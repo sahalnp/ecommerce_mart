@@ -1,7 +1,6 @@
   import express from "express";
-  import bcrypt from "bcrypt";
   import User from "../models/user.js";
-  import { loginUser } from "../controllers/authController.js";
+  import { loginUser, signupUser,otp } from "../controllers/authController.js";
 
   const router = express.Router();
 
@@ -16,11 +15,10 @@
   router.post("/login",loginUser)
   
   router.get("/signup", (req, res) => {
-    res.render("signup", { title: "Signup", user: null });
+    res.render('signup.ejs',{title:"Signup-Edumart",user:null})
   });
 
-  router.post("/signup", async (req, res) => {
-    
-  });
+  router.post("/signup",signupUser)
+
 
   export default router;

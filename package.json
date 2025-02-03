@@ -9,7 +9,8 @@
     "install": "^0.13.0",
     "mongod": "^2.0.0",
     "mongoose": "^8.9.5",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "two-step-auth": "^1.1.2"
   },
   "scripts": {
     "start": "node src/index.js",
