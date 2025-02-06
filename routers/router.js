@@ -1,6 +1,5 @@
   import express from "express";
-  import User from "../models/user.js";
-  import { loginUser, signupUser,otp } from "../controllers/authController.js";
+  import { loginUser, signupUser, verifyotp } from "../controllers/authController.js";
 
   const router = express.Router();
 
@@ -8,7 +7,7 @@
     res.render("index");
   });
 
-  router.get("/login", (req, res) => {
+  router.get("/login", (req, res) => { 
     res.render("login", { title: "Login-Edumart", user: null });
   });
 
@@ -17,8 +16,12 @@
   router.get("/signup", (req, res) => {
     res.render('signup.ejs',{title:"Signup-Edumart",user:null})
   });
-
   router.post("/signup",signupUser)
 
+  router.get('/otp',(req,res)=>{
+    res.render('otp',{title:"OTP",error:null})
+  })
+  
+  router.post('/otp',verifyotp)
 
   export default router;
