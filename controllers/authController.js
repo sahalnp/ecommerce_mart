@@ -5,16 +5,22 @@ import  {transporter}  from "../config/sendMail.js";
 
 // Controller for login
 export const loginUser = async (req, res) => {
-    const email=req.body.email;
-    const password=req.body.password
-    console.log(req.body.email);
-    console.log(password);
-    
-    
-
-    // Find the user by name (or email if needed)
-    const user = await User.findOne({ email:email })
+    const emailornumber=req.body.emailornumber;
+    const password=req.body.password;
+    if(!emailornumber){
+        return res.render("login", { user: "Email or number not be empty" });
+    }
+    if(!password){
+        return res.render("login", { user: "Password must be filled" });
+    }
+    console.log(emailornumber,"kdsfjkfjklj");
+        const user = await User.findOne( { $or: [
+            { email:emailornumber},
+            { number:parseInt(emailornumber)}
+            ] });
+        
     console.log("user is ",user);
+    req.session.user_emailornumber=emailornumber
     
     if (!user) {
         return res.render("login", { user: "User does not exist. Please sign up." });//sending login page if user doesnot exist
@@ -35,10 +41,14 @@ export const signupUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     req.session.user = {
-        name: req.body.name,
+        firstname: req.body.firstname,
+        Lastname:req.body.lastname,
         email: req.body.email,
+        number:req.body.number,
         password: hashedPassword
     };
+    console.log(req.session.user,"fjkdsfdsklfjdsklfjdklsfjkslfj"
+    );
     
     const existingUser = await User.findOne({ email:req.session.user.email });
     console.log(existingUser);
@@ -74,7 +84,7 @@ export const verifyotp=async (req,res) =>{
     if(otp==req.session.otp){
         const newUser = await User.create(req.session.user);
         console.log("The new user",newUser);
-        res.redirect('/login')
+        res.redirect('/phoneotp')
     }
     else{
         res.render('otp',{title: "OTP",error:"Invalid OTP:Please Try again"})
@@ -83,5 +93,20 @@ export const verifyotp=async (req,res) =>{
     console.log("The Error",error);
     
    } 
-    
-}    
+}
+   export const logout = (req, res) => {
+    if (req.session.user_emailornumber) {
+        req.session.destroy((err) => {
+            if (err) {
+                console.log("Error destroying session:", err);
+                return res.status(500).send("Logout failed");
+            }
+            res.clearCookie("auth");
+            res.redirect("/");
+            console.log("logouted");
+            
+        });
+    } else {
+        res.redirect("/");
+    }
+};
