@@ -1,12 +1,8 @@
-export const isUserloggedIn=(req,res)=>{    
-    if(req.session.user){
-        return res.redirect('/')
+export const isUserloggedIn = (req, res) => {
+    if (req.isAuthenticated() || req.session.user) {
+      return res.redirect("/");
     }
-        res.render("login", { title: "Login-Edumart", user: null })
-}
-export function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect("/login");
-}
+    
+    res.render("login", { title: "Login-M4 Mart", user: null });
+  };
+  

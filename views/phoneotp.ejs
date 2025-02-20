@@ -11,17 +11,19 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f4f4f4;
+            background: linear-gradient(to right, #141e30, #243b55); /* Background like yours */
+            margin: 0;
         }
         .container {
             background: white;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             text-align: center;
+            width: 500px; /* Adjusted to match your original */
         }
         input {
-            padding: 10px;
+            padding: 12px;
             font-size: 18px;
             text-align: center;
             width: 100%;
@@ -30,23 +32,36 @@
             border-radius: 5px;
         }
         button {
-            margin-top: 10px;
-            padding: 10px 20px;
+            margin-top: 15px;
+            padding: 12px 20px;
             font-size: 16px;
             background: #28a745;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            width: 100%;
         }
         button:hover {
             background: #218838;
         }
         .resend-btn {
+            margin-top: 10px;
             background: #007bff;
+            cursor: not-allowed; /* Initially disabled */
+            width: 100%;
         }
         .resend-btn:hover {
+            background: #007bff;
+        }
+        .resend-btn.enabled {
+            cursor: pointer;
             background: #0056b3;
+        }
+        #timer-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
         }
     </style>
 </head>
@@ -64,12 +79,50 @@
             <button type="submit">Verify OTP</button>
         </form>
 
+        <!-- Resend OTP Timer -->
+        <p id="timer-text">Resend OTP in <span id="timer">60</span> seconds</p>
+
+        <!-- Resend OTP Button -->
+        <button id="resendBtn" class="resend-btn" disabled>Resend OTP</button>
+
         <!-- Resend OTP Form -->
-        <form action="/phoneotp" method="POST">
+        <form id="resendForm" action="/phoneotp" method="POST">
             <input type="hidden" name="phone" value="<%= phone %>">
-            <button type="submit" class="resend-btn">Resend OTP</button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let timerText = document.getElementById("timer-text");
+            let timerSpan = document.getElementById("timer");
+            let resendBtn = document.getElementById("resendBtn");
+            let timeLeft = 60; // Timer set to 60 seconds
+
+            function updateTimer() {
+                if (timeLeft > 0) {
+                    timerSpan.textContent = timeLeft;
+                    timeLeft--;
+                    setTimeout(updateTimer, 1000);
+                } else {
+                    timerText.style.display = "none"; // Hide timer text
+                    resendBtn.removeAttribute("disabled"); // Enable button
+                    resendBtn.classList.add("enabled");
+                }
+            }
+
+            updateTimer(); // Start the countdown
+
+            // Resend OTP when clicking the button
+            resendBtn.addEventListener("click", function () {
+                resendBtn.setAttribute("disabled", "true"); // Disable button
+                resendBtn.classList.remove("enabled");
+                timerText.style.display = "block"; // Show timer text
+                timeLeft = 60; // Reset timer
+                updateTimer(); // Restart countdown
+                document.getElementById("resendForm").submit(); // Submit form
+            });
+        });
+    </script>
 </body>
 </html>
 <%- include('partials/footer') %>
