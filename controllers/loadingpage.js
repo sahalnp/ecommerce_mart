@@ -12,7 +12,7 @@
         res.render('signup.ejs',{title:"Signup-M4 Mart",user:null})
     }
     export const otp=(req,res)=>{
-        res.render('otp',{title:"OTP",error:null,time:"Pass"})
+        res.render('otp',{title:"OTP",error:null,time:60})
     }
     export const account=(req,res)=>{
         res.render('account.ejs', { 
@@ -27,7 +27,7 @@
         });
     }
     export const phoneotp=(req,res,next)=>{
-        res.render("phoneotp",{phone: req.session.newnumber,error:null})
+        res.render("phoneotp",{phone: req.session.newnumber,error:null,time:60})
     }
     export const auth_google= passport.authenticate("google", { scope: ["profile", "email"] });
 

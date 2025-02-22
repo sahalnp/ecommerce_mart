@@ -12,10 +12,9 @@ const now = new Date();
 
 export const sendsms = async (req, res,next) => {
     req.session.phoneotp = phoneGenerateOtp();
-    console.log("The otp send to phone:", req.session.phoneotp);
-    console.log(req.session.phone_otp_Expire);
-    
+    console.log("The otp send to phone:", req.session.phoneotp)
     req.session.phone_otp_Expire = settimer(now);
+    console.log(req.session.phone_otp_Expire);
     const new_number = req.session.newnumber;
     const msgoption = {
         from: process.env.TWILIO_NUMBER,

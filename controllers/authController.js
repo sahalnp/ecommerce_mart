@@ -51,8 +51,8 @@ export const signupUser = async (req, res, next) => {
     };
     req.session.email = req.session.users.email;
     req.session.newnumber = req.session.users.number;
-    console.log(req.session.newnumber,"number");
-    
+    console.log(req.session.newnumber, "number");
+
     console.log(req.session.users);
 
     const existingUser = await User.findOne({
@@ -82,12 +82,12 @@ export const send_otp = async (req, res, next) => {
 const generateotp = () => Math.floor(100000 + Math.random() * 90000);
 export const verifyotp = async (req, res) => {
     const { otp } = req.body;
-    console.log(req.session.otp_Expire,"sdfdsifdsfdsklhfswoiurioweuroiwior");
-    
 
     try {
-        if (otp != req.session.otp || new Date(req.session.otp_Expire) < new Date()) {
-
+        if (
+            otp != req.session.otp ||
+            new Date(req.session.otp_Expire) < new Date()
+        ) {
             res.render("otp", {
                 title: "OTP",
                 error: "Invalid OTP: Please Try again",
@@ -119,20 +119,23 @@ export const logout = (req, res) => {
 
 export const phoneverifyotp = async (req, res) => {
     try {
-        if (req.session.phoneotp != req.body.otp||req.session.otp_Expire < new Date()) {
-
-            // const newUser = await User.create(req.session.users);
-            console.log("create");
-            //res.redirect("/login");
-        } else {  // <-- Move `else` here immediately after `if`
+        if (
+            req.session.phoneotp != req.body.otp ||
+            new Date(req.session.otp_Expire) < new Date()
+        ) {
             res.render("phoneotp", {
-                phone:req.session.newnumber,
+                phone: req.session.newnumber,
                 error: "Invalid otp: Please try again",
+                time: null,
             });
+        } else{
+            console.log("baluiiiiii")
+            const newUser = await User.create(req.session.users);
+            res.redirect("/login");
+            console.log("create");
         }
-        
-        console.log(req.session.phone_otp_Expire, "sdfdksfjskfjskldfjdsklfj");
-
+           
+        console.log(req.session.phone_otp_Expire);
     } catch (error) {
         console.log("Error verifying OTP", error);
     }

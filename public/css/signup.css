@@ -6,3 +6,29 @@
     width: 100%;
     max-width: 400px;
 }
+.otp-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+  
+  #timer {
+    margin-right: 10px;
+  }
+  
+  #resend-btn {
+    padding: 5px 10px;
+    background-color: #337ab7;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  #resend-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  

@@ -1,128 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter OTP</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(to right, #141e30, #243b55); /* Background like yours */
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 500px; /* Adjusted to match your original */
-        }
-        input {
-            padding: 12px;
-            font-size: 18px;
-            text-align: center;
-            width: 100%;
-            margin-top: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            margin-top: 15px;
-            padding: 12px 20px;
-            font-size: 16px;
-            background: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            width: 100%;
-        }
-        button:hover {
-            background: #218838;
-        }
-        .resend-btn {
-            margin-top: 10px;
-            background: #007bff;
-            cursor: not-allowed; /* Initially disabled */
-            width: 100%;
-        }
-        .resend-btn:hover {
-            background: #007bff;
-        }
-        .resend-btn.enabled {
-            cursor: pointer;
-            background: #0056b3;
-        }
-        #timer-text {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Enter OTP</h2>
-        <p>We have sent an OTP to your phone number: <strong><%= phone %></strong></p>
+<%- include('partials/header') %>
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow-lg text-center" style="max-width: 400px; width: 100%;">
+        <h2 class="mb-3">Enter OTP</h2>
+        <p class="text-muted fw">We have sent an OTP to your phone number: <strong><%= phone %></strong></p>
+
         <% if (error) { %>
-            <p style="color: red;"><%= error %></p>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
         <% } %>
 
-        <form method="POST">
-            <input type="hidden" name="phone" value="<%= phone %>">
-            <input type="text" name="otp" placeholder="Enter OTP" required maxlength="7">
-            <button type="submit">Verify OTP</button>
+        <form action="/phoneotp" method="POST">
+            <div class="mb-3">
+                <input type="text" name="otp" class="form-control text-center" placeholder="Enter OTP" required>
+            </div>
+            <button class="btn btn-success w-100 mt-3">Verify OTP</button>
         </form>
 
-        <!-- Resend OTP Timer -->
-        <p id="timer-text">Resend OTP in <span id="timer">60</span> seconds</p>
-
-        <!-- Resend OTP Button -->
-        <button id="resendBtn" class="resend-btn" disabled>Resend OTP</button>
-
-        <!-- Resend OTP Form -->
-        <form id="resendForm" action="/phoneotp" method="POST">
-            <input type="hidden" name="phone" value="<%= phone %>">
-        </form>
+        <% if (time !== null) { %>
+            <div class="mt-3 d-flex align-items-center justify-content-center">
+                <span id="timer" class="text-muted">Resend OTP in <%= time %>s</span>
+            </div>
+            <a href="/phoneotp" id="resendBtn" class="btn btn-link p-0 text-primary d-none">Resend OTP</a>
+        <% } else { %>
+            <a href="/phoneotp" id="resendBtn" class="btn btn-link p-0 text-primary">Resend OTP</a>
+        <% } %>
     </div>
+</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            let timerText = document.getElementById("timer-text");
-            let timerSpan = document.getElementById("timer");
-            let resendBtn = document.getElementById("resendBtn");
-            let timeLeft = 60; // Timer set to 60 seconds
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let timerSpan = document.getElementById("timer");
+        let resendBtn = document.getElementById("resendBtn");
+        let timeLeft = 60;
 
-            function updateTimer() {
-                if (timeLeft > 0) {
-                    timerSpan.textContent = timeLeft;
-                    timeLeft--;
-                    setTimeout(updateTimer, 1000);
-                } else {
-                    timerText.style.display = "none"; // Hide timer text
-                    resendBtn.removeAttribute("disabled"); // Enable button
-                    resendBtn.classList.add("enabled");
-                }
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timerSpan.textContent = `Resend OTP in ${timeLeft}s`;
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                timerSpan.style.display = "none"; // Hide timer
+                resendBtn.classList.remove("d-none"); // Show Resend OTP button
             }
+        }
 
+        if (timeLeft <= 0) {
+            timerSpan.style.display = "none"; // Hide timer immediately
+            resendBtn.classList.remove("d-none"); // Show Resend OTP button immediately
+        } else {
             updateTimer(); // Start the countdown
+        }
+    });
+</script>
 
-            // Resend OTP when clicking the button
-            resendBtn.addEventListener("click", function () {
-                resendBtn.setAttribute("disabled", "true"); // Disable button
-                resendBtn.classList.remove("enabled");
-                timerText.style.display = "block"; // Show timer text
-                timeLeft = 60; // Reset timer
-                updateTimer(); // Restart countdown
-                document.getElementById("resendForm").submit(); // Submit form
-            });
-        });
-    </script>
-</body>
-</html>
 <%- include('partials/footer') %>
