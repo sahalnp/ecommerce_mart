@@ -1,0 +1,103 @@
+<%- include('../partials/header') %>
+
+<style>
+    .sidebar {
+        height: 100vh;
+        background-color: #343a40;
+        padding-top: 20px;
+    }
+
+    .sidebar .nav-link {
+        color: white;
+    }
+
+    .sidebar .nav-link:hover {
+        background-color: #495057;
+        color: white;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <!-- Top navbar -->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+                <div class="container-fluid">
+                    <span class="navbar-brand">Dashboard</span>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Notifications</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">Account</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User List Section -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">USERS LIST:</h5>
+                        </div>
+                        <% if (user.length > 0) { %>
+                            <ul>
+                                <% users.forEach(user => { %>
+                                    <form action="/admin/user/<%=user.firstname %>" method="GET">
+                                        <button 
+                                            name="button" 
+                                            value="<%=user.firstname %>" 
+                                            class="btn btn-light w-100 text-start"
+                                        >
+                                            <%=user.firstname %>
+                                        </button>
+                                    </form>
+                                <% }) %>
+                            </ul>
+                        <% } else { %>
+                            <p class="text-center">No users found.</p>
+                        <% } %>
+                    </div>  
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

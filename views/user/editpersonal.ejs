@@ -1,0 +1,33 @@
+<%- include('../partials/header') %>
+
+
+<div class="container mt-5">
+    <div class="card p-4">
+        <h3 class="mb-4">Edit Personal Information</h3>
+        <form>
+            <div class="mb-3">
+                <label for="firstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstName" value="Muhammed">
+            </div>
+            
+            <div class="mb-3">
+                <label for="lastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastName" value="Sahal">
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" value="sahalnp60@gmail.com">
+            </div>
+            
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" value="+918921018932">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

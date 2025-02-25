@@ -3,10 +3,11 @@ import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import session from "express-session";
 import { connectDB } from "./config/db.js";
-import authRoutes from "./routers/router.js";
+import authRoutes from "./routers/user_router.js";
 import express from "express";
-import "./config/passport.js"; 
-import passport from "passport"; 
+import "./config/passport.js";
+import passport from "passport";
+import adminRouter from "./routers/admin_router.js";
 
 dotenv.config();
 connectDB();
@@ -25,18 +26,18 @@ app.use(
         secret: process.env.SESSION_SECRET || "your_default_secret",
         resave: false,
         saveUninitialized: true,
-        cookie:{ maxAge: 1000 * 60 * 60 }
+        cookie: { maxAge: 1000 * 60 * 60 },
     })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
 app.use(express.static(path.join(__dirname, "./public")));
 app.use("/", authRoutes);
+app.use("/", adminRouter);
 app.listen(port, () => {
     console.log(`Server Started on http://localhost:${port}`);
 });

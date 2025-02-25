@@ -8,9 +8,8 @@ import {
     email_check,
     reset_verify_otp,
     new_pass,
-    resend_otp_email,
     send_otp,
-} from "../controllers/authController.js";
+} from "../controllers/user/userAuthController.js";
 import { isUserloggedIn } from "../middleware/userauth.js";
 import {
     account,
@@ -22,14 +21,14 @@ import {
     auth_google_callback,
     reset_pass_otp,
     pass_reset,
-} from "../controllers/loadingpage.js";
-import { sendsms } from "../utlity/sendphoneotp.js";
+} from "../controllers/user/authViewController.js";
+import { sendsms } from "../utility/sendphoneotp.js";
 
 export const router = express.Router();
 
 router.get("/", home);
 
-router.get("/login", isUserloggedIn);
+router.get("/login",isUserloggedIn);
 router.post("/login", loginUser);
 
 router.get("/signup", loadsignup);
@@ -54,6 +53,7 @@ router.get("/pass_reset", pass_reset);
 router.post("/pass_reset", new_pass);
 
 router.get("/auth/google", auth_google);
+
 router.get("/auth/google/callback", auth_google_callback);
 
 export default router;

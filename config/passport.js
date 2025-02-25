@@ -18,10 +18,13 @@ passport.use(
 
         req.session.regenerate((err) => {  // Ensures session is properly initialized
           if (err) return done(err);
+          req.session.
           
-          req.session.user = email_val;
+          req.session.google_user=profile;
+          console.log(profile,"dfsklfjlk");
+          
           req.session.save(() => {
-            console.log("Session saved:", req.session.user);
+            console.log("Session saved:", req.session.user_email);
             return done(null, { profile, existingUser: !!google_user });
           });
         });
