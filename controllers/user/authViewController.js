@@ -1,8 +1,9 @@
+
 import passport from "passport";
 export const home = (req, res) => {
     let username = "LOGIN";
-    if (req.session.user) {
-        username = req.session.user.firstname + " " + req.session.user.Lastname;
+    if (req.session.users) {
+        username = req.session.users.firstname + " " + req.session.users.Lastname;
         if (req.session.user_name) {
             username = req.session.user_name;
         }
@@ -18,9 +19,8 @@ export const otp = (req, res) => {
 export const account = (req, res) => {
     
     res.render("user/account.ejs", {
-        name: req.session.user.firstname,
         title: "ACCOUNT",
-        users: req.session.user || {},
+        user: req.session.users || {},
         orders: req.orders || [],
         role: null,
         place: null,
@@ -80,3 +80,5 @@ export const reset_pass_otp = (req, res) => {
 export const pass_reset = (req, res) => {
     res.render("user/reset_pass", { token: "dsfksk" });
 };
+
+

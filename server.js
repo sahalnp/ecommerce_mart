@@ -17,9 +17,10 @@ const port = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true })); //To pass form data from server
 
 app.use(
     session({
@@ -33,9 +34,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.set("view engine", "ejs");
+app.set("view engine", "ejs"); // Serve static files
+
 app.set("views", path.join(__dirname, "./views"));
-app.use(express.static(path.join(__dirname, "./public")));
+app.use(express.static(path.join(__dirname, "./public")))
+
+
 app.use("/", authRoutes);
 app.use("/", adminRouter);
 app.listen(port, () => {

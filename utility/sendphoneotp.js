@@ -1,6 +1,6 @@
 import twilio from "twilio";
 import dotenv from "dotenv";
-import { settimer } from "../middleware/otp_timer.js";
+import { settimer } from "../middleware/otp_timerMiddleware.js";
 dotenv.config();
 
 const client = new twilio(

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+    <head>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui"
+        />
+        <meta
+            name="description"
+            content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code."
+        />
+        <meta
+            name="keywords"
+            content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard"
+        />
+        <meta name="author" content="ThemeSelect" />
+        <title>Chameleon Admin</title>
+        <link
+            rel="apple-touch-icon"
+            href="/theme-assets/images/ico/apple-icon-120.png"
+        />
+        <link
+            rel="shortcut icon"
+            type="image/x-icon"
+            href="/theme-assets/images/favicon.png"
+        />
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+
+        <link
+            href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700"
+            rel="stylesheet"
+        />
+        <link
+            href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"
+            rel="stylesheet"
+        />
+        <!-- BEGIN VENDOR CSS-->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/vendors.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/charts/chartist.css"
+        />
+        <!-- END VENDOR CSS-->
+        <!-- BEGIN CHAMELEON  CSS-->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/app-lite.css"
+        />
+        <!-- END CHAMELEON  CSS-->
+        <!-- BEGIN Page Level CSS-->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/core/colors/palette-gradient.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/core/menu/menu-types/vertical-menu.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/pages/dashboard-ecommerce.css"
+        />
+        <style>
+            /* Global Styles */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+            .category-box {
+                display: flex;
+                align-items: center;
+                width: 50%;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 8px;
+                background-color: #fff;
+                color: #6c757d;
+                cursor: pointer;
+            }
+            /* Navbar Styling */
+            .navbar {
+                background-color: #343a40;
+                padding: 15px;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+            }
+
+            .navbar-brand {
+                color: white;
+                font-weight: bold;
+            }
+
+            .navbar a {
+                color: white;
+                text-decoration: none;
+            }
+
+            /* Sidebar Styling */
+
+            /* Sidebar Branding */
+            .navbar-header {
+                text-align: left;
+                padding: 10px 20px;
+            }
+
+            .brand-text {
+                font-size: 18px;
+                font-weight: bold;
+                color: #222;
+                margin-left: 8px;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                .content {
+                    margin-left: 0;
+                }
+            }
+
+            /* Main Content */
+            .content {
+                margin-left: 240px;
+                padding: 20px;
+                margin-top: 60px;
+            }
+
+            /* Form Styling */
+            .container {
+                width: 100%;
+                max-width: 600px;
+                margin: 50px auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                text-align: center;
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-weight: bold;
+                font-size: 15px;
+                display: block;
+                margin-bottom: 6px;
+            }
+
+            input,
+            select,
+            textarea {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                background: #28a745;
+                border: none;
+                color: white;
+                font-size: 18px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background: #218838;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                .content {
+                    margin-left: 0;
+                }
+            }
+        </style>
+    </head>
+    <body
+        class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"
+        data-open="click"
+        data-menu="vertical-menu"
+        data-color="bg-chartbg"
+        data-col="2-columns"
+    >
+        <!-- fixed-top-->
+        <nav
+            class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light"
+        >
+            <div class="navbar-wrapper">
+                <div class="navbar-container content">
+                    <div
+                        class="collapse navbar-collapse show"
+                        id="navbar-mobile"
+                    >
+                        <ul class="nav navbar-nav mr-auto float-left">
+                            <li class="nav-item d-block d-md-none">
+                                <a
+                                    class="nav-link nav-menu-main menu-toggle hidden-xs"
+                                    href="#"
+                                    ><i class="ft-menu"></i
+                                ></a>
+                            </li>
+                            <li class="nav-item d-none d-md-block">
+                                <a class="nav-link nav-link-expand" href="#"
+                                    ><i class="ficon ft-maximize"></i
+                                ></a>
+                            </li>
+                            <li class="nav-item dropdown navbar-search">
+                                <a
+                                    class="nav-link dropdown-toggle hide"
+                                    data-toggle="dropdown"
+                                    href="#"
+                                    ><i class="ficon ft-search"></i
+                                ></a>
+                                <ul class="dropdown-menu">
+                                    <li class="arrow_box">
+                                        <form>
+                                            <div class="input-group search-box">
+                                                <div
+                                                    class="position-relative has-icon-right full-width"
+                                                >
+                                                    <input
+                                                        class="form-control"
+                                                        id="search"
+                                                        type="text"
+                                                        placeholder="Search here..."
+                                                    />
+                                                    <div
+                                                        class="form-control-position navbar-search-close"
+                                                    >
+                                                        <i class="ft-x"> </i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav float-right">
+                            <li class="dropdown dropdown-notification nav-item">
+                                <a
+                                    class="nav-link nav-link-label"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                    ><i class="ficon ft-mail"> </i
+                                ></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="arrow_box_right">
+                                        <a class="dropdown-item" href="#"
+                                            ><i class="ft-book"></i> Read
+                                            Mail</a
+                                        ><a class="dropdown-item" href="#"
+                                            ><i class="ft-bookmark"></i> Read
+                                            Later</a
+                                        ><a class="dropdown-item" href="#"
+                                            ><i class="ft-check-square"></i>
+                                            Mark all Read
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dropdown dropdown-user nav-item">
+                                <a
+                                    class="nav-link dropdown-toggle"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                    role="button"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                >
+                                    <span class="avatar avatar-online">
+                                        <img
+                                            src="/theme-assets/images/gallery/image.png"
+                                            alt="User Avatar"
+                                            class="default-avatar"
+                                        />
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="#">
+                                        <span
+                                            class="user-name text-bold-700 ml-1"
+                                            ><%= admin.firstname %></span
+                                        >
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a
+                                        class="dropdown-item"
+                                        href="/admin/logout"
+                                    >
+                                        <i class="ft-power"></i> Logout
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ////////////////////////////////////////////////////////////////////////////-->
+
+        <div
+            class="main-menu menu-fixed menu-light menu-accordion menu-shadow"
+            data-scroll-to-active="true"
+            data-img="/theme-assets/images/backgrounds/02.jpg"
+        >
+            <div class="navbar-header">
+                <ul class="nav navbar-nav flex-row">
+                    <li class="nav-item mr-auto">
+                        <a class="navbar-brand" href="/admin/dashboard"
+                            ><img
+                                class="brand-logo"
+                                alt="Chameleon admin logo"
+                                src="/theme-assets/images/logo/logo.png"
+                            />
+                            <h3 class="brand-text">Chameleon</h3></a
+                        >
+                    </li>
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link close-navbar"
+                            ><i class="ft-x"></i
+                        ></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="main-menu-content">
+                <ul
+                    class="navigation navigation-main"
+                    id="main-menu-navigation"
+                    data-menu="menu-navigation"
+                >
+                    <li class="nav-item">
+                        <a href="/admin/dashboard"
+                            ><i class="fa fa-home"></i
+                            ><span class="menu-title" data-i18n=""
+                                >Dashboard</span
+                            ></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/userDetails">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/admin/category"
+                            ><i class="fas fa-list"></i
+                            ><span class="menu-title">Categories</span></a
+                        >
+                    </li>
+
+                    <li class="nav-item active">
+                        <a href="/admin/add_product"
+                            ><i class="fas fa-plus"></i
+                            ><span class="menu-title">Add Product</span></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a href="watchlist.html">
+                            <i class="fas fa-heart"></i>
+                            <span>Watchlist</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navigation-background"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content content">
+            <div class="content-wrapper">
+                <div class="content-header row"></div>
+                <div class="content-body">
+                    <div class="container">
+                        <h2>Add Product</h2>
+                        <form
+                            action="/admin/upload"
+                            method="POST"
+                            enctype="multipart/form-data"
+                        >
+                            <label for="title">Product Title</label>
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                required
+                            />
+
+                            <label for="productPrice">Price</label>
+                            <input
+                                type="number"
+                                id="productPrice"
+                                name="productPrice"
+                                required
+                            />
+
+                            <label for="sale">Sale Price</label>
+                            <input
+                                type="number"
+                                id="sale"
+                                name="salePrice"
+                                required
+                            />
+
+                            <label for="brand">Brand</label>
+                            <input
+                                type="text"
+                                id="brand"
+                                name="brand"
+                                required
+                            />
+
+                            <label for="description">Description</label>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="3"
+                                required
+                            ></textarea>
+
+                            <label for="size">Size</label>
+                            <input type="text" id="size" name="size" required />
+
+                            <label for="category">Category</label>
+                            
+                                <% if (Array.isArray(categories)) { %>
+                                    <i class="fa fa-list-alt"></i>
+                                    <% categories.forEach(category => { %>
+                                        <input type="text" class="category-box" name="category" value="<%= category%>">
+                                    <% }); %>
+                                <% } %>
+                                
+                            
+                            
+
+                            <label for="genderCategory">For</label>
+                            
+                            <% if (Array.isArray(genderCategory)||genderCategory!=='undefined') { %>
+                                <i class="fa fa-list-alt"></i>
+                                <% genderCategory.forEach(gendercategory=> { %>
+                                    <input type="text" class="category-box" name="genderCategory" value="<%= gendercategory%>">
+                                <% }); %>
+                            <% } %>
+
+                            <label for="image">Product Image</label>
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/*"
+                                
+                                required
+                            />
+
+                            <button type="submit">Add Product</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

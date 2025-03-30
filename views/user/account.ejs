@@ -1,4 +1,5 @@
-<a%- include('partials/header') %>
+<%- include('../partials/header') %>
+
     <div class="container-fluid">
         <div class="row">
             <nav class="col-md-3 sidebar">
@@ -24,19 +25,13 @@
                         <div class="profile-container">
                             <div class="profile-header">
                                 <img src="profile-pic.jpg" alt="Profile Picture">
-                                <div>
-                                    <h2>name</h2>
-                                    <p><%= role %></p>
-                                    <br>
-                                    <p><%= place %></p>
-                                    
-                                </div>
+                               
                                 <button class="edit-btn">Edit ✎</button>
                             </div>
                         
                             <div class="info-section">
                                 <h3>Personal Information</h3>
-                                <p><span>First Name:</span><%= user.Firstname %></p>
+                                <p><span>First Name:</span><%= user.firstname %></p>
                                 <p><span>Last Name:</span><%=user.Lastname%></p>
                                 <p><span>Email:</span><%=user.email %></p>
                                 <p><span>Phone:</span><%=user.number %></p>

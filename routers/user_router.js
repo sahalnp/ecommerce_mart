@@ -10,7 +10,7 @@ import {
     new_pass,
     send_otp,
 } from "../controllers/user/userAuthController.js";
-import { isUserloggedIn } from "../middleware/userauth.js";
+import { isUserloggedIn } from "../middleware/userauthMiddleware.js";
 import {
     account,
     loadsignup,

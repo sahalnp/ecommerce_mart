@@ -1,23 +1,17 @@
 import bcrypt from "bcrypt";
-import { User } from "../../models/user.js";
+import { User } from "../../models/userModel.js";
 import { sendotp } from "../../utility/sendotp_email.js";
-import { settimer } from "../../middleware/otp_timer.js";
+import { settimer } from "../../middleware/otp_timerMiddleware.js";
 import { forgetPassMail } from "../../utility/ForgotPassEmail.js";
 
 // Controller for login
 export const loginUser = async (req, res) => {
     const emailornumber = req.body.emailornumber;
     const password = req.body.password;
-    if (!emailornumber) {
-        return res.render("user/login", { user: "Email or number not be empty" });
-    }
-    if (!password) {
-        return res.render("user/login", { user: "Password must be filled" });
-    }
     const user = await User.findOne({
         $or: [{ email: emailornumber }, { number: parseInt(emailornumber) }],
     });
-    req.session.user = user;
+    req.session.users = user;
 
     console.log("user is ", req.session.user);
     req.session.user_emailornumber = emailornumber;
