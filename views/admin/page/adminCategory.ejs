@@ -845,7 +845,7 @@
                                         <% for(let i=0; i < catList.length; i++) { %>
                                             <tr>
                                                 <td><%= i+1 %></td>
-                                                <td><%= catList[i].categoryName %></td>
+                                                <td><%= catList[i].name %></td>
                                                 <td>
                                                     <% if (catList[i].isListed) { %>
                                                         <a href="/admin/category/unList/<%= catList[i]?._id %>">

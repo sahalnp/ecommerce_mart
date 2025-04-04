@@ -73,15 +73,16 @@ export const userDetails = asyncHandler(async (req, res) => {
 });
 export const add_product = async (req, res) => {
     const admminData = await admin.findOne({ _id: req.session.admin._id });
-    let categories = await categoryModel.find({})
-    let genderCategory=await genderModel.find({})
+    let categories = await categoryModel.find({  });
+    let genderCategory = await genderModel.find({});
 
+    console.log(categories, "7410852");
 
     if (req.session.admin) {
         res.render("admin/page/adminAddProduct", {
             admin: admminData,
             categories,
-            genderCategory
+            genderCategory,
         });
     } else {
         return res.redirect("/admin/login");
@@ -110,5 +111,5 @@ export const addCategoryLoad = asyncHandler(async (req, res) => {
     if (!req.session.admin) {
         return res.redirect("/admin/login");
     }
-    return res.render("admin/page/addCategory");
+    return res.render("admin/page/addCategory", { admin: req.session.admin,message:null });
 });

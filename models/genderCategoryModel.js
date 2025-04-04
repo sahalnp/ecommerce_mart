@@ -3,7 +3,6 @@ const genderSchema=new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        enum: ["Male", "Female", "Unisex"] 
     }
 
 })
