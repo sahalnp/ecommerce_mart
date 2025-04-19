@@ -8,6 +8,7 @@ import express from "express";
 import "./config/passport.js";
 import passport from "passport";
 import adminRouter from "./routers/admin_router.js";
+import MongoStore from "connect-mongo";
 
 dotenv.config();
 connectDB();
@@ -24,12 +25,21 @@ app.use(express.urlencoded({ extended: true })); //To pass form data from server
 
 app.use(
     session({
-        secret: process.env.SESSION_SECRET || "your_default_secret",
-        resave: false,
-        saveUninitialized: true,
-        cookie: { maxAge: 1000 * 60 * 60 },
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: "mongodb+srv://sahalnp:9804@cluster0.azo4t.mongodb.net/",
+        dbName: "ecomerce", 
+        collectionName: "sessions",
+      }),
+      cookie: {
+        secure: false, 
+        maxAge: 24 * 60 * 60 * 1000, 
+      },
     })
-);
+  );
+  
 
 app.use(passport.initialize());
 app.use(passport.session());

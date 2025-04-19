@@ -31,18 +31,18 @@ const productSchema = new mongoose.Schema(
             },
         ],
         size: {
-            type: String,
+            type: Array,
             required: true,
         },
-        category:[ {
+        category:[{
             type: mongoose.Schema.Types.ObjectId,
             ref:'category',
             required: true,
         }
-        ],
+    ]
+        ,
         genderCategory:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'gender',
+            type:Array,
             required:true
         },
         inStock:{
@@ -55,6 +55,10 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        isListed:{
+            type:Boolean,
+            default:false
+        }
     },
     { timestamps: true }
 );

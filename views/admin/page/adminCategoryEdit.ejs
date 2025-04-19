@@ -92,7 +92,27 @@
                 box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.12);
                 transition: all 0.3s ease-in-out;
             }
-
+            .card {
+                border: 1px solid #ced4da; 
+            }
+            .card-header {
+                border-bottom: 1px solid #ced4da; 
+            }
+            .form-control {
+                border: 1px solid #ced4da; 
+                border-radius: 0.25rem; 
+            }
+            .btn-primary {
+                background-color: #007bff; 
+                border-color: #007bff;
+                color: white;
+                border-radius: 0.25rem; 
+                padding: 0.75rem 1.5rem;
+            }
+            .btn-primary:hover {
+                background-color: #0056b3; 
+                border-color: #0056b3;
+            }
             h2 {
                 text-align: center;
                 color: #000000;
@@ -366,71 +386,58 @@
             <div class="navigation-background"></div>
         </div>
 
-        <div class="container">
-            <h2>Add Category</h2>
-            <form action="/admin/addCategory" method="POST">
-                <!-- Category Input -->
-                <div class="d-flex gap-4">
-                    <input
-                       id="categoryInput"
-                        name="category"
-                        class="mb-0 mr-2"
-                        placeholder="Enter category"
-                    />
-                    <button  type="button" id="addCategoryBtn" class="mt-0">
-                        Add
-                    </button>
+        <div class="app-content content">
+            <div class="content-wrapper">
+                <div class="content-header row">
+                    <div class="content-header-left col-md-6 col-12 mb-2">
+                        <h3 class="text-dark">Edit Category</h3>
+                    </div>
                 </div>
-                <ul id="categoryList"></ul>
-
-                <input type="hidden" id="categoriesField" name="categories" />
-                <button type="submit" class="submit-btn">
-                    Submit Categories
-                </button>
-            </form>
-            <% if (message) { %>
-                <div class="alert alert-danger mt-2" style="color: white; background-color: rgb(233, 88, 88); padding: 10px; margin-top: 10px; border-radius: 5px; text-align: center;">
-                    <%= message %>
+        
+                <div class="content-body">
+                    <section id="edit-category">
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <div class="card shadow-sm rounded">
+                                    <div class="card-header bg-light text-dark">
+                                        <h4 class="mb-0 text-center">Category Info</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <form method="POST" action="/admin/editCategory/<%= category._id %>">
+                                            <input type="hidden" name="id" value="<%= category._id %>">
+        
+                                            <div class="form-group">
+                                                <label for="name" class="text-dark">
+                                                    <span style="font-weight: bold;">Category Name</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="name"
+                                                    name="name"
+                                                    class="form-control"
+                                                    value="<%= category.name %>"
+                                                    required
+                                                />
+                                            </div>
+        
+                                            <div class="form-group form-check">
+                                                <input
+                                                    type="checkbox"
+                                                    name="isListed"
+                                                    class="form-check-input"
+                                                    id="isListed"
+                                                    <%= category.isListed ? 'checked' : '' %>
+                                                />
+                                                <label class="form-check-label" for="isListed" style="font-size: 1.1rem;">Is Listed</label>
+                                            </div>
+        
+                                            <button type="submit" class="btn btn-primary btn-block mt-2" >
+                                                Update Category
+                                            </button>
+                                        </form>
+                                    </div> </div> </div> </div> </section>
                 </div>
-            <% } %>
-
-        <script>
-            document
-                .getElementById("addCategoryBtn")
-                .addEventListener("click", function () {
-                    const input = document.getElementById("categoryInput");
-
-                    const categoryList =
-                        document.getElementById("categoryList");      
-
-                    const category = input.value.trim();
-
-                    // Check for duplicate category
-                    const categoryExists = Array.from(
-                        categoryList.getElementsByTagName("li")
-                    ).some((li) => li.textContent === category);
-
-                    if (category && !categoryExists) {
-                        const li = document.createElement("li");
-                        li.textContent = category;
-                        li.style = `margin-top:20px;
-                color:black`;
-                        categoryList.appendChild(li);
-
-                        input.value = "";
-                        updateCategoriesField();
-                    }
-
-                });
-
-            // Function to update category field
-            function updateCategoriesField() {
-                const listItems = document.querySelectorAll("#categoryList li");
-                let categories = Array.from(listItems).map(
-                    (li) => li.textContent
-                );
-                document.getElementById("categoriesField").value = categories;
-            }
-
-        </script>
-        <%- include('../../partials/footer') %>
+            </div>
+        </div>
+  
+        > <%- include('../../partials/footer') %>

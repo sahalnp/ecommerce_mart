@@ -21,7 +21,6 @@
             rel="apple-touch-icon"
             href="/theme-assets/images/ico/apple-icon-120.png"
         />
-  
         <link
             rel="shortcut icon"
             type="image/x-icon"
@@ -82,69 +81,6 @@
         />
         <!-- END Page Level CSS-->
         <!-- BEGIN Custom CSS-->
-        <style>
-            .container {
-                max-width: 450px;
-                margin: 60px auto;
-                padding: 25px;
-                background: #ffffff;
-                border-radius: 12px;
-                box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.12);
-                transition: all 0.3s ease-in-out;
-            }
-
-            h2 {
-                text-align: center;
-                color: #000000;
-                font-size: 22px;
-                font-weight: 600;
-                margin-bottom: 15px;
-            }
-
-            input {
-                width: 100%;
-                padding: 12px;
-                margin-bottom: 12px;
-                border: 1.8px solid #ccc;
-                border-radius: 8px;
-                font-size: 14px;
-                outline: none;
-                transition: border 0.3s ease;
-            }
-
-            input:focus {
-                border-color: #007bff;
-                box-shadow: 0px 0px 6px rgba(0, 123, 255, 0.3);
-            }
-
-            button {
-                width: 100%;
-                padding: 12px;
-                background: linear-gradient(135deg, #007bff, #0056b3);
-                color: white;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                font-size: 16px;
-                font-weight: bold;
-                transition: all 0.3s ease-in-out;
-                margin-top: 10px;
-            }
-
-            button:hover {
-                background: linear-gradient(135deg, #0056b3, #004080);
-                transform: scale(1.03);
-            }
-
-            .submit-btn {
-                   background: linear-gradient(135deg, #007bff, #0056b3);
-                border: none;
-            }
-
-            .submit-btn:hover {
-                background: #0056b3;
-            }
-        </style>
         <!-- END Custom CSS-->
     </head>
     <body
@@ -224,7 +160,8 @@
                                 <div
                                     class="dropdown-menu"
                                     aria-labelledby="dropdown-flag"
-                                ></div>
+                                >
+                                </div>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav float-right">
@@ -319,7 +256,7 @@
                     id="main-menu-navigation"
                     data-menu="menu-navigation"
                 >
-                    <li class="nav-item">
+                    <li class="active">
                         <a href="/admin/dashboard"
                             ><i class="fa fa-home"></i
                             ><span class="menu-title" data-i18n=""
@@ -328,21 +265,19 @@
                         >
                     </li>
                     <li class="nav-item">
+                        <a href="/admin/userDetails">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="/admin/products">
                             <i class="fas fa-boxes"></i>
                             <span class="menu-title">All Products</span>
                         </a>
                     </li>
                     
-
                     <li class="nav-item">
-                        <a href="/admin/userDetails">
-                            <i class="fas fa-users"></i>
-                            <span>Users</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item active">
                         <a href="/admin/category"
                             ><i class="fas fa-list"></i
                             ><span class="menu-title">Categories</span></a
@@ -366,71 +301,136 @@
             <div class="navigation-background"></div>
         </div>
 
-        <div class="container">
-            <h2>Add Category</h2>
-            <form action="/admin/addCategory" method="POST">
-                <!-- Category Input -->
-                <div class="d-flex gap-4">
-                    <input
-                       id="categoryInput"
-                        name="category"
-                        class="mb-0 mr-2"
-                        placeholder="Enter category"
-                    />
-                    <button  type="button" id="addCategoryBtn" class="mt-0">
-                        Add
-                    </button>
-                </div>
-                <ul id="categoryList"></ul>
+        <div class="app-content content">
+            <div class="content-wrapper">
+                <div class="content-wrapper-before"></div>
+                <div class="content-header row"></div>
+                <div class="content-body">
+                    <!-- Chart -->
+                    <div class="row match-height">
+                        <div class="col-12">
+                            <div class="">
+                                <div
+                                    id="gradient-line-chart1"
+                                    class="height-250 GradientlineShadow1"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chart -->
+                    <!-- eCommerce statistic -->
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="card pull-up ecom-card-1 bg-white">
+                                <div class="card-content ecom-card2 height-180">
+                                    <h5
+                                        class="text-muted danger position-absolute p-1"
+                                    >
+                                        Progress Stats
+                                    </h5>
+                                    <div>
+                                        <i
+                                            class="ft-pie-chart danger font-large-1 float-right p-1"
+                                        ></i>
+                                    </div>
+                                    <div
+                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
+                                    >
+                                        <div
+                                            id="progress-stats-bar-chart"
+                                        ></div>
+                                        <div
+                                            id="progress-stats-line-chart"
+                                            class="progress-stats-shadow"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-6 col-md-12">
+                            <div class="card pull-up ecom-card-1 bg-white">
+                                <div class="card-content ecom-card2 height-180">
+                                    <h5
+                                        class="text-muted info position-absolute p-1"
+                                    >
+                                        Activity Stats
+                                    </h5>
+                                    <div>
+                                        <i
+                                            class="ft-activity info font-large-1 float-right p-1"
+                                        ></i>
+                                    </div>
+                                    <div
+                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
+                                    >
+                                        <div
+                                            id="progress-stats-bar-chart1"
+                                        ></div>
+                                        <div
+                                            id="progress-stats-line-chart1"
+                                            class="progress-stats-shadow"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-12">
+                            <div class="card pull-up ecom-card-1 bg-white">
+                                <div class="card-content ecom-card2 height-180">
+                                    <h5
+                                        class="text-muted warning position-absolute p-1"
+                                    >
+                                        Sales Stats
+                                    </h5>
+                                    <div>
+                                        <i
+                                            class="ft-shopping-cart warning font-large-1 float-right p-1"
+                                        ></i>
+                                    </div>
+                                    <div
+                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
+                                    >
+                                        <div
+                                            id="progress-stats-bar-chart2"
+                                        ></div>
+                                        <div
+                                            id="progress-stats-line-chart2"
+                                            class="progress-stats-shadow"
+                                        ></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--/ eCommerce statistic -->
 
-                <input type="hidden" id="categoriesField" name="categories" />
-                <button type="submit" class="submit-btn">
-                    Submit Categories
-                </button>
-            </form>
-            <% if (message) { %>
-                <div class="alert alert-danger mt-2" style="color: white; background-color: rgb(233, 88, 88); padding: 10px; margin-top: 10px; border-radius: 5px; text-align: center;">
-                    <%= message %>
-                </div>
-            <% } %>
-
-        <script>
-            document
-                .getElementById("addCategoryBtn")
-                .addEventListener("click", function () {
-                    const input = document.getElementById("categoryInput");
-
-                    const categoryList =
-                        document.getElementById("categoryList");      
-
-                    const category = input.value.trim();
-
-                    // Check for duplicate category
-                    const categoryExists = Array.from(
-                        categoryList.getElementsByTagName("li")
-                    ).some((li) => li.textContent === category);
-
-                    if (category && !categoryExists) {
-                        const li = document.createElement("li");
-                        li.textContent = category;
-                        li.style = `margin-top:20px;
-                color:black`;
-                        categoryList.appendChild(li);
-
-                        input.value = "";
-                        updateCategoriesField();
-                    }
-
-                });
-
-            // Function to update category field
-            function updateCategoriesField() {
-                const listItems = document.querySelectorAll("#categoryList li");
-                let categories = Array.from(listItems).map(
-                    (li) => li.textContent
-                );
-                document.getElementById("categoriesField").value = categories;
-            }
-
-        </script>
+                   
+        <!-- BEGIN VENDOR JS-->
+        <script
+            src="/theme-assets/vendors/js/vendors.min.js"
+            type="text/javascript"
+        ></script>
+        <!-- BEGIN VENDOR JS-->
+        <!-- BEGIN PAGE VENDOR JS-->
+        <script
+            src="/theme-assets/vendors/js/charts/chartist.min.js"
+            type="text/javascript"
+        ></script>
+        <!-- END PAGE VENDOR JS-->
+        <!-- BEGIN CHAMELEON  JS-->
+        <script
+            src="/theme-assets/js/core/app-menu-lite.js"
+            type="text/javascript"
+        ></script>
+        <script
+            src="/theme-assets/js/core/app-lite.js"
+            type="text/javascript"
+        ></script>
+        <!-- END CHAMELEON  JS-->
+        <!-- BEGIN PAGE LEVEL JS-->
+        <script
+            src="/theme-assets/js/scripts/pages/dashboard-lite.js"
+            type="text/javascript"
+        ></script>
+        <!-- END PAGE LEVEL JS-->
         <%- include('../../partials/footer') %>

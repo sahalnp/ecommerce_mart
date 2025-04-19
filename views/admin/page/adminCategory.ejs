@@ -82,402 +82,6 @@
         <!-- END Page Level CSS-->
         <!-- BEGIN Custom CSS-->
         <!-- END Custom CSS-->
-        <style>
-            /* Global Styles */
-            :root {
-                --primary-color: #5D87FF;
-                --primary-hover: #4570ea;
-                --secondary-color: #49BEFF;
-                --success-color: #13DEB9;
-                --info-color: #539BFF;
-                --warning-color: #FFAE1F;
-                --danger-color: #FA896B;
-                --light-color: #F9FAFB;
-                --dark-color: #1E293B;
-                --sidebar-width: 260px;
-                --header-height: 70px;
-                --border-color: #e5eaef;
-                --card-border-radius: 10px;
-                --font-family: 'Poppins', sans-serif;
-            }
-            
-            body {
-                font-family: var(--font-family);
-                background-color: #f7f9fc;
-                margin: 0;
-                padding: 0;
-                color: #333;
-                overflow-x: hidden;
-                min-height: 100vh;
-            }
-            
-            /* Typography */
-            h1, h2, h3, h4, h5, h6 {
-                font-weight: 600;
-                color: var(--dark-color);
-            }
-            
-            h1 {
-                font-size: 1.75rem;
-                margin-bottom: 1.5rem;
-            }
-            
-            /* Layout Helpers */
-            .container-fluid {
-                padding-left: 1.5rem;
-                padding-right: 1.5rem;
-            }
-            
-            /* Card Styling */
-            .card {
-                background: #fff;
-                border: none;
-                border-radius: var(--card-border-radius);
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-                margin-bottom: 1.5rem;
-                transition: all 0.2s ease;
-            }
-            
-            .card:hover {
-                box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
-            }
-            
-            .card-header {
-                background-color: transparent;
-                border-bottom: 1px solid var(--border-color);
-                padding: 1.25rem 1.5rem;
-            }
-            
-            .card-body {
-                padding: 1.5rem;
-            }
-            
-            /* Navbar Styling */
-            .navbar {
-                background-color: #fff;
-                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-                padding: 0.5rem 1.5rem;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                left: 0;
-                z-index: 1040;
-                height: var(--header-height);
-            }
-            
-            .navbar-brand {
-                color: var(--dark-color);
-                font-weight: 700;
-                font-size: 1.25rem;
-                display: flex;
-                align-items: center;
-            }
-            
-            .navbar-brand img {
-                height: 35px;
-                margin-right: 10px;
-            }
-            
-            .navbar a {
-                color: #555;
-                text-decoration: none;
-            }
-            
-            .navbar a:hover {
-                color: var(--primary-color);
-            }
-            
-            .avatar {
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                overflow: hidden;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background-color: var(--light-color);
-            }
-            
-            .avatar img {
-                width: 100%;
-                height: auto;
-            }
-            
-            /* Sidebar Styling */
-            .sidebar {
-                position: fixed;
-                left: 0;
-                top: 0;
-                height: 100%;
-                width: var(--sidebar-width);
-                background-color: #fff;
-                box-shadow: 1px 0 20px rgba(0, 0, 0, 0.08);
-                z-index: 1050;
-                transition: all 0.2s ease;
-                padding-top: var(--header-height);
-                overflow-y: auto;
-            }
-            
-            .sidebar-header {
-                padding: 1.5rem;
-                border-bottom: 1px solid var(--border-color);
-            }
-            
-            .sidebar-brand {
-                display: flex;
-                align-items: center;
-                text-decoration: none;
-                color: var(--dark-color);
-                font-weight: 700;
-                font-size: 1.25rem;
-            }
-            
-            .sidebar-brand img {
-                height: 35px;
-                margin-right: 10px;
-            }
-            
-            .nav-item {
-                margin: 5px 0;
-            }
-            
-            .nav-link {
-                color: #555;
-                padding: 0.8rem 1.5rem;
-                border-radius: 5px;
-                display: flex;
-                align-items: center;
-                transition: all 0.2s ease;
-                font-weight: 500;
-            }
-            
-            .nav-link:hover {
-                color: var(--primary-color);
-                background-color: rgba(93, 135, 255, 0.05);
-            }
-            
-            .nav-link.active {
-                color: var(--primary-color);
-                background-color: rgba(93, 135, 255, 0.05);
-                font-weight: 600;
-            }
-            
-            .nav-link i {
-                font-size: 1.25rem;
-                margin-right: 10px;
-                width: 24px;
-                text-align: center;
-            }
-            
-            /* Main Content */
-            .main-content {
-                margin-left: var(--sidebar-width);
-                padding: 2rem;
-                margin-top: var(--header-height);
-                min-height: calc(100vh - var(--header-height));
-            }
-            
-            /* Table Styling */
-            .table {
-                width: 100%;
-                margin-bottom: 1rem;
-                background-color: transparent;
-                border-collapse: collapse;
-            }
-            
-            .table th {
-                padding: 1rem;
-                border-top: 1px solid var(--border-color);
-                font-weight: 600;
-                color: var(--dark-color);
-                background-color: rgba(0, 0, 0, 0.02);
-            }
-            
-            .table td {
-                padding: 1rem;
-                vertical-align: middle;
-                border-top: 1px solid var(--border-color);
-            }
-            
-            .table-hover tbody tr:hover {
-                background-color: rgba(0, 0, 0, 0.02);
-            }
-            
-            /* Buttons */
-            .btn {
-                border-radius: 5px;
-                padding: 0.65rem 1.25rem;
-                font-weight: 500;
-                transition: all 0.2s ease;
-            }
-            
-            .btn-sm {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.875rem;
-            }
-            
-            .btn-primary {
-                background-color: var(--primary-color);
-                border-color: var(--primary-color);
-            }
-            
-            .btn-primary:hover, .btn-primary:focus {
-                background-color: var(--primary-hover);
-                border-color: var(--primary-hover);
-            }
-            
-            .btn-success {
-                background-color: var(--success-color);
-                border-color: var(--success-color);
-            }
-            
-            .btn-danger {
-                background-color: var(--danger-color);
-                border-color: var(--danger-color);
-            }
-            
-            .btn-info {
-                background-color: var(--info-color);
-                border-color: var(--info-color);
-                color: #fff;
-            }
-            
-            .btn-info:hover {
-                color: #fff;
-            }
-            
-            .btn-icon {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 36px;
-                height: 36px;
-                padding: 0;
-                border-radius: 50%;
-            }
-            
-            /* Forms */
-            .form-control {
-                padding: 0.65rem 1rem;
-                font-size: 0.875rem;
-                border: 1px solid var(--border-color);
-                border-radius: 5px;
-            }
-            
-            .form-control:focus {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 0.2rem rgba(93, 135, 255, 0.25);
-            }
-            
-            .input-group .btn {
-                padding: 0.65rem 1rem;
-            }
-            
-            /* Page header */
-            .page-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-            }
-            
-            .page-title {
-                font-size: 1.5rem;
-                font-weight: 600;
-                margin: 0;
-            }
-            
-            /* Search */
-            .searchform {
-                position: relative;
-                max-width: 300px;
-            }
-            
-            /* Responsive */
-            @media (max-width: 992px) {
-                :root {
-                    --sidebar-width: 0;
-                }
-                
-                .sidebar {
-                    transform: translateX(-100%);
-                }
-                
-                .sidebar.show {
-                    transform: translateX(0);
-                    --sidebar-width: 260px;
-                }
-                
-                .main-content {
-                    margin-left: 0;
-                }
-                
-                .sidebar-toggle {
-                    display: block;
-                }
-            }
-            
-            @media (max-width: 576px) {
-                .main-content {
-                    padding: 1.5rem;
-                }
-                
-                .page-header {
-                    flex-direction: column;
-                    align-items: flex-start;
-                }
-                
-                .page-header .btn {
-                    margin-top: 1rem;
-                    align-self: flex-start;
-                }
-            }
-            
-            /* Status badges */
-            .badge {
-                padding: 0.5rem 0.75rem;
-                font-weight: 500;
-                border-radius: 30px;
-            }
-            
-            .badge-success {
-                background-color: rgba(19, 222, 185, 0.15);
-                color: var(--success-color);
-            }
-            
-            .badge-danger {
-                background-color: rgba(250, 137, 107, 0.15);
-                color: var(--danger-color);
-            }
-            
-            /* Utility classes */
-            .text-primary { color: var(--primary-color) !important; }
-            .text-success { color: var(--success-color) !important; }
-            .text-warning { color: var(--warning-color) !important; }
-            .text-danger { color: var(--danger-color) !important; }
-            
-            .bg-light { background-color: var(--light-color) !important; }
-            
-            .shadow-sm { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important; }
-            
-            .rounded-circle { border-radius: 50% !important; }
-            
-            .logo-img {
-                max-width: 180px;
-                height: auto;
-            }
-            
-            /* Icon colors */
-            .fa-list-alt, .fa-gift, .fa-tag, .fa-image {
-                color: #6c757d;
-            }
-            
-            /* Action buttons container */
-            .actions-container {
-                display: flex;
-                gap: 0.5rem;
-            }
-        </style>
     </head>
     <body
         class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"
@@ -527,7 +131,6 @@
                                                         class="form-control"
                                                         id="search"
                                                         type="text"
-                                                        name="search"
                                                         placeholder="Search here..."
                                                     />
                                                     <div
@@ -557,8 +160,7 @@
                                 <div
                                     class="dropdown-menu"
                                     aria-labelledby="dropdown-flag"
-                                >
-                                </div>
+                                ></div>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav float-right">
@@ -569,49 +171,38 @@
                                     data-toggle="dropdown"
                                     ><i class="ficon ft-mail"> </i
                                 ></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="arrow_box_right">
-                                        <a class="dropdown-item" href="#"
-                                            ><i class="ft-book"></i> Read
-                                            Mail</a
-                                        ><a class="dropdown-item" href="#"
-                                            ><i class="ft-bookmark"></i> Read
-                                            Later</a
-                                        ><a class="dropdown-item" href="#"
-                                            ><i class="ft-check-square"></i>
-                                            Mark all Read
-                                        </a>
-                                    </div>
-                                </div>
                             </li>
                             <li class="dropdown dropdown-user nav-item">
-                                <a
-                                    class="dropdown-toggle nav-link dropdown-user-link"
-                                    href="#"
-                                    data-toggle="dropdown"
-                                >
-                                    <span class="avatar avatar-online">
-                                        <img
-                                            src="/theme-assets\images\gallery\image.png"
-                                            alt="User Avatar"
-                                            class="default-avatar"
-                                        />
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="arrow_box_right">
-                                        <a class="dropdown-item" href="#">
-
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <a
-                                            class="dropdown-item"
-                                            href="/admin/logout"
-                                            ><i class="ft-power"></i>Logout</a
-                                        >
-                                    </div>
-                                </div>
-                            </li>
+                              <a
+                                  class="dropdown-toggle nav-link dropdown-user-link"
+                                  href="#"
+                                  data-toggle="dropdown"
+                              >
+                                  <span class="avatar avatar-online">
+                                      <img
+                                          src="/theme-assets\images\gallery\image.png"
+                                          alt="User Avatar"
+                                          class="default-avatar"
+                                      />
+                                  </span>
+                              </a>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                  <div class="arrow_box_right">
+                                      <a class="dropdown-item" href="#">
+                                          <span
+                                              class="user-name text-bold-700 ml-1"
+                                              ><%= admin.firstname %></span
+                                          >
+                                      </a>
+                                      <div class="dropdown-divider"></div>
+                                      <a
+                                          class="dropdown-item"
+                                          href="/admin/logout"
+                                          ><i class="ft-power"></i>Logout</a
+                                      >
+                                  </div>
+                              </div>
+                          </li>
                         </ul>
                     </div>
                 </div>
@@ -664,6 +255,12 @@
                             <span>Users</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/admin/products">
+                            <i class="fas fa-boxes"></i>
+                            <span class="menu-title">All Products</span>
+                        </a>
+                    </li>
 
                     <li class="nav-item active">
                         <a href="/admin/category"
@@ -688,206 +285,90 @@
             </div>
             <div class="navigation-background"></div>
         </div>
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light">
-            <div class="container-fluid">
-                <button class="navbar-toggler border-0 d-lg-none" type="button" id="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <div class="d-flex align-items-center">
-                    <a class="navbar-brand d-lg-none" href="/admin/dashboard">
-                        <img src="/theme-assets/images/logo/logo.png" alt="Chameleon Logo" height="30">
-                    </a>
-                </div>
-                
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="flag-icon flag-icon-us"></i>
-                            </a>
 
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-bell"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-                                <li><a class="dropdown-item" href="#">New order received</a></li>
-                                <li><a class="dropdown-item" href="#">User registered</a></li>
-                                <li><a class="dropdown-item" href="#">Server update completed</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">View all notifications</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="avatar">
-                                    <img src="/theme-assets/images/gallery/image.png" alt="User Avatar">
-                                </div>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Profile</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <a class="sidebar-brand" href="/admin/dashboard">
-                    <img src="/theme-assets/images/logo/logo.png" alt="Chameleon Logo" height="30">
-                    <span>Chameleon</span>
-                </a>
-            </div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/dashboard">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/userDetails">
-                        <i class="fas fa-users"></i>
-                        <span>Users</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/admin/">
-                        <i class="fas fa-list"></i>
-                        <span>Categories</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/products">
-                        <i class="fas fa-shopping-bag"></i>
-                        <span>Products</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/add_product">
-                        <i class="fas fa-plus"></i>
-                        <span>Add Product</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/orders">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span>Orders</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/coupons">
-                        <i class="fas fa-gift"></i>
-                        <span>Coupons</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/banners">
-                        <i class="fas fa-image"></i>
-                        <span>Banners</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/reports">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Reports</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="container-fluid">
-                <div class="page-header">
-                    <h1 class="page-title">Category Management</h1>
-                    <a href="/admin/addCategory" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i>Add Category
-                    </a>
-                </div>
-                
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center mb-4">
-                            <div class="col-md-6">
-                                <form class="searchform" action="/admin/category/search" method="post">
-                                    <div class="input-group">
-                                        <input list="search_terms" type="text" class="form-control" name="search" placeholder="Search a category">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+        <div class="app-content content">
+            <div class="content-wrapper">
+              <div class="content-header row"></div>
+              <div class="content-body">
+                <h2>Category Management</h2>
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                  <div class="row mt-4">
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                          <h5 class="card-title mb-0">CATEGORIES LIST:</h5>
+                          <a href="/admin/addCategory" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i> Add Category
+                          </a>
                         </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover">
+        
+                        <div class="card-body">
+                          <form class="mb-3" action="/admin/category/search" method="post">
+                            <div class="input-group">
+                              <input list="search_terms" type="text" class="form-control" name="search" placeholder="Search a category" />
+                              <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                              </button>
+                            </div>
+                          </form>
+        
+                          <% if (catList?.length > 0) { %>
+                            <div class="table-responsive">
+                              <table class="table table-striped">
                                 <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
+                                  <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th> <!-- Add a Delete column header -->
+                                  </tr>
                                 </thead>
                                 <tbody>
-                                    <% if (catList?.length > 0) { %>
-                                        <% for(let i=0; i < catList.length; i++) { %>
-                                            <tr>
-                                                <td><%= i+1 %></td>
+                                    
+                                    <% for (let i = 0; i < catList.length; i++) { %>
+                                        <% if (catList[i].isDlt==false) { %> 
+                                                <tr>
+                                                <td><%= i + 1 %></td>
                                                 <td><%= catList[i].name %></td>
                                                 <td>
                                                     <% if (catList[i].isListed) { %>
-                                                        <a href="/admin/category/unList/<%= catList[i]?._id %>">
-                                                            <button type="button" class="btn btn-danger btn-sm">
-                                                                <i class="fas fa-eye-slash me-1"></i>Unlist
-                                                            </button>
-                                                        </a>
+                                                    <a href="/admin/category/unList/<%= catList[i]._id %>">
+                                                        <span class="badge badge-success">Listed</span>
+                                                    </a>
                                                     <% } else { %>
-                                                        <a href="/admin/category/list/<%= catList[i]?._id %>">
-                                                            <button type="button" class="btn btn-success btn-sm">
-                                                                <i class="fas fa-eye me-1"></i>List
-                                                            </button>
-                                                        </a>
+                                                    <a href="/admin/category/list/<%= catList[i]._id %>">
+                                                        <span class="badge badge-danger">Unlisted</span>
+                                                    </a>
                                                     <% } %>
                                                 </td>
                                                 <td>
-                                                    <div class="actions-container">
-                                                        <a href="/admin/editCategory/<%= catList[i]._id %>" class="btn btn-info btn-sm">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                    </div>
+                                                    <a href="/admin/editCategory/<%= catList[i]._id %>">
+                                                    <i class="fas fa-edit"></i>
+                                                    </a>
                                                 </td>
-                                            </tr>
-                                        <% } %>
-                                    <% } else { %>
-                                        <tr>
-                                            <td colspan="4" class="text-center py-4">
-                                                <div class="alert alert-info mb-0">
-                                                    <i class="fas fa-info-circle me-2"></i>No categories found
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
+                                                <td> <!-- Add the Delete icon with a link -->
+                                                    <a href="/admin/category/delete/<%= catList[i]._id %>" onclick="return confirm('Are you sure you want to delete this category?');">
+                                                    <i class="fas fa-trash-alt"></i> <!-- Font Awesome delete/trash icon -->
+                                                    </a>
+                                                </td>
+                                                </tr>
+                                                <% } %>
+                                                <% } %>
+                                            </tbody>
+                                     
+                              </table>
+                            </div>
+                          <% } else { %>
+                            <p class="text-center mt-4">No categories found.</p>
+                          <% } %>
+                          
                         </div>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                </main>
+              </div>
             </div>
         </div>
-        <!-- Scripts -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<%- include('../../partials/footer') %>
-
+         <%- include('../../partials/footer') %>

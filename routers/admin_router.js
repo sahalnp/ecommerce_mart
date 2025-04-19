@@ -24,10 +24,10 @@ import {
     
 } from "../controllers/admin/adminDashboardController.js";
 
-import {  productAdd } from "../controllers/admin/productController.js";
+import {  editProduct, getAllProducts, productAdd } from "../controllers/admin/productController.js";
 import { isAdminloggedIn } from "../middleware/adminAuthMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
-import {addCategory} from "../controllers/admin/categoryManageController.js"
+import {addCategory, categorydlt, categoryEdit, Editcatgory} from "../controllers/admin/categoryManageController.js"
 
 const adminRouter = express.Router();
 
@@ -55,10 +55,18 @@ adminRouter.get("/admin/add_product", add_product);
 
 adminRouter.get('/admin/category',categoryLoad)
 
-adminRouter.post('/admin/upload', upload.single('image'),productAdd)
+adminRouter.post('/admin/upload', upload.array('photos',15),productAdd)
 adminRouter.get('/admin/userDetails',userDetails)
 
 adminRouter.get('/admin/addCategory',addCategoryLoad)
 adminRouter.post('/admin/addCategory',addCategory)
+
+adminRouter.get('/admin/editCategory/:id',categoryEdit)
+adminRouter.post('/admin/editCategory/:id',Editcatgory)
+
+adminRouter.get('/admin/category/delete/:id',categorydlt)
+
+adminRouter.get("/admin/products",getAllProducts)
+adminRouter.get("/admin/edit/:id",editProduct)
 
 export default adminRouter;

@@ -8,8 +8,8 @@ export const passkeySend = async (req, res, next) => {
     if (req.session.passkey == "0000") {
         req.session.pass = true;
         if (req.session.admin) {
-            return res.render("admin/profile", {
-                name: req.session.admin.name,
+            return res.render("admin/page/admin_dashboard", {
+                admin: req.session.admin,
             });
         }
        return res.redirect('/admin/login')

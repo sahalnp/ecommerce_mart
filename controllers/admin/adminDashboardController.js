@@ -59,7 +59,7 @@ export const adminEdit = asyncHandler(async (req, res) => {
         { new: true }
     );
     console.log("Updated", updated);
-    res.redirect('/admin/dashboard')
+    res.redirect('/admin/userDetails')
 });
 
 

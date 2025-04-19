@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+    <head>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui"
+        />
+        <meta
+            name="description"
+            content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code."
+        />
+        <meta
+            name="keywords"
+            content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard"
+        />
+        <meta name="author" content="ThemeSelect" />
+        <title>Chameleon Admin</title>
+        <link
+            rel="apple-touch-icon"
+            href="/theme-assets/images/ico/apple-icon-120.png"
+        />
+        <link
+            rel="shortcut icon"
+            type="image/x-icon"
+            href="/theme-assets/images/favicon.png"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700"
+            rel="stylesheet"
+        />
+        <link
+            href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- Vendor & Chameleon CSS -->
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/vendors.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/charts/chartist.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/app-lite.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/core/colors/palette-gradient.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/core/menu/menu-types/vertical-menu.css"
+        />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="/theme-assets/vendors/css/pages/dashboard-ecommerce.css"
+        />
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+
+            .navbar {
+                background-color: #343a40;
+                padding: 15px;
+                position: fixed;
+                width: 100%;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+            }
+
+            .navbar a {
+                color: white;
+                text-decoration: none;
+            }
+
+            .size-price-row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .app-content {
+            padding: 30px 0;
+        }
+        .content-wrapper {
+            padding: 20px;
+        }
+        .content-header-title {
+            color: #343a40;
+        }
+        #edit-product {
+            margin-top: 20px;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border-radius: 0.25rem;
+        }
+        .card-header {
+            background-color: #007bff; /* Primary color */
+            color: white;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+            border-radius: 0.25rem 0.25rem 0 0;
+        }
+        .card-title {
+            margin-bottom: 0;
+            font-size: 1.25rem;
+        }
+        .card-body {
+            padding: 1.25rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #495057;
+        }
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .form-control-file {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+        }
+        .form-check {
+            margin-bottom: 0.75rem;
+        }
+        .form-check-input {
+            float: left;
+            margin-right: 0.5rem;
+        }
+        .btn-success {
+            color: #fff;
+            background-color: #28a745;
+            border-color: #28a745;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        .text-muted {
+            font-size: 0.875rem;
+            color: #6c757d !important;
+        }
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+        .rounded {
+            border-radius: 0.25rem !important;
+        }
+        .text-center {
+            text-align: center !important;
+        }
+            .size-price-row input {
+                flex: 1;
+            }
+
+            .content {
+                margin-left: 240px;
+                padding: 20px;
+                margin-top: 60px;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 600px;
+                margin: 50px auto;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            h2 {
+                text-align: center;
+                font-size: 22px;
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-weight: bold;
+                font-size: 15px;
+                display: block;
+                margin-bottom: 6px;
+            }
+
+            input,
+            select,
+            textarea {
+                width: 100%;
+                padding: 10px;
+                font-size: 14px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            input[type="checkbox"] {
+                width: auto;
+                vertical-align: middle;
+            }
+
+            .category-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+
+            .category-box {
+                display: flex;
+                align-items: center;
+                padding: 6px 10px;
+                background: #f9f9f9;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+            }
+
+            .category-box input {
+                margin-right: 8px;
+            }
+
+            .gender-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+
+            .gender-group label {
+                font-weight: normal;
+                margin-left: 5px;
+            }
+
+            .gender-option {
+                display: flex;
+                align-items: center;
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                background: #28a745;
+                border: none;
+                color: white;
+                font-size: 18px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background: #218838;
+            }
+
+            @media (max-width: 768px) {
+                .content {
+                    margin-left: 0;
+                }
+
+                .container {
+                    margin: 20px;
+                }
+            }
+        </style>
+    </head>
+    <body
+        class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"
+        data-open="click"
+        data-menu="vertical-menu"
+        data-color="bg-chartbg"
+        data-col="2-columns"
+    >
+        <!-- Navbar and Sidebar skipped for brevity -->
+        <nav
+            class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light"
+        >
+            <div class="navbar-wrapper">
+                <div class="navbar-container content">
+                    <div
+                        class="collapse navbar-collapse show"
+                        id="navbar-mobile"
+                    >
+                        <ul class="nav navbar-nav mr-auto float-left">
+                            <li class="nav-item d-block d-md-none">
+                                <a
+                                    class="nav-link nav-menu-main menu-toggle hidden-xs"
+                                    href="#"
+                                    ><i class="ft-menu"></i
+                                ></a>
+                            </li>
+                            <li class="nav-item d-none d-md-block">
+                                <a class="nav-link nav-link-expand" href="#"
+                                    ><i class="ficon ft-maximize"></i
+                                ></a>
+                            </li>
+                            <li class="nav-item dropdown navbar-search">
+                                <a
+                                    class="nav-link dropdown-toggle hide"
+                                    data-toggle="dropdown"
+                                    href="#"
+                                    ><i class="ficon ft-search"></i
+                                ></a>
+                                <ul class="dropdown-menu">
+                                    <li class="arrow_box">
+                                        <form>
+                                            <div class="input-group search-box">
+                                                <div
+                                                    class="position-relative has-icon-right full-width"
+                                                >
+                                                    <input
+                                                        class="form-control"
+                                                        id="search"
+                                                        type="text"
+                                                        placeholder="Search here..."
+                                                    />
+                                                    <div
+                                                        class="form-control-position navbar-search-close"
+                                                    >
+                                                        <i class="ft-x"> </i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav float-right">
+                            <li class="dropdown dropdown-language nav-item">
+                                <a
+                                    class="dropdown-toggle nav-link"
+                                    id="dropdown-flag"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                    ><i class="flag-icon flag-icon-us"></i
+                                    ><span class="selected-language"></span
+                                ></a>
+                                <div
+                                    class="dropdown-menu"
+                                    aria-labelledby="dropdown-flag"
+                                ></div>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav float-right">
+                            <li class="dropdown dropdown-notification nav-item">
+                                <a
+                                    class="nav-link nav-link-label"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                    ><i class="ficon ft-mail"> </i
+                                ></a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="arrow_box_right">
+                                        <a class="dropdown-item" href="#"
+                                            ><i class="ft-book"></i> Read
+                                            Mail</a
+                                        ><a class="dropdown-item" href="#"
+                                            ><i class="ft-bookmark"></i> Read
+                                            Later</a
+                                        ><a class="dropdown-item" href="#"
+                                            ><i class="ft-check-square"></i>
+                                            Mark all Read
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dropdown dropdown-user nav-item">
+                                <a
+                                    class="dropdown-toggle nav-link dropdown-user-link"
+                                    href="#"
+                                    data-toggle="dropdown"
+                                >
+                                    <span class="avatar avatar-online">
+                                        <img
+                                            src="/theme-assets\images\gallery\image.png"
+                                            alt="User Avatar"
+                                            class="default-avatar"
+                                        />
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <div class="arrow_box_right">
+                                        <a class="dropdown-item" href="#">
+                                            <span
+                                                class="user-name text-bold-700 ml-1"
+                                                ><%= admin.firstname %></span
+                                            >
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a
+                                            class="dropdown-item"
+                                            href="/admin/logout"
+                                            ><i class="ft-power"></i>Logout</a
+                                        >
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div
+            class="main-menu menu-fixed menu-light menu-accordion menu-shadow"
+            data-scroll-to-active="true"
+            data-img="/theme-assets/images/backgrounds/02.jpg"
+        >
+            <div class="navbar-header">
+                <ul class="nav navbar-nav flex-row">
+                    <li class="nav-item mr-auto">
+                        <a class="navbar-brand" href="/admin/dashboard"
+                            ><img
+                                class="brand-logo"
+                                alt="Chameleon admin logo"
+                                src="/theme-assets/images/logo/logo.png"
+                            />
+                            <h3 class="brand-text">Chameleon</h3></a
+                        >
+                    </li>
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link close-navbar"
+                            ><i class="ft-x"></i
+                        ></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="main-menu-content">
+                <ul
+                    class="navigation navigation-main"
+                    id="main-menu-navigation"
+                    data-menu="menu-navigation"
+                >
+                    <li class="nav-item">
+                        <a href="/admin/dashboard"
+                            ><i class="fa fa-home"></i
+                            ><span class="menu-title" data-i18n=""
+                                >Dashboard</span
+                            ></a
+                        >
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/admin/userDetails">
+                            <i class="fas fa-users"></i>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/admin/products">
+                            <i class="fas fa-boxes"></i>
+                            <span class="menu-title">All Products</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/admin/category"
+                            ><i class="fas fa-list"></i
+                            ><span class="menu-title">Categories</span></a
+                        >
+                    </li>
+
+                    <li class="nav-item active">
+                        <a href="/admin/add_product"
+                            ><i class="fas fa-plus"></i
+                            ><span class="menu-title">Add Product</span></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a href="watchlist.html">
+                            <i class="fas fa-heart"></i>
+                            <span>Watchlist</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navigation-background"></div>
+        </div>
+
+     HTML
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .app-content {
+            padding: 30px 0;
+        }
+        .content-wrapper {
+            padding: 20px;
+        }
+        .content-header-title {
+            color: #343a40;
+        }
+        #edit-product {
+            margin-top: 20px;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-title {
+            margin-bottom: 0;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #495057;
+        }
+        .form-control {
+            border-radius: 0.25rem;
+        }
+        .form-control-file {
+            padding: 0.375rem 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            background-color: #fff;
+        }
+        .btn-success {
+            border-radius: 0.25rem;
+        }
+        .text-muted {
+            font-size: 0.875rem;
+        }
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+        .shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .rounded {
+            border-radius: 0.25rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-md-6 col-12 mb-2">
+                    <h3 class="content-header-title">Edit Product</h3>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <section id="edit-product">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="card shadow-sm rounded">
+                                <div class="card-header bg-primary text-white">
+                                    <h4 class="card-title mb-0">Product Details</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form
+                                        method="POST"
+                                        action="/admin/update-product"
+                                        enctype="multipart/form-data"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="id"
+                                            value="<%= product._id %>"
+                                        />
+
+                                        <div class="form-group">
+                                            <label for="title">Product Title</label>
+                                            <input
+                                                type="text"
+                                                id="title"
+                                                name="title"
+                                                class="form-control"
+                                                value="<%= product.title %>"
+                                                required
+                                            />
+                                        </div>
+
+                                        <div class="form-row">
+                                            <div class="form-group col-md-6">
+                                                <label for="productPrice">Product Price</label>
+                                                <input
+                                                    type="number"
+                                                    id="productPrice"
+                                                    name="productPrice"
+                                                    class="form-control"
+                                                    value="<%= product.productPrice %>"
+                                                />
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="salePrice">Sale Price</label>
+                                                <input
+                                                    type="number"
+                                                    id="salePrice"
+                                                    name="salePrice"
+                                                    class="form-control"
+                                                    value="<%= product.salePrice %>"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="brand">Brand</label>
+                                            <input
+                                                type="text"
+                                                id="brand"
+                                                name="brand"
+                                                class="form-control"
+                                                value="<%= product.brand %>"
+                                            />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="description">Description</label>
+                                            <textarea
+                                                id="description"
+                                                name="description"
+                                                class="form-control"
+                                                rows="4"
+                                            ><%= product.description %></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="image">Upload New Images</label>
+                                            <input
+                                                type="file"
+                                                id="image"
+                                                name="image[]"
+                                                class="form-control-file"
+                                                multiple
+                                            />
+                                            <div class="row mt-3">
+                                                <% if (product.image && product.image.length > 0) { %>
+                                                    <% product.image.forEach(function(img, index) { %>
+                                                        <div class="col-md-4 text-center mb-3">
+                                                            <label>Image <%= index + 1 %>:</label>
+                                                            <img
+                                                                src="<%= img %>"
+                                                                class="img-fluid rounded shadow-sm"
+                                                                style="height: 120px; object-fit: cover;"
+                                                                alt="Product Image"
+                                                            />
+                                                        </div>
+                                                    <% }); %>
+                                                <% } else { %>
+                                                    <p class="text-muted">No existing images.</p>
+                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="size">Size</label>
+                                            <% if (product.size && product.size.length > 0) { %>
+                                                <% product.size.forEach(function(s) { %>
+                                                    <input
+                                                        type="text"
+                                                        name="size[]"
+                                                        class="form-control mb-2"
+                                                        value="<%= s %>"
+                                                    />
+                                                <% }); %>
+                                            <% } else { %>
+                                                <input
+                                                    type="text"
+                                                    name="size[]"
+                                                    class="form-control mb-2"
+                                                    placeholder="Enter size"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    name="size[]"
+                                                    class="form-control mb-2"
+                                                    placeholder="Enter another size (optional)"
+                                                />
+                                            <% } %>
+                                            <small class="form-text text-muted">Enter each size on a new line.</small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Category</label><br />
+                                            <% if (product.category && product.category.length > 0) { %>
+                                                <% product.category.forEach(function(cat, i) { %>
+                                                    <div class="form-check form-check-inline">
+                                                        <input
+                                                            type="checkbox"
+                                                            name="category[]"
+                                                            value="<%= cat %>"
+                                                            class="form-check-input"
+                                                            id="cat-<%= i %>"
+                                                            checked
+                                                        />
+                                                        <label class="form-check-label" for="cat-<%= i %>"><%= cat %></label>
+                                                    </div>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <div class="form-check form-check-inline">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="category[]"
+                                                        value="Electronics"
+                                                        class="form-check-input"
+                                                        id="cat-0"
+                                                    />
+                                                    <label class="form-check-label" for="cat-0">Electronics</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="category[]"
+                                                        value="Clothing"
+                                                        class="form-check-input"
+                                                        id="cat-1"
+                                                    />
+                                                    <label class="form-check-label" for="cat-1">Clothing</label>
+                                                </div>
+                                            <% } %>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Gender Category</label><br />
+                                            <% const genders = ['Men', 'Women', 'Unisex']; %>
+                                            <% genders.forEach(function(gender, i) { %>
+                                                <div class="form-check form-check-inline">
+                                                    <input type="checkbox"
+                                                        name="genderCategory[]"
+                                                        value="<%= gender %>"
+                                                        class="form-check-input"
+                                                        id="gender-<%= i %>" <%=
+                                                        product.genderCategory &&
+                                                        product.genderCategory.includes(gender)
+                                                        ? 'checked' : '' %> />
+                                                    <label
+                                                        class="form-check-label"
+                                                        for="gender-<%= i %>"
+                                                    ><%= gender %></label>
+                                                </div>
+                                            <% }); %>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="inStock">In Stock</label>
+                                            <input
+                                                type="number"
+                                                id="inStock"
+                                                name="inStock"
+                                                class="form-control"
+                                                value="<%= product.inStock %>"
+                                            />
+                                        </div>
+
+                                        <div class="form-group form-check">
+                                            <input type="checkbox"
+                                                name="isListed"
+                                                class="form-check-input"
+                                                id="isListed" <%=
+                                                product.isListed ? 'checked' :
+                                                '' %> />
+                                            <label
+                                                class="form-check-label"
+                                                for="isListed"
+                                            >Is Listed</label>
+                                        </div>
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-block mt-3"
+                                        >
+                                            Update Product
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+        > <%- include('../../partials/footer') %>
+
