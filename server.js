@@ -18,18 +18,18 @@ const port = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+  app.use(express.static(path.join(__dirname, "./public")));
 
-app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); //To pass form data from server
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
     session({
-      secret: process.env.SESSION_SECRET,
+      secret:process.env.MONGO_URL,
       resave: false,
       saveUninitialized: false,
       store: MongoStore.create({
-        mongoUrl: "mongodb+srv://sahalnp:9804@cluster0.azo4t.mongodb.net/",
+        mongoUrl: process.env.MONGO_URL,
         dbName: "ecomerce", 
         collectionName: "sessions",
       }),
@@ -44,11 +44,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.set("view engine", "ejs"); // Serve static files
+app.set("view engine", "ejs"); 
 
 app.set("views", path.join(__dirname, "./views"));
 app.use(express.static(path.join(__dirname, "./public")))
-
 
 app.use("/", authRoutes);
 app.use("/", adminRouter);

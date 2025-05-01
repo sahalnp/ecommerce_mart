@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+<head></head>
+<%- include('../partials/navbar') %>
+
+<div class="app-content content">
+    <div class="content-wrapper" style="margin-top: 60px">
+        <div class="content-header row"></div>
+        <div class="content-body">
+            <h2>Brand Management</h2>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <!-- ✅ FULL WIDTH FIX -->
+                        <div class="card">
+                            <div
+                                class="card-body d-flex justify-content-between align-items-center"
+                            >
+                                <h5 class="card-title mb-0">BRAND LIST:</h5>
+                                <a
+                                    href="/admin/brand/add"
+                                    class="btn btn-primary"
+                                >
+                                    <i class="fas fa-plus me-2"></i> Add Brand
+                                </a>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <input
+                                        list="search_terms"
+                                        onkeyup="search_brand()"
+                                        id="searchbar"
+                                        type="text"
+                                        class="form-control"
+                                        name="search"
+                                        placeholder="Search a brand"
+                                    />
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary ms-2"
+                                    >
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+
+                                <% if (brand?.length > 0) { %>
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Status</th>
+                                                <th>Edit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="brand-list">
+                                            <% for (let i = 0; i < brand.length; i++) { 
+                                                const singleBrand = brand[i];
+                                                if (!singleBrand.isDlt) { %>
+                                            <tr class="brand-item">
+                                                <td><%= i + 1 %></td>
+                                                <td class="name">
+                                                    <%= singleBrand.name %>
+                                                </td>
+                                                <td>
+                                                    <form action="/admin/brand/update-status/<%= singleBrand._id %>" method="POST">
+                                                            <select 
+                                                            class="form-select <% if (!singleBrand.isListed) { %> bg-danger text-white <% } else { %> bg-success text-white <% } %>"
+                                                                style=" color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;"
+                                                            
+                                                            name="isListed"
+                                                            onchange="this.form.submit()"
+                                                        >
+                                                            <option value="true" <%= singleBrand.isListed ? "selected" : "" %>>Listed</option>
+                                                            <option value="false" <%= !singleBrand.isListed ? "selected" : "" %>>Unlisted</option>
+                                                        </select>
+                                                    </form>
+                                                </td>
+
+                                                <td>
+                                                    <a
+                                                        href="/admin/brand/edit/<%= singleBrand._id %>"
+                                                    >
+                                                        <i
+                                                            class="fas fa-edit"
+                                                        ></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <% } } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } else { %>
+                                <p class="text-center mt-4">No brands found.</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script>
+    function search_brand() {
+        const input = document.getElementById("searchbar").value.toLowerCase();
+        const rows = document.getElementsByClassName("brand-item");
+
+        for (let i = 0; i < rows.length; i++) {
+            const name = rows[i]
+                .getElementsByClassName("name")[0]
+                .innerText.toLowerCase();
+            rows[i].style.display = name.includes(input) ? "" : "none";
+        }
+    }
+</script>
+
+<%- include('../partials/footer') %>

@@ -3,49 +3,52 @@ import { User } from "../../models/userModel.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 
-export const passkeySend = async (req, res, next) => {
-    req.session.passkey = req.body.passkey;
-    if (req.session.passkey == "0000") {
-        req.session.pass = true;
-        if (req.session.admin) {
-            return res.render("admin/page/admin_dashboard", {
-                admin: req.session.admin,
+    export const passkeySend = async (req, res, next) => {
+        req.session.passkey = req.body.passkey;
+        
+        if (req.session.passkey == "0000") {
+            req.session.pass = true;
+            console.log(req.session.admin);
+            
+            if (req.session.admin) {
+                return res.render("admin/page/admin_dashboard", {
+                    admin: req.session.admin,
+                });
+            }
+        return res.redirect('/admin/login')
+        }
+        return res.render("admin/Auth/admin_passkey", { error: "Invalid Passkey" });
+    };
+
+    export const admin_login = asyncHandler(async (req, res) => {
+
+        const {password,EmailORNumber} = req.body;
+
+        // Find admin in the database
+        const adminDetails = await admin.findOne({
+            $or: [{ email: EmailORNumber }, { number: parseInt(EmailORNumber) }],
+        });
+        
+        // If admin not found
+        if (!adminDetails) {
+            return res.render("admin/Auth/admin_login", {
+                error: "Admin does not exist. Please sign up.",
             });
         }
-       return res.redirect('/admin/login')
-    }
-    return res.render("admin/admin_passkey", { error: "Invalid Passkey" });
-};
 
-export const admin_login = asyncHandler(async (req, res) => {
-    const emailornumber = req.body.emailOrPhone;
-    const password = req.body.password;
+        // Compare password
+        const passwordMatch = await bcrypt.compare(password, adminDetails.password);
+        
+        if (!passwordMatch) {
+            return res.render("admin/Auth/admin_login", {
+                error: "Incorrect password. Please try again.",
+            });
+        }
 
-    // Find admin in the database
-    const adminDetails = await admin.findOne({
-        $or: [{ email: emailornumber }, { number: parseInt(emailornumber) }],
+        // Store session and redirect
+        req.session.admin = adminDetails;
+        return res.redirect("/admin/dashboard");
     });
-
-    // If admin not found
-    if (!adminDetails) {
-        return res.render("admin/admin_login", {
-            error: "Admin does not exist. Please sign up.",
-        });
-    }
-
-    // Compare password
-    const passwordMatch = await bcrypt.compare(password, adminDetails.password);
-
-    if (!passwordMatch) {
-        return res.render("admin/admin_login", {
-            error: "Incorrect password. Please try again.",
-        });
-    }
-
-    // Store session and redirect
-    req.session.admin = adminDetails;
-    return res.redirect("/admin/dashboard");
-});
 
 export const adminSignup = async (req, res) => {
     const { countryCode, number } = req.body;
@@ -70,12 +73,12 @@ export const adminSignup = async (req, res) => {
         admin_email: await admin.findOne({ email: req.body.email }),
     };
     if (number_Exist.user || number_Exist.admin) {
-        return res.render("admin/admin_signup", {
+        return res.render("admin/Auth/admin_signup", {
             error: "The Number already registered",
         });
     }
     if (emailExist.user_email || emailExist.admin_email) {
-        return res.render("admin/admin_signup", {
+        return res.render("admin/Auth/admin_signup", {
             error: "The Email already registered",
         });
     } else {
@@ -86,10 +89,10 @@ export const adminSignup = async (req, res) => {
 export const verify_adminOtp = asyncHandler(async (req, res) => {
     const { otp } = req.body;
     if (otp == req.session.sendotp) {
-        await collection.create(req.session.admin);
+        await admin.create(req.session.admin);
         res.redirect("/admin/login");
     }
-    res.render("admin/admin_otp", { error: "Invalid OTP:Please try again" });
+    res.render("admin/Auth/admin_otp", { message: "Invalid OTP:Please try again" });
 });
 
 

@@ -61,5 +61,3 @@ export const adminEdit = asyncHandler(async (req, res) => {
     console.log("Updated", updated);
     res.redirect('/admin/userDetails')
 });
-
-

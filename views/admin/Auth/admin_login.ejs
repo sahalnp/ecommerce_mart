@@ -1,0 +1,101 @@
+<%- include('../partials/authHeader', { title: "Admin Login" }) %>
+
+<style>
+    body {
+        background-color: #0e1c36; /* Dark blue background */
+        font-size: 1rem; /* Medium text size */
+    }
+
+    .btn-color {
+        background-color: #0e1c36;
+        color: #fff;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-color:hover {
+        background-color: #1f325a;
+    }
+
+    .profile-image-pic {
+        height: 150px;
+        width: 150px;
+        object-fit: cover;
+        border: 3px solid #0e1c36;
+    }
+
+    .cardbody-color {
+        background-color: #ffffff; /* White form background */
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #0e1c36;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center text-light mb-4">Admin Login</h2>
+            <div class="card shadow rounded-4">
+                <form class="card-body cardbody-color p-4" action="/admin/login" method="POST">
+                    <div class="text-center mb-4">
+                        <img
+                            src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"
+                            alt="profile"
+                            class="img-fluid profile-image-pic rounded-circle"
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="EmailORNumber" class="form-label fw-semibold">Email/Number</label>
+                        <input
+                            type="text"
+                            name="EmailORNumber"
+                            class="form-control"
+                            id="EmailOrNumber"
+                            placeholder="Enter email or number"
+                            required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            placeholder="Enter password"
+                            name="password"
+                            required
+                        />
+                    </div>
+                    <% if (error) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error %>
+                        </div>
+                    <% } %>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-color fw-medium">
+                            Login
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <p class="text-dark mb-0">
+                            Not registered?
+                            <a href="/admin/signup" class="fw-bold text-decoration-underline text-dark">Create an account</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/authFooter') %>

@@ -1,24 +1,23 @@
 
 import passport from "passport";
 export const home = (req, res) => {
-    let username = "LOGIN";
     if (req.session.users) {
         username = req.session.users.firstname + " " + req.session.users.Lastname;
         if (req.session.user_name) {
             username = req.session.user_name;
         }
     }
-    res.render("user/index", { username: username });
+    res.render("users/index");
 };
 export const loadsignup = (req, res) => {
-    res.render("user/signup.ejs", { title: "Signup-M4 Mart", user: null });
+    res.render("users/signup.ejs", { title: "Signup-M4 Mart", user: null });
 };
 export const otp = (req, res) => {
-    res.render("user/otp", { title: "OTP", error: null, time: 60 });
+    res.render("users/otp", { title: "OTP", error: null, time: 60 });
 };
 export const account = (req, res) => {
     
-    res.render("user/account.ejs", {
+    res.render("users/account.ejs", {
         title: "ACCOUNT",
         user: req.session.users || {},
         orders: req.orders || [],
@@ -30,7 +29,7 @@ export const account = (req, res) => {
     });
 };
 export const phoneotp = (req, res, next) => {
-    res.render("user/phoneotp", {
+    res.render("users/phoneotp", {
         phone: req.session.newnumber,
         error: null,
         time: 60,
@@ -68,17 +67,17 @@ export const auth_google_callback = (req, res, next) => {
     )(req, res, next);
 };
 export const resetpass = (req, res) => {
-    res.render("user/reset_pass", { title: "Reset Password" });
+    res.render("users/reset_pass", { title: "Reset Password" });
 };
 export const reset_pass_otp = (req, res) => {
-    res.render("user/reset_pass_otp", {
+    res.render("users/reset_pass_otp", {
         showOtpInput: null,
         error: null,
         email: null,
     });
 };
 export const pass_reset = (req, res) => {
-    res.render("user/reset_pass", { token: "dsfksk" });
+    res.render("users/reset_pass");
 };
 
 

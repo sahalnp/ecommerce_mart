@@ -17,7 +17,7 @@ export const loginUser = async (req, res) => {
     req.session.user_emailornumber = emailornumber;
 
     if (!user) {
-        return res.render("user/login", {
+        return res.render("users/login", {
             user: "User does not exist. Please sign up.",
         }); //sending login page if user doesnot exist
     }
@@ -25,7 +25,7 @@ export const loginUser = async (req, res) => {
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
     if (!passwordMatch) {
-        return res.render("user/login", {
+        return res.render("users/login", {
             user: "Incorrect password. Please try again.",
         }); //sending login page and sending a message passsword not coorect
     }
@@ -61,7 +61,7 @@ export const signupUser = async (req, res, next) => {
 
     //finding if user exist or not
     if (existingUser || existnumber) {
-        return res.render("user/signup", { user: "User already exists" });
+        return res.render("users/signup", { user: "User already exists" });
     } else {
         return res.redirect("/otp");
     }
@@ -83,7 +83,7 @@ export const verifyotp = async (req, res) => {
             otp != req.session.otp ||
             new Date(req.session.otp_Expire) < new Date()
         ) {
-            res.render("user/otp", {
+            res.render("users/otp", {
                 title: "OTP",
                 error: "Invalid OTP: Please Try again",
                 time: null,
@@ -118,7 +118,7 @@ export const phoneverifyotp = async (req, res) => {
             req.session.phoneotp != req.body.otp ||
             new Date(req.session.otp_Expire) < new Date()
         ) {
-            res.render("user/phoneotp", {
+            res.render("users/phoneotp", {
                 phone: req.session.newnumber,
                 error: "Invalid otp: Please try again",
                 time: null,
@@ -142,14 +142,14 @@ export const email_check = async (req, res) => {
     req.session.email_verify = email;
 
     if (!exist_check) {
-        res.render("user/reset_pass_otp", {
+        res.render("users/reset_pass_otp", {
             showOtpInput: null,
             error: "Email doesn't exist",
             email: null,
         });
     } else {
         await sendotp(email, email_otp);
-        res.render("user/reset_pass_otp", {
+        res.render("users/reset_pass_otp", {
             showOtpInput: "Pass",
             error: null,
             email: email,
@@ -158,9 +158,9 @@ export const email_check = async (req, res) => {
 };
 export const reset_verify_otp = (req, res) => {
     if (req.session.pass_otp == req.body.otp) {
-        res.redirect("/pass_reset");
+        res.redirect("/forgotPassword");
     } else {
-        res.render("user/reset_pass_otp", {
+        res.render("users/reset_pass_otp", {
             showOtpInput: "pass",
             error: "Invalid OTP:Please try again",
             email: req.session.email_verify,
@@ -168,6 +168,9 @@ export const reset_verify_otp = (req, res) => {
     }
 };
 export const new_pass = async (req, res) => {
+   if(req.body.password!==confirmPassword){
+    req.session.pass="Password don't Matches"
+   } 
     const { password } = req.body;
     const hashPassword = await bcrypt.hash(password, 10);
     await User.findOneAndUpdate({ password: hashPassword });
@@ -177,9 +180,10 @@ export const resend_otp_email = async (req, res) => {
     console.log(req.session.email);
     const username=await User.findOne({email:req.session.email})
     console.log(username.firstname);
-    const resetUrl="http://localhost:3000/reset"
+    const resetUrl=`${req.protocol}://${req.get('host')}/reset`;
+
 
     const resend_otp = generateotp();
     await forgetPassMail(req.session.email,resetUrl,username.firstname);
-    res.render("user/otp", { title: "OTP", error: null, time: "Pass" });
+    res.render("users/otp", { title: "OTP", error: null, time: "Pass" });
 };

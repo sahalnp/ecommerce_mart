@@ -1,9 +1,26 @@
 import { product } from "../../models/productModel.js";
 import asyncHandler from "express-async-handler";
 import { imageModel } from "../../models/imageModel.js";
+import { admin } from "../../models/adminModel.js";
+import { categoryModel } from "../../models/categoryModel.js";
+import { brandModel } from "../../models/brandModel.js";
 
-import { categoryModel } from "../../models/categoryModel.js"; // Import category model
+export const loadAdd_product = async (req, res) => {
+    const admminData = await admin.findOne({ _id: req.session.admin._id });
+    let categories = await categoryModel.find();
+    let brands = await brandModel.find();
 
+    if (req.session.admin) {
+        res.render("admin/page/adminAddProduct", {
+            admin: admminData,
+            brands,
+            categories,
+            activePage: "adminAddProduct",
+        });
+    } else {
+        return res.redirect("/admin/login");
+    }
+};
 
 export const productAdd = asyncHandler(async (req, res) => {
     if (!req.files || req.files.length === 0) {
@@ -11,56 +28,91 @@ export const productAdd = asyncHandler(async (req, res) => {
     }
 
     let filenames = [];
-    req.files.forEach(file => {
-        filenames.push(file.originalname);  
+    req.files.forEach((file) => {
+        filenames.push(file.originalname);
         console.log("Uploaded file:", file.originalname);
     });
 
-
     if (filenames.length === 0) {
-        return res.status(400).json({ error: "No valid image filenames found" });
+        return res
+            .status(400)
+            .json({ error: "No valid image filenames found" });
     }
 
     try {
-        const basePath = `${req.protocol}://${req.get("host")}/public/uploads`;
+        const basePath = `${req.protocol}://${req.get("host")}/uploads`;
         const imageIds = [];
 
         for (let file of req.files) {
             const savedImage = await imageModel.create({
-                filename: file.filename,  
+                filename: file.filename,
                 filepath: `${basePath}/${file.filename}`,
             });
             imageIds.push(savedImage._id);
         }
-        console.log(imageIds,"74189526");
-        
 
-        // Continue with your product creation logic
-        const { title, productPrice, salePrice, brand, description, genderCategory } = req.body;
-        const sizes = JSON.parse(JSON.stringify(req.body.sizes));
-        const categorys = req.body.categorybox;
-
-        const typedoc = await categoryModel.find({
-            name: { $in: categorys },
-        });
-
-        const categoryIds = typedoc.map((category) => category._id);
-
-        const isListed = true;
-        const inStock = true;
-
-        const findProduct = await product.findOne({
+        const {
             title,
             productPrice,
             salePrice,
-            brand,
             description,
-            size: sizes,
+            genderCategory,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            inStock
+        } = req.body;
+
+        //Getting category id
+        const typedoc = await categoryModel.find({
+            name: { $in: req.body.categorybox },
+        });
+        const categoryIds = typedoc.map((category) => category._id);
+        
+        const brandDoc = await brandModel.findOne({ name: req.body.brandbox });
+
+
+        if (!brandDoc) {
+            return res.status(400).json({ error: "Invalid brand selected" });
+        }
+
+        const brandIds = brandDoc._id; 
+
+        const isListed = true;
+
+
+        const findProduct = await product.findOne({
+            title,
+            pricing: {
+                price: productPrice,
+                salePrice,
+            },
+            brand: brandIds,
+            description,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
             category: categoryIds,
             genderCategory,
             isListed,
             inStock,
-            image: imageIds, 
+            image: imageIds,
             isActive: true,
         });
 
@@ -68,49 +120,175 @@ export const productAdd = asyncHandler(async (req, res) => {
             return res.status(400).json("The product already exists");
         }
 
-        // const newProduct = await product.create({
-        //     title,
-        //     productPrice,
-        //     salePrice,
-        //     brand,
-        //     description,
-        //     size: sizes,
-        //     category: categoryIds,
-        //     genderCategory,
-        //     isListed,
-        //     inStock,
-        //     image: imageIds,  
-        //     isActive: true,
-        // });
+        const newProduct = await product.create({
+            title,
+            pricing: {
+                price: productPrice,
+                salePrice,
+            },
+            brand: brandIds,
+            description,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            category: categoryIds,
+            genderCategory,
+            isListed,
+            inStock,
+            image: imageIds,
+            isActive: true,
+        });
 
-        res.redirect("/admin/dashboard"); 
+        res.redirect("/admin/dashboard");
     } catch (err) {
-        console.error("Error during product creation:", err);
+        console.error("Error during product adding:", err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 export const getAllProducts = asyncHandler(async (req, res) => {
     try {
-        
-        const findAll = await product.find({});
+        const findAll = await product.find().populate("image");
+
         res.render("admin/page/productListAdmin", {
             admin: req.session.admin,
             products: findAll,
+            activePage: "productListAdmin",
         });
-        
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal Server Error");
     }
 });
 
-    export const editProduct= asyncHandler(async(req,res)=>{
-        
-        const id=req.params.id      
-        const findProduct= await product.findOne({_id:id})
+export const editProduct = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    const findProduct = await product.findOne({ _id: id }).populate('brand');
+    
+    const fndBrand= await brandModel.find()
+    const fndCat= await categoryModel.find()  
+    
+    res.render("admin/page/productEdit", {
+        product: findProduct,
+        admin: req.session.admin,
+        activePage: "productEdit",
+        brand:fndBrand,
+        categry:fndCat
+    });
+});
+export const productEdit = asyncHandler(async (req, res) => {
+    console.log(req.body.sa,"123456789");
+    console.log(req.body.brandradio);
+    
+    try {
+        const id = req.params.id;
+        const existingProduct = await product.findById(id);
+        if (!existingProduct) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+        const imageIds = [];
+        const basePath = `${req.protocol}://${req.get("host")}/uploads`;
 
-        console.log(findProduct);
+        if (Array.isArray(req.files) && req.files.length > 0) {
+            for (let file of req.files) {
+                const savedImage = await imageModel.create({
+                    filename: file.filename,
+                    filepath: `${basePath}/${file.filename}`,
+                });
+                imageIds.push(savedImage._id);
+            }
+        } else {
+
+            imageIds.push(...existingProduct.image);
+        }
+
+        const {
+            title,
+            productPrice,
+            salePrice,
+            description,
+            genderCategory,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            inStock,
+        } = req.body;
+
+        const typedoc = await categoryModel.find({
+            name: { $in: req.body.categorybox },
+        });
+        const categoryIds = typedoc.map((category) => category._id);
         
-            res.render('admin/page/productEdit',{product:findProduct,admin:req.session.admin})
-    })
+        const brandDoc = await brandModel.findById(req.body.brandbox);
+        if (!brandDoc) {
+            return res.status(400).json({ error: "Invalid brand selected" });
+        }
+       
+        
+
+        await product.findByIdAndUpdate(id, {
+            title,
+            pricing: {
+                price: productPrice,
+                salePrice: salePrice,
+            },
+            brand: brandDoc._id,
+            description,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            category: categoryIds,
+            genderCategory,
+            isListed,
+            inStock,
+            image: imageIds,
+            isActive: true,
+        });
+
+        res.redirect("/admin/products");
+    } catch (error) {
+        console.error("Error during product update:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+export const imageDlt=asyncHandler(async(req,res)=>{
+    const { productId } = req.params;
+    const { imageId } = req.body;
+
+    try {
+        await product.findByIdAndUpdate(productId, {
+            $pull: { image: imageId }
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting image:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+

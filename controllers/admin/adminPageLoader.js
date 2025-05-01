@@ -2,37 +2,43 @@ import asyncHandler from "express-async-handler";
 import { sendotp } from "../../utility/sendotp_email.js";
 import { User } from "../../models/userModel.js";
 import { admin } from "../../models/adminModel.js";
-import { categoryModel } from "../../models/categoryModel.js";
+
 
 export const loadPasskey = asyncHandler(async (req, res) => {
     if (req.session.pass) {
-        return res.render("admin/admin_login", { error: null });
+        return res.render("admin/Auth/admin_login", { error:null });
     }
-    return res.render("admin/admin_passkey", { error: null });
+    return res.render("admin/Auth/admin_passkey", { error:null });
 });
 
 export const load_adminSignup = asyncHandler(async (req, res) => {
     if (req.session.admin) {
         return res.redirect("/admin/dashboard");
     }
-    return res.render("admin/admin_signup", { error: null });
+    return res.render("admin/Auth/admin_signup", { error:null });
 });
 
 export const admin_Otp = asyncHandler(async (req, res) => {
+    
     if (req.session.admin) {
-        return res.render("admin/admin_otp");
+        return res.render("admin/Auth/admin_otp",{message:null});
     }
     const generateotp = () => Math.floor(100000 + Math.random() * 90000);
+    
     req.session.sendotp = generateotp();
+    console.log(req.session.sendotp);
+    
     await sendotp(req.session.admin.email, req.session.sendotp);
     return res.redirect("/admin/login");
 });
 
 export const loadUser_Edit = asyncHandler(async (req, res) => {
     if (req.session.admin) {
+        const result = await User.findOne({_id:req.params.id})
         return res.render("admin/page/userEdit", {
             user: result,
-            admin: adminData,
+            admin: req.session.admin,
+            activePage: 'userEdit'
         });
     }
     const userid = req.params.id;
@@ -61,7 +67,7 @@ export const adminDashboard = asyncHandler(async (req, res) => {
     if (!req.session.admin) {
         return res.redirect("/admin/login");
     }
-    return res.render("admin/page/admin_dashboard", { admin: adminData });
+    return res.render("admin/page/admin_dashboard", { admin: adminData, activePage: 'admin_dashboard' });
 });
 export const userDetails = asyncHandler(async (req, res) => {
     const adminData = await admin.findOne({ _id: req.session.admin._id });
@@ -72,51 +78,7 @@ export const userDetails = asyncHandler(async (req, res) => {
     return res.render("admin/page/userManagement", {
         user: results,
         admin: adminData,
+         activePage: 'userManagement'
     });
 });
-export const add_product = async (req, res) => {
-    const admminData = await admin.findOne({ _id: req.session.admin._id });
-    let categories = await categoryModel.find({});
-    
 
-    if (req.session.admin) {
-        res.render("admin/page/adminAddProduct", {
-            admin: admminData,
-            categories,
-        });
-    } else {
-        return res.redirect("/admin/login");
-    }
-};
-export const categoryLoad = asyncHandler(async (req, res) => {
-    if (!req.session.admin) {
-        return res.redirect("/admin/login");
-    }
-    if (req.body.search) {
-        const categoryFnd = await categoryModel.findOne({
-            category: req.body.search,
-        });
-        return res.render("admin/page/adminCategory", {
-            catList: categoryFnd,
-            admin:req.session.admin,
-            dlt:false
-        });
-    } else {
-        const find = await categoryModel.find({});
-
-        return res.render("admin/page/adminCategory", {
-            catList: find,
-            admin:req.session.admin,
-            dlt:false
-        });
-    }
-});
-export const addCategoryLoad = asyncHandler(async (req, res) => {
-    if (!req.session.admin) {
-        return res.redirect("/admin/login");
-    }
-    return res.render("admin/page/addCategory", {
-        admin: req.session.admin,
-        message: null,
-    });
-});

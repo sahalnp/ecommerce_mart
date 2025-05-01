@@ -7,60 +7,108 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
-        productPrice: {
-            type: Number,
+         brand: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "brand",
             required: true,
         },
-        salePrice: {
-            type: Number,
-            required: true,
-        },
-        brand: {
-            type: String,
-            required: true,
-        },
+
         description: {
             type: String,
             required: true,
         },
+
+        pricing: {
+            price: {
+                type: Number,
+                required: true,
+            },
+            salePrice: {
+                type: Number,
+                required: true,
+            },
+        },
+
+        bandColour: {
+            type: String,
+            required: true,
+        },
+
+        bandMaterial: {
+            type: String,
+            required: true,
+        },
+
+        warranty: {
+            type: String,
+            required: true,
+        },
+
+        movementType: {
+            type: String,
+            required: true,
+        },
+
+        itemWeight: {
+            type:String,
+            required: true,
+        },
+
+        modelNumber: {
+            type: String,
+            required: true,
+        },
+
+        caseShape: {
+            type: String,
+            required: true,
+        },
+
+        specialFeatures: {
+            type: String,
+            required: true,
+        },
+
+        modelYear: {
+            type: String,
+            required: true,
+        },
+
+        caseDiameter: {
+            type: String,
+            required: true,
+        },
+
         image: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref:'imageModel',
-                required:true
+                ref: "image",
+                required: true,
             },
         ],
-        size: {
-            type: Array,
+
+        category: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "category",
+                required: true,
+            },
+        ],
+
+        inStock: {
+            type: Number,
             required: true,
+            min: 0,
+            max: 15,
         },
-        category:[{
-            type: mongoose.Schema.Types.ObjectId,
-            ref:'category',
-            required: true,
-        }
-    ]
-        ,
-        genderCategory:{
-            type:Array,
-            required:true
-        },
-        inStock:{
-            type:Number,
-            required:true,  
-            min:0,
-            max:15
-        },
+
         isListed: {
             type: Boolean,
             default: true,
         },
-        isListed:{
-            type:Boolean,
-            default:false
-        }
     },
     { timestamps: true }
 );
+
 
 export const product = mongoose.model("product", productSchema);

@@ -49,8 +49,8 @@ router.post("/reset", email_check);
 
 router.post("/reset_verify_otp", reset_verify_otp);
 
-router.get("/pass_reset", pass_reset);
-router.post("/pass_reset", new_pass);
+router.get("/forgotPassword", pass_reset);
+router.post("/forgotPassword", new_pass);
 
 router.get("/auth/google", auth_google);
 

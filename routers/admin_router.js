@@ -6,9 +6,6 @@ import {
     loadUser_Edit,
     adminLogout,
     userDetails,
-    add_product,
-    categoryLoad,
-    addCategoryLoad,
 } from "../controllers/admin/adminPageLoader.js";
 import {
     adminSignup,
@@ -21,18 +18,41 @@ import {
     userEdit,
     userDelete,
     adminEdit,
-    
 } from "../controllers/admin/adminDashboardController.js";
 
-import {  editProduct, getAllProducts, productAdd } from "../controllers/admin/productController.js";
+import {
+    editProduct,
+    getAllProducts,
+    imageDlt,
+    loadAdd_product,
+    productAdd,
+    productEdit,
+} from "../controllers/admin/productController.js";
 import { isAdminloggedIn } from "../middleware/adminAuthMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
-import {addCategory, categorydlt, categoryEdit, Editcatgory} from "../controllers/admin/categoryManageController.js"
+import {
+    addCategory,
+    addCategoryLoad,
+    categorydlt,
+    categoryEdit,
+    categoryLoad,
+    Editcatgory,
+} from "../controllers/admin/categoryManageController.js";
+import {
+    addBrand,
+    brandList,
+    editBrand,
+    loadBrandAdd,
+    loadEditBrand,
+    updateStatus,
+} from "../controllers/admin/adminBrandController.js";
 
 const adminRouter = express.Router();
 
-adminRouter.get("/admin/login",isAdminloggedIn,loadPasskey);
+adminRouter.get("/admin/login", isAdminloggedIn, loadPasskey);
 adminRouter.post("/admin/login", admin_login);
+
+// adminRouter.get('/admin/editProfile',editProfile)
 
 adminRouter.post("/admin/login/passkey", passkeySend);
 
@@ -51,22 +71,35 @@ adminRouter.post("/admin/edit-user/:id", userEdit);
 adminRouter.post("/admin/delete-user/:id", userDelete);
 adminRouter.post("/admin/profile/:id", adminEdit);
 
-adminRouter.get("/admin/add_product", add_product);
+adminRouter.get("/admin/add_product", loadAdd_product);
 
-adminRouter.get('/admin/category',categoryLoad)
+adminRouter.get("/admin/category", categoryLoad);
 
-adminRouter.post('/admin/upload', upload.array('photos',15),productAdd)
-adminRouter.get('/admin/userDetails',userDetails)
+adminRouter.post("/admin/upload", upload.array("photos", 15), productAdd);
+adminRouter.get("/admin/userDetails", userDetails);
 
-adminRouter.get('/admin/addCategory',addCategoryLoad)
-adminRouter.post('/admin/addCategory',addCategory)
+adminRouter.get("/admin/addCategory", addCategoryLoad);
+adminRouter.post("/admin/addCategory", addCategory);
 
-adminRouter.get('/admin/editCategory/:id',categoryEdit)
-adminRouter.post('/admin/editCategory/:id',Editcatgory)
+adminRouter.get("/admin/editCategory/:id", categoryEdit);
+adminRouter.post("/admin/editCategory/:id", Editcatgory);
 
-adminRouter.get('/admin/category/delete/:id',categorydlt)
+adminRouter.get("/admin/category/delete/:id", categorydlt);
 
-adminRouter.get("/admin/products",getAllProducts)
-adminRouter.get("/admin/edit/:id",editProduct)
+adminRouter.get("/admin/products", getAllProducts);
+
+adminRouter.get("/admin/product/edit/:id", editProduct);
+adminRouter.post("/admin/product/edit/:id",productEdit)
+adminRouter.post('/admin/product/:productId/delete-image',imageDlt)
+
+adminRouter.get("/admin/brand", brandList);
+
+adminRouter.get("/admin/brand/edit/:id", loadEditBrand);
+adminRouter.post("/admin/brand/edit/:id", editBrand);
+
+adminRouter.get("/admin/brand/add", loadBrandAdd);
+adminRouter.post("/admin/brand/add", addBrand);
+
+adminRouter.post("/admin/brand/update-status/:id", updateStatus);
 
 export default adminRouter;

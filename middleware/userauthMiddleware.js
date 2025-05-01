@@ -3,6 +3,6 @@ export const isUserloggedIn = (req, res) => {
       return res.redirect("/");
     }
     
-    res.render("user/login", { title: "Login-M4 Mart", user: null });
+    res.render("users/login", { title: "Login-M4 Watch", user: null });
   };
   

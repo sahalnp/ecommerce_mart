@@ -1,689 +1,401 @@
-<!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
-    <head>
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui"
-        />
-        <meta
-            name="description"
-            content="Chameleon Admin is a modern Bootstrap 4 webapp &amp; admin dashboard html template with a large number of components, elegant design, clean and organized code."
-        />
-        <meta
-            name="keywords"
-            content="admin template, Chameleon admin template, dashboard template, gradient admin template, responsive admin template, webapp, eCommerce dashboard, analytic dashboard"
-        />
-        <meta name="author" content="ThemeSelect" />
-        <title>Chameleon Admin</title>
-        <link
-            rel="apple-touch-icon"
-            href="/theme-assets/images/ico/apple-icon-120.png"
-        />
-        <link
-            rel="shortcut icon"
-            type="image/x-icon"
-            href="/theme-assets/images/favicon.png"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.28.0/feather.min.css"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        />
-        <link
-            href="https://fonts.googleapis.com/css?family=Muli:300,300i,400,400i,600,600i,700,700i%7CComfortaa:300,400,700"
-            rel="stylesheet"
-        />
-        <link
-            href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome.min.css"
-            rel="stylesheet"
-        />
+<%- include('../partials/header') %>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .size-price-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-        <!-- Vendor & Chameleon CSS -->
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/vendors.css"
-        />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/charts/chartist.css"
-        />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/app-lite.css"
-        />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/core/colors/palette-gradient.css"
-        />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/core/menu/menu-types/vertical-menu.css"
-        />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="/theme-assets/vendors/css/pages/dashboard-ecommerce.css"
-        />
+        .size-price-row input {
+            flex: 1;
+        }
 
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            margin-top: 60px;
+        }
+        .small-button {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 13px;
+            background: #0056b3;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        #image-wrapper input[type="file"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #image-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px; /* spacing between file inputs */
+            margin-top: 10px;
+        }
 
-            .navbar {
-                background-color: #343a40;
-                padding: 15px;
-                position: fixed;
-                width: 100%;
-                top: 0;
-                left: 0;
-                z-index: 1000;
-            }
+        #image-wrapper input[type="file"] {
+            flex: 0 0 auto;
+        }
+        .small-button:hover {
+            background-color: #007bff;
+        }
 
-            .navbar a {
-                color: white;
-                text-decoration: none;
-            }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
 
-            .size-price-row {
-                display: flex;
-                gap: 10px;
-                margin-bottom: 10px;
-            }
+        h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
 
-            .size-price-row input {
-                flex: 1;
-            }
+        label {
+            font-weight: bold;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 6px;
+        }
 
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .category-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .category-item input[type="checkbox"] {
+            vertical-align: middle;
+            margin-top: 7px; /* Slight nudge down */
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: auto;
+            vertical-align: middle;
+        }
+
+        .category-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .category-box {
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .category-box input {
+            margin-right: 8px;
+        }
+
+        .gender-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .gender-group label {
+            font-weight: normal;
+            margin-left: 5px;
+        }
+
+        .gender-option {
+            display: flex;
+            align-items: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #007bff;
+        }
+        button {
+            background: #0056b3;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #image-wrapper input[type="file"] {
+            width: 200px;
+            padding: 4px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .size-price-row {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
             .content {
-                margin-left: 240px;
-                padding: 20px;
-                margin-top: 60px;
-            }
-            .small-button {
-                width: auto;
-                padding: 6px 12px;
-                font-size: 13px;
-                background: #0056b3;
-                margin-bottom: 15px;
-                display: inline-block;
-            }
-            #image-wrapper input[type="file"] {
-                display: block;
-                margin-bottom: 10px;
-            }
-            #image-wrapper {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px; /* spacing between file inputs */
-                margin-top: 10px;
-            }
-
-            #image-wrapper input[type="file"] {
-                flex: 0 0 auto;
-            }
-            .small-button:hover {
-                background-color: #007bff;
+                margin-left: 0;
             }
 
             .container {
-                width: 100%;
-                max-width: 600px;
-                margin: 50px auto;
-                background: white;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin: 20px;
             }
+        }
+    </style>
+</head>
 
-            h2 {
-                text-align: center;
-                font-size: 22px;
-                margin-bottom: 20px;
-            }
+<%- include('../partials/navbar') %>
 
-            label {
-                font-weight: bold;
-                font-size: 15px;
-                display: block;
-                margin-bottom: 6px;
-            }
-
-            input,
-            select,
-            textarea {
-                width: 100%;
-                padding: 10px;
-                font-size: 14px;
-                margin-bottom: 15px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-            }
-
-            input[type="checkbox"] {
-                width: auto;
-                vertical-align: middle;
-            }
-
-            .category-group {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-                margin-bottom: 15px;
-            }
-
-            .category-box {
-                display: flex;
-                align-items: center;
-                padding: 6px 10px;
-                background: #f9f9f9;
-                border: 1px solid #ccc;
-                border-radius: 6px;
-            }
-
-            .category-box input {
-                margin-right: 8px;
-            }
-
-            .gender-group {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-                margin-bottom: 20px;
-            }
-
-            .gender-group label {
-                font-weight: normal;
-                margin-left: 5px;
-            }
-
-            .gender-option {
-                display: flex;
-                align-items: center;
-            }
-
-            button {
-                width: 100%;
-                padding: 10px;
-                background: #28a745;
-                border: none;
-                color: white;
-                font-size: 18px;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background: #007bff;
-            }
-            button {
-                background: #0056b3;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-weight: bold;
-            }
-
-            #image-wrapper input[type="file"] {
-                width: 200px;
-                padding: 4px;
-                margin-top: 5px;
-                margin-bottom: 5px;
-            }
-
-            .size-price-row {
-                margin-bottom: 10px;
-            }
-
-            @media (max-width: 768px) {
-                .content {
-                    margin-left: 0;
-                }
-
-                .container {
-                    margin: 20px;
-                }
-            }
-        </style>
-    </head>
-    <body
-        class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"
-        data-open="click"
-        data-menu="vertical-menu"
-        data-color="bg-chartbg"
-        data-col="2-columns"
-    >
-        <!-- Navbar and Sidebar skipped for brevity -->
-        <nav
-            class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light"
-        >
-            <div class="navbar-wrapper">
-                <div class="navbar-container content">
-                    <div
-                        class="collapse navbar-collapse show"
-                        id="navbar-mobile"
-                    >
-                        <ul class="nav navbar-nav mr-auto float-left">
-                            <li class="nav-item d-block d-md-none">
-                                <a
-                                    class="nav-link nav-menu-main menu-toggle hidden-xs"
-                                    href="#"
-                                    ><i class="ft-menu"></i
-                                ></a>
-                            </li>
-                            <li class="nav-item d-none d-md-block">
-                                <a class="nav-link nav-link-expand" href="#"
-                                    ><i class="ficon ft-maximize"></i
-                                ></a>
-                            </li>
-                            <li class="nav-item dropdown navbar-search">
-                                <a
-                                    class="nav-link dropdown-toggle hide"
-                                    data-toggle="dropdown"
-                                    href="#"
-                                    ><i class="ficon ft-search"></i
-                                ></a>
-                                <ul class="dropdown-menu">
-                                    <li class="arrow_box">
-                                        <form>
-                                            <div class="input-group search-box">
-                                                <div
-                                                    class="position-relative has-icon-right full-width"
-                                                >
-                                                    <input
-                                                        class="form-control"
-                                                        id="search"
-                                                        type="text"
-                                                        placeholder="Search here..."
-                                                    />
-                                                    <div
-                                                        class="form-control-position navbar-search-close"
-                                                    >
-                                                        <i class="ft-x"> </i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <ul class="nav navbar-nav float-right">
-                            <li class="dropdown dropdown-language nav-item">
-                                <a
-                                    class="dropdown-toggle nav-link"
-                                    id="dropdown-flag"
-                                    href="#"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="false"
-                                    ><i class="flag-icon flag-icon-us"></i
-                                    ><span class="selected-language"></span
-                                ></a>
-                                <div
-                                    class="dropdown-menu"
-                                    aria-labelledby="dropdown-flag"
-                                ></div>
-                            </li>
-                        </ul>
-                        <ul class="nav navbar-nav float-right">
-                            <li class="dropdown dropdown-notification nav-item">
-                                <a
-                                    class="nav-link nav-link-label"
-                                    href="#"
-                                    data-toggle="dropdown"
-                                    ><i class="ficon ft-mail"> </i
-                                ></a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="arrow_box_right">
-                                        <a class="dropdown-item" href="#"
-                                            ><i class="ft-book"></i> Read
-                                            Mail</a
-                                        ><a class="dropdown-item" href="#"
-                                            ><i class="ft-bookmark"></i> Read
-                                            Later</a
-                                        ><a class="dropdown-item" href="#"
-                                            ><i class="ft-check-square"></i>
-                                            Mark all Read
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="dropdown dropdown-user nav-item">
-                                <a
-                                    class="dropdown-toggle nav-link dropdown-user-link"
-                                    href="#"
-                                    data-toggle="dropdown"
-                                >
-                                    <span class="avatar avatar-online">
-                                        <img
-                                            src="/theme-assets\images\gallery\image.png"
-                                            alt="User Avatar"
-                                            class="default-avatar"
-                                        />
-                                    </span>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <div class="arrow_box_right">
-                                        <a class="dropdown-item" href="#">
-                                            <span
-                                                class="user-name text-bold-700 ml-1"
-                                                ><%= admin.firstname %></span
-                                            >
-                                        </a>
-                                        <div class="dropdown-divider"></div>
-                                        <a
-                                            class="dropdown-item"
-                                            href="/admin/logout"
-                                            ><i class="ft-power"></i>Logout</a
-                                        >
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <div
-            class="main-menu menu-fixed menu-light menu-accordion menu-shadow"
-            data-scroll-to-active="true"
-            data-img="/theme-assets/images/backgrounds/02.jpg"
-        >
-            <div class="navbar-header">
-                <ul class="nav navbar-nav flex-row">
-                    <li class="nav-item mr-auto">
-                        <a class="navbar-brand" href="/admin/dashboard"
-                            ><img
-                                class="brand-logo"
-                                alt="Chameleon admin logo"
-                                src="/theme-assets/images/logo/logo.png"
-                            />
-                            <h3 class="brand-text">Chameleon</h3></a
-                        >
-                    </li>
-                    <li class="nav-item d-md-none">
-                        <a class="nav-link close-navbar"
-                            ><i class="ft-x"></i
-                        ></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="main-menu-content">
-                <ul
-                    class="navigation navigation-main"
-                    id="main-menu-navigation"
-                    data-menu="menu-navigation"
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-body">
+            <div class="container">
+                <h2>Add Product</h2>
+                <form
+                    action="/admin/upload"
+                    method="POST"
+                    enctype="multipart/form-data"
                 >
-                    <li class="nav-item">
-                        <a href="/admin/dashboard"
-                            ><i class="fa fa-home"></i
-                            ><span class="menu-title" data-i18n=""
-                                >Dashboard</span
-                            ></a
-                        >
-                    </li>
+                    <!-- 🔹 BASIC INFO -->
+                    <h3>Basic Info</h3>
+                    <label for="title">Product Title</label>
+                    <input type="text" id="title" name="title" required />
 
-                    <li class="nav-item">
-                        <a href="/admin/userDetails">
-                            <i class="fas fa-users"></i>
-                            <span>Users</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/admin/products">
-                            <i class="fas fa-boxes"></i>
-                            <span class="menu-title">All Products</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a href="/admin/category"
-                            ><i class="fas fa-list"></i
-                            ><span class="menu-title">Categories</span></a
-                        >
-                    </li>
-
-                    <li class="nav-item active">
-                        <a href="/admin/add_product"
-                            ><i class="fas fa-plus"></i
-                            ><span class="menu-title">Add Product</span></a
-                        >
-                    </li>
-                    <li class="nav-item">
-                        <a href="watchlist.html">
-                            <i class="fas fa-heart"></i>
-                            <span>Watchlist</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="navigation-background"></div>
-        </div>
-        <!-- Main Content -->
-        <div class="app-content content">
-            <div class="content-wrapper">
-                <div class="content-body">
-                    <div class="container">
-                        <h2>Add Product</h2>
-                        <form
-                            action="/admin/upload"
-                            method="POST"
-                            enctype="multipart/form-data"
-                        >
-                            <label for="title">Product Title</label>
+                    <label for="brand">Brand</label>
+                    <div class="category-group">
+                        <% if (brands && brands.length > 0) { %> <%
+                        brands.forEach((brand, index) => { %>
+                        <div class="category-item" style="margin-right: 500px;">
                             <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                required
+                                type="checkbox"
+                                id="brand<%= index %>"
+                                name="brandbox"
+                                style="margin-bottom: 10px;"
+                                
+                                value="<%= brand.name %>"
                             />
-
-                            <label for="productPrice">Price</label>
-                            <input
-                                type="number"
-                                id="productPrice"
-                                name="productPrice"
-                                required
-                            />
-
-                            <label for="sale">Sale Price</label>
-                            <input
-                                type="number"
-                                id="sale"
-                                name="salePrice"
-                                required
-                            />
-
-                            <label for="brand">Brand</label>
-                            <input
-                                type="text"
-                                id="brand"
-                                name="brand"
-                                required
-                            />
-
-                            <label for="description">Description</label>
-                            <textarea
-                                id="description"
-                                name="description"
-                                rows="3"
-                                required
-                            ></textarea>
-
-                            <label>Sizes</label>
-                            <div id="sizes-wrapper">
-                                <div class="size-price-row">
-                                    <input
-                                        type="text"
-                                        name="sizes[0][size]"
-                                        class="text-uppercase"
-                                        required
-                                    />
-                                    <input
-                                        type="number"
-                                        name="sizes[0][price]"
-                                        class="text-uppercase"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <button
-                                type="button"
-                                id="add-size-btn"
-                                class="small-button"
-                            >
-                                + Add Size
-                            </button>
-                            <div style="height: 15px"></div>
-                            <label for="category">Category</label>
-                            <div class="category-group">
-                                <% if (categories && categories.length > 0) { %>
-                                <% categories.forEach((category, index) => { %>
-                                <input
-                                    type="checkbox"
-                                    id="category<%= index %>"
-                                    name="categorybox"
-                                    value="<%= category.name %>"
-                                />
-                                <label
-                                    for="category<%= index %>"
-                                    style="margin-bottom: 13px"
-                                >
-                                    <%= category.name %>
-                                </label>
-                                <% }); %> <% } %>
-                            </div>
-
-                            <label for="genderCategory">For</label>
-                            <div class="gender-group">
-                                <div class="gender-option">
-                                    <input
-                                        type="checkbox"
-                                        id="men"
-                                        name="genderCategory"
-                                        value="Men"
-                                    />
-                                    <label style="margin-bottom: 13px" for="men"
-                                        >Men</label
-                                    >
-                                </div>
-                                <div class="gender-option">
-                                    <input
-                                        type="checkbox"
-                                        id="women"
-                                        name="genderCategory"
-                                        value="Women"
-                                    />
-                                    <label
-                                        style="margin-bottom: 13px"
-                                        for="women"
-                                        style="margin-bottom: 13px"
-                                        >Women</label
-                                    >
-                                </div>
-                                <div class="gender-option">
-                                    <input
-                                        type="checkbox"
-                                        id="unisex"
-                                        name="genderCategory"
-                                        value="Unisex"
-                                    />
-                                    <label
-                                        style="margin-bottom: 13px"
-                                        for="unisex"
-                                        >Unisex</label
-                                    >
-                                </div>
-                                <div class="gender-option">
-                                    <input
-                                        type="checkbox"
-                                        id="kids"
-                                        name="genderCategory"
-                                        value="Kids"
-                                    />
-                                    <label
-                                        style="margin-bottom: 13px"
-                                        for="kids"
-                                        >Kids</label
-                                    >
-                                </div>
-                            </div>
-                            <label for="image">Product Image</label>
-                            <div id="image-wrapper">
-                                <input
-                                    type="file"
-                                    name="photos"
-                                    accept="image/*"
-                                    required
-                                />
-                            </div>
-                            <button
-                                type="button"
-                                id="add-image-btn"
-                                class="small-button"
-                            >
-                                + Add Image
-                            </button>
-                            <button type="submit ">Add Product</button>
-                        </form>
+                            <label style="margin-bottom:10px" for="brand<%= index %>">
+                                <%= brand.name %>
+                            </label>
+                        </div>
+                        <% }); %> <% } %>
                     </div>
-                </div>
+
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="3"
+                        required
+                    ></textarea>
+
+                    <!-- 🔹 PRICING -->
+                    <h3>Pricing</h3>
+                    <label for="productPrice">Price</label>
+                    <input
+                        type="number"
+                        id="productPrice"
+                        name="productPrice"
+                        required
+                    />
+
+                    <label for="sale">Sale Price</label>
+                    <input type="number" id="sale" name="salePrice" required />
+
+                    <!-- 🔹 PRODUCT SPECIFICATIONS -->
+                    <h3>Product Specifications</h3>
+
+                    <label for="bandColour">Band Colour</label>
+                    <input
+                        type="text"
+                        id="bandColour"
+                        name="bandColour"
+                        required
+                    />
+
+                    <label for="bandMaterial">Band Material Type</label>
+                    <input
+                        type="text"
+                        id="bandMaterial"
+                        name="bandMaterial"
+                        required
+                    />
+
+                    <label for="warrantyType">Warranty</label>
+                    <input
+                        type="number"
+                        id="warranty"
+                        name="warranty"
+                        required
+                    />
+
+                    <label for="movementType">Watch Movement Type</label>
+                    <input
+                        type="text"
+                        id="movementType"
+                        name="movementType"
+                        required
+                    />
+
+                    <label for="itemWeight">Item Weight</label>
+                    <input
+                        type="text"
+                        id="itemWeight"
+                        name="itemWeight"
+                        required
+                    />
+
+                    <label for="modelNumber">Model Number</label>
+                    <input
+                        type="text"
+                        id="modelNumber"
+                        name="modelNumber"
+                        required
+                    />
+
+                    <label for="caseShape">Case Shape</label>
+                    <input
+                        type="text"
+                        id="caseShape"
+                        name="caseShape"
+                        required
+                    />
+
+                    <label for="specialFeatures">Special Features</label>
+                    <input
+                        type="text"
+                        id="specialFeatures"
+                        name="specialFeatures"
+                        required
+                    />
+
+                    <label for="modelYear">Model Year</label>
+                    <input
+                        type="text"
+                        id="modelYear"
+                        name="modelYear"
+                        required
+                    />
+
+                    <label for="caseDiameter">Case Diameter</label>
+                    <input
+                        type="text"
+                        id="caseDiameter"
+                        name="caseDiameter"
+                        required
+                    />
+
+                    <h3>Images & Category</h3>
+                    <label for="image">Product Images</label>
+                    <div id="image-wrapper">
+                        <input
+                            type="file"
+                            name="photos"
+                            accept="image/*"
+                            required
+                        />
+                    </div>
+                    <div style="height: 10px"></div>
+
+                    <button
+                        type="button"
+                        id="add-image-btn"
+                        class="small-button"
+                    >
+                        + Add Image
+                    </button>
+
+                    <label for="category">Category</label>
+                    <div class="category-group">
+                        <% if (categories && categories.length > 0) { %> <%
+                        categories.forEach((category, index) => { %>
+                        <div class="category-item">
+                            <input
+                                type="checkbox"
+                                id="category<%= index %>"
+                                name="categorybox"
+                                value="<%= category.name %>"
+                            />
+                            <label for="category<%= index %>">
+                                <%= category.name %>
+                            </label>
+                        </div>
+                        <% }); %> <% } %>
+                    </div>
+                    <label for="inStock">inStock</label>
+                    <input
+                        type="number"
+                        id="inStock"
+                        name="inStock"
+                        required
+                    />
+                   
+                    <button type="submit">Add Product</button>
+                </form>
             </div>
-            <script>
-                let sizeIndex = 1;
-                let imageIndex = 1;
-
-                document
-                    .getElementById("add-size-btn")
-                    .addEventListener("click", function () {
-                        const wrapper =
-                            document.getElementById("sizes-wrapper");
-
-                        const div = document.createElement("div");
-                        div.classList.add("size-price-row");
-
-                        div.innerHTML = `
-                        <input type="text" class="text-uppercase" name="sizes[${sizeIndex}][size]" required />
-                         <input type="number" class="text-uppercase" name="sizes[${sizeIndex}][price]" required />
-                    `;
-
-                        wrapper.appendChild(div);
-                        sizeIndex++;
-                    });
-                document
-                    .getElementById("add-image-btn")
-                    .addEventListener("click", function () {
-                        const wrapper =
-                            document.getElementById("image-wrapper");
-
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.name = "photos";
-                        input.accept = "image/*";
-                        input.required = true;
-                        input.style.marginTop = "5px";
-
-                        wrapper.appendChild(input);
-                        imageIndex++;
-                    });
-            </script>
-
-            <%- include('../../partials/footer') %>
         </div>
-    </body>
-</html>
+    </div>
+</div>
+
+    <script>
+        let imageIndex = 1;
+        document
+            .getElementById("add-image-btn")
+            ?.addEventListener("click", function () {
+                const wrapper = document.getElementById("image-wrapper");
+                const input = document.createElement("input");
+                input.type = "file";
+                input.name = "photos";
+                input.accept = "image/*";
+                input.required = true;
+                input.style.marginTop = "5px";
+                wrapper.appendChild(input);
+                imageIndex++;
+            });
+    </script>
+
+    <%- include('../partials/footer') %>
+
