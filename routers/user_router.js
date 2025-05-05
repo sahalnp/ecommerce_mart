@@ -23,37 +23,59 @@ import {
     pass_reset,
 } from "../controllers/user/authViewController.js";
 import { sendsms } from "../utility/sendphoneotp.js";
+import { about, addTocart, blog, blogDetails, checkout, confirmaton, contact, elements, laodProduct, laodShop, loadEditProfile } from "../controllers/user/userPageLoader.js";
+import { editProfile } from "../controllers/user/userDashboard.js";
 
-export const router = express.Router();
+export const UserRouter = express.Router();
 
-router.get("/", home);
+UserRouter.get("/", home);
 
-router.get("/login",isUserloggedIn);
-router.post("/login", loginUser);
+UserRouter.get("/login",isUserloggedIn);
+UserRouter.post("/login", loginUser);
 
-router.get("/signup", loadsignup);
-router.post("/signup", signupUser);
+UserRouter.get("/signup", loadsignup);
+UserRouter.post("/signup", signupUser);
 
-router.get("/otp",send_otp, otp);
-router.post("/otp", verifyotp);
+UserRouter.get("/otp",send_otp, otp);
+UserRouter.post("/otp", verifyotp);
 
-router.get("/phoneotp", sendsms, phoneotp);
-router.post("/phoneotp", phoneverifyotp);
+UserRouter.get("/phoneotp", sendsms, phoneotp);
+UserRouter.post("/phoneotp", phoneverifyotp);
 
-router.get("/account", account);
+UserRouter.get("/account", account);
 
-router.get("/logout", logout);
+UserRouter.get("/logout", logout);
 
-router.get("/reset", reset_pass_otp);
-router.post("/reset", email_check);
+UserRouter.get("/reset", reset_pass_otp);
+UserRouter.post("/reset", email_check);
 
-router.post("/reset_verify_otp", reset_verify_otp);
+UserRouter.post("/reset_verify_otp", reset_verify_otp);
 
-router.get("/forgotPassword", pass_reset);
-router.post("/forgotPassword", new_pass);
+UserRouter.get("/forgotPassword", pass_reset);
+UserRouter.post("/forgotPassword", new_pass);
 
-router.get("/auth/google", auth_google);
+UserRouter.get("/auth/google", auth_google);
+UserRouter.get("/auth/google/callback", auth_google_callback);
 
-router.get("/auth/google/callback", auth_google_callback);
+UserRouter.get('/profile/edit/:id',loadEditProfile)
+UserRouter.post('/profile/edit/:id',editProfile)
 
-export default router;
+UserRouter.get('/shop',laodShop)
+UserRouter.get('/product/:id',laodProduct)
+
+UserRouter.get('/cart',addTocart)
+
+UserRouter.get('/about',about)
+
+UserRouter.get('/blog',blog)
+
+UserRouter.get('/blog-details',blogDetails)
+
+UserRouter.get('/elements',elements)
+
+UserRouter.get('/confirmation',confirmaton)
+
+UserRouter.get('/checkout',checkout)
+
+UserRouter.get('/contact',contact)
+export default UserRouter;

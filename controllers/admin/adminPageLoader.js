@@ -69,6 +69,17 @@ export const adminDashboard = asyncHandler(async (req, res) => {
     }
     return res.render("admin/page/admin_dashboard", { admin: adminData, activePage: 'admin_dashboard' });
 });
+export const editAdmin=asyncHandler(async(req,res)=>{
+
+    if(req.session.admin){
+        return res.render('admin/page/adminProfile',{
+            admin:req.session.admin,
+            activePage:null
+            
+        })
+    return res.redirect('/admin/login')
+    }
+})
 export const userDetails = asyncHandler(async (req, res) => {
     const adminData = await admin.findOne({ _id: req.session.admin._id });
     const results = await User.find({ role: 0 });

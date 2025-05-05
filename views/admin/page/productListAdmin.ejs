@@ -31,7 +31,6 @@
                                     <th>Image</th>
                                     <th>Name</th>
                                     <th>Price</th>
-                                    <th>Size</th>
                                     <th>Status</th>
                                     <th>In Stock</th>
                                     <th>Actions</th>
@@ -53,40 +52,28 @@
                                     </td>
                                     <td class="text-dark">
                                         <%= product.title %>
-                                    </td>
-                                    <td class="text-dark">
-                                        ₹<%= product.salePrice ?
-                                        product.salePrice.toFixed(2) :
-                                        (product.productPrice ?
-                                        product.productPrice.toFixed(2) :
-                                        '0.00') %>
-                                    </td>
-                                    <td class="text-dark">
-                                        <% if (Array.isArray(product.size) &&
-                                        product.size.length > 0) { %> <%
-                                        product.size.forEach(s => { %>
-                                        <div>
-                                            <%= s.size.toUpperCase() %> - ₹<%=
-                                            s.price %>
-                                        </div>
-                                        <% }) %> <% } else { %>
-                                        <span class="badge bg-secondary"
-                                            >No size</span
-                                        >
-                                        <% } %>
-                                    </td>
-                                    <td class="text-success">
-                                        <% if (product.inStock > 0) { %>
-                                        <span
-                                            class="badge bg-primary text-white fs-5"
-                                            >Active</span
-                                        >
-                                        <% } else { %>
-                                        <span class="badge text-primary"
-                                            >Out of Stock</span
-                                        >
-                                        <% } %>
-                                    </td>
+                                        </td>
+                                        <td class="text-dark">
+                                            ₹<%= product.pricing?.salePrice ?
+                                            product.pricing.salePrice.toFixed(2) :
+                                            (product.pricing?.price ?
+                                            product.pricing.price.toFixed(2) :
+                                            '0.00') %>
+                                        </td>
+                                        
+
+                                        <td>
+                                            <form action="/admin/product/listing/<%= product._id %>" method="POST">
+                                                <select name="isListed" 
+                                                        class="form-select form-select-sm <%= product.isListed ? 'bg-primary text-white' : 'bg-danger text-white' %>" 
+                                                        onchange="this.form.submit()">
+                                                    <option value="true" <%= product.isListed ? 'selected' : '' %>>Listed</option>
+                                                    <option value="false" <%= !product.isListed ? 'selected' : '' %>>Unlisted</option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        
+                                        
                                     <td class="text-dark">
                                         <%= product.inStock || 0 %>
                                     </td>
@@ -100,13 +87,7 @@
                                             >
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a
-                                                href="/admin/product/delete-product/<%= product._id %>"
-                                                class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Are you sure you want to delete this product?')"
-                                            >
-                                                <i class="fas fa-trash-alt"></i>
-                                            </a>
+                                            
                                         </div>
                                     </td>
                                 </tr>
@@ -118,7 +99,22 @@
                 </div>
             </div>
         </div>
-
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('select[name="isListed"]').forEach(select => {
+                    select.addEventListener('change', function () {
+                        if (this.value === 'true') {
+                            this.classList.remove('bg-danger');
+                            this.classList.add('bg-primary', 'text-white');
+                        } else {
+                            this.classList.remove('bg-primary');
+                            this.classList.add('bg-danger', 'text-white');
+                        }
+                    });
+                });
+            });
+        </script>
+        
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="/admin/theme-assets/vendors/js/vendors.min.js"></script>
         <script src="/admin/theme-assets/js/core/app-menu-lite.js"></script>

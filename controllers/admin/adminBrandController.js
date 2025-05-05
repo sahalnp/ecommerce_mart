@@ -16,6 +16,7 @@ export const loadBrandAdd = asyncHandler(async (req, res) => {
         res.render("admin/page/addBrand", {
             message: null,
             activePage: "brandManagement",
+            admin:req.session.admin
         });
     }
 });

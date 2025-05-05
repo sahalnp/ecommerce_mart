@@ -3,30 +3,31 @@ import { User } from "../../models/userModel.js";
 import { sendotp } from "../../utility/sendotp_email.js";
 import { settimer } from "../../middleware/otp_timerMiddleware.js";
 import { forgetPassMail } from "../../utility/ForgotPassEmail.js";
+import asyncHandler from "express-async-handler";
 
 // Controller for login
 export const loginUser = async (req, res) => {
-    const emailornumber = req.body.emailornumber;
-    const password = req.body.password;
+    const {password,emailornumber} = req.body
     const user = await User.findOne({
         $or: [{ email: emailornumber }, { number: parseInt(emailornumber) }],
     });
+    
     req.session.users = user;
-
-    console.log("user is ", req.session.user);
+    
+    console.log("user is ", req.session.users);
     req.session.user_emailornumber = emailornumber;
 
     if (!user) {
-        return res.render("users/login", {
-            user: "User does not exist. Please sign up.",
+        return res.render("users/Auth/login", {
+            error: "User does not exist. Please sign up.",
         }); //sending login page if user doesnot exist
     }
 
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
     if (!passwordMatch) {
-        return res.render("users/login", {
-            user: "Incorrect password. Please try again.",
+        return res.render("users/Auth/login", {
+            error: "Incorrect password. Please try again.",
         }); //sending login page and sending a message passsword not coorect
     }
     return res.redirect("/");
@@ -61,20 +62,22 @@ export const signupUser = async (req, res, next) => {
 
     //finding if user exist or not
     if (existingUser || existnumber) {
-        return res.render("users/signup", { user: "User already exists" });
+        return res.render("users/Auth/signup", { user: "User already exists" });
     } else {
         return res.redirect("/otp");
     }
 };
+const generateotp = () => Math.floor(100000 + Math.random() * 90000);
 export const send_otp = async (req, res, next) => {
-    const otp = generateotp();
-    req.session.otp = otp;
-    await send_otp(req.session.email, otp); // Send OTP to user's email
+
+    req.session.otp = generateotp();
+
+    
+    await sendotp(req.session.email,req.session.otp); // Send OTP to user's email
     const now = new Date();
     req.session.otp_Expire = settimer(now);
     next();
 };
-const generateotp = () => Math.floor(100000 + Math.random() * 90000);
 export const verifyotp = async (req, res) => {
     const { otp } = req.body;
 
@@ -83,7 +86,7 @@ export const verifyotp = async (req, res) => {
             otp != req.session.otp ||
             new Date(req.session.otp_Expire) < new Date()
         ) {
-            res.render("users/otp", {
+            res.render("users/Auth/otp", {
                 title: "OTP",
                 error: "Invalid OTP: Please Try again",
                 time: null,
@@ -113,26 +116,29 @@ export const logout = (req, res) => {
 };
 
 export const phoneverifyotp = async (req, res) => {
+    console.log("Received OTP:", req.body.otp);
+    console.log("Stored OTP:", req.session.phoneotp);
+    console.log("Expiry Time:", req.session.phone_otp_Expire);
+
     try {
         if (
-            req.session.phoneotp != req.body.otp ||
-            new Date(req.session.otp_Expire) < new Date()
+            parseInt(req.session.phoneotp) !== parseInt(req.body.otp) ||
+            new Date(req.session.phone_otp_Expire) < new Date()
         ) {
-            res.render("users/phoneotp", {
+            return res.render("users/Auth/phoneotp", {
                 phone: req.session.newnumber,
-                error: "Invalid otp: Please try again",
+                error: "Invalid OTP: Please try again",
                 time: null,
             });
-        } else{
+        } else {
             await User.create(req.session.users);
-            res.redirect("/login");
+            return res.redirect("/login");
         }
-           
-        console.log(req.session.phone_otp_Expire);
     } catch (error) {
         console.log("Error verifying OTP", error);
     }
 };
+
 
 export const email_check = async (req, res) => {
     const email_otp = generateotp();
@@ -142,14 +148,14 @@ export const email_check = async (req, res) => {
     req.session.email_verify = email;
 
     if (!exist_check) {
-        res.render("users/reset_pass_otp", {
+        res.render("users/Auth/reset_pass_otp", {
             showOtpInput: null,
             error: "Email doesn't exist",
             email: null,
         });
     } else {
         await sendotp(email, email_otp);
-        res.render("users/reset_pass_otp", {
+        res.render("users/Auth/reset_pass_otp", {
             showOtpInput: "Pass",
             error: null,
             email: email,
@@ -160,7 +166,7 @@ export const reset_verify_otp = (req, res) => {
     if (req.session.pass_otp == req.body.otp) {
         res.redirect("/forgotPassword");
     } else {
-        res.render("users/reset_pass_otp", {
+        res.render("users/Auth/reset_pass_otp", {
             showOtpInput: "pass",
             error: "Invalid OTP:Please try again",
             email: req.session.email_verify,
@@ -185,5 +191,5 @@ export const resend_otp_email = async (req, res) => {
 
     const resend_otp = generateotp();
     await forgetPassMail(req.session.email,resetUrl,username.firstname);
-    res.render("users/otp", { title: "OTP", error: null, time: "Pass" });
+    res.render("users/Auth/otp", { title: "OTP", error: null, time: "Pass" });
 };

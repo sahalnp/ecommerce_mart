@@ -68,7 +68,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             specialFeatures,
             modelYear,
             caseDiameter,
-            inStock
+            inStock,
         } = req.body;
 
         //Getting category id
@@ -76,18 +76,16 @@ export const productAdd = asyncHandler(async (req, res) => {
             name: { $in: req.body.categorybox },
         });
         const categoryIds = typedoc.map((category) => category._id);
-        
-        const brandDoc = await brandModel.findOne({ name: req.body.brandbox });
 
+        const brandDoc = await brandModel.findOne({ name: req.body.brandbox });
 
         if (!brandDoc) {
             return res.status(400).json({ error: "Invalid brand selected" });
         }
 
-        const brandIds = brandDoc._id; 
+        const brandIds = brandDoc._id;
 
         const isListed = true;
-
 
         const findProduct = await product.findOne({
             title,
@@ -120,7 +118,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             return res.status(400).json("The product already exists");
         }
 
-        const newProduct = await product.create({
+        await product.create({
             title,
             pricing: {
                 price: productPrice,
@@ -171,33 +169,50 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 export const editProduct = asyncHandler(async (req, res) => {
     const id = req.params.id;
-    const findProduct = await product.findOne({ _id: id }).populate('brand');
-    
-    const fndBrand= await brandModel.find()
-    const fndCat= await categoryModel.find()  
-    
+    const findProduct = await product.findOne({ _id: id }).populate("brand").populate("category").populate("image");
+
+    const fndBrand = await brandModel.find();
+    const fndCat = await categoryModel.find();
+
     res.render("admin/page/productEdit", {
         product: findProduct,
         admin: req.session.admin,
         activePage: "productEdit",
-        brand:fndBrand,
-        categry:fndCat
+        brand: fndBrand,
+        categry: fndCat,
     });
 });
-export const productEdit = asyncHandler(async (req, res) => {
-    console.log(req.body.sa,"123456789");
-    console.log(req.body.brandradio);
-    
-    try {
-        const id = req.params.id;
-        const existingProduct = await product.findById(id);
-        if (!existingProduct) {
-            return res.status(404).json({ error: "Product not found" });
-        }
-        const imageIds = [];
-        const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+    export const productEdit = asyncHandler(async (req, res) => {
+        try {
+            const id = req.params.id;
+            const existingProduct = await product.findById(id);
+            if (!existingProduct) {
+                return res.status(404).json({ error: "Product not found" });
+            }
 
-        if (Array.isArray(req.files) && req.files.length > 0) {
+            const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+            const imageIds = [];
+
+            // // Handle image uploading
+            // if (Array.isArray(req.files) && req.files.length > 0) {
+            //     // Check if the image already exists
+            //     let imgFind = await imageModel.findOne({ filepath: `${basePath}/${req.files[0].filename}` });
+
+            //     if (!imgFind) {
+
+            //         for (let file of req.files) {
+            //             const savedImage = await imageModel.create({
+            //                 filename: file.filename,
+            //                 filepath: `${basePath}/${file.filename}`,
+            //             });
+            //             imageIds.push(savedImage._id); 
+            //         }
+            //     }
+            // } else {
+            //     console.log("No new images uploaded.");
+            // }
+
+
             for (let file of req.files) {
                 const savedImage = await imageModel.create({
                     filename: file.filename,
@@ -205,90 +220,105 @@ export const productEdit = asyncHandler(async (req, res) => {
                 });
                 imageIds.push(savedImage._id);
             }
-        } else {
-
-            imageIds.push(...existingProduct.image);
-        }
-
-        const {
-            title,
-            productPrice,
-            salePrice,
-            description,
-            genderCategory,
-            bandColour,
-            bandMaterial,
-            warranty,
-            movementType,
-            itemWeight,
-            countryOrigin,
-            modelNumber,
-            caseShape,
-            specialFeatures,
-            modelYear,
-            caseDiameter,
-            inStock,
-        } = req.body;
-
-        const typedoc = await categoryModel.find({
-            name: { $in: req.body.categorybox },
-        });
-        const categoryIds = typedoc.map((category) => category._id);
+            
+            const existingImageIds = req.body.existingImages || [];
         
-        const brandDoc = await brandModel.findById(req.body.brandbox);
-        if (!brandDoc) {
-            return res.status(400).json({ error: "Invalid brand selected" });
+            const allImageIds = [...existingImageIds, ...imageIds]; 
+            const {
+                title,
+                productPrice,
+                salePrice,
+                description,
+                genderCategory,
+                bandColour,
+                bandMaterial,
+                warranty,
+                movementType,
+                itemWeight,
+                countryOrigin,
+                modelNumber,
+                caseShape,
+                specialFeatures,
+                modelYear,
+                caseDiameter,
+                inStock,
+                isListed,
+            } = req.body;
+            let isList=true
+            if (isListed=='undefined'){
+                isList=false
+            }
+            const categoryDocs = await categoryModel.find({
+                name: { $in: req.body.categorybox },
+            });
+
+            const categoryIds = categoryDocs.map((category) => category._id);
+
+            // Handle brand
+            const brandDoc = await brandModel.findById(req.body.brandradio);
+            if (!brandDoc) {
+                return res.status(400).json({ error: "Invalid brand selected" });
+            }
+
+            await product.findByIdAndUpdate(id, {
+                title,
+                pricing: {
+                    price: productPrice,
+                    salePrice: salePrice,
+                },
+                brand: brandDoc._id,
+                description,
+                bandColour,
+                bandMaterial,
+                warranty,
+                movementType,
+                itemWeight,
+                countryOrigin,
+                modelNumber,
+                caseShape,
+                specialFeatures,
+                modelYear,
+                caseDiameter,
+                category: categoryIds,
+                genderCategory,
+                isListed:isList,
+                inStock,
+                image: allImageIds, 
+                isActive: true,
+            });
+
+            res.redirect("/admin/products");
+        } catch (error) {
+            console.error("Error during product update:", error);
+            res.status(500).json({ error: "Internal Server Error" });
         }
-       
-        
+    });
 
-        await product.findByIdAndUpdate(id, {
-            title,
-            pricing: {
-                price: productPrice,
-                salePrice: salePrice,
-            },
-            brand: brandDoc._id,
-            description,
-            bandColour,
-            bandMaterial,
-            warranty,
-            movementType,
-            itemWeight,
-            countryOrigin,
-            modelNumber,
-            caseShape,
-            specialFeatures,
-            modelYear,
-            caseDiameter,
-            category: categoryIds,
-            genderCategory,
-            isListed,
-            inStock,
-            image: imageIds,
-            isActive: true,
-        });
+    export const productListing=asyncHandler(async(req,res)=>{
+        const { id } = req.params;
+        const { isListed } = req.body;
+        await product.findByIdAndUpdate(id, { isListed: isListed === 'true' });
+        res.redirect('/admin/products'); 
+    });
 
-        res.redirect("/admin/products");
-    } catch (error) {
-        console.error("Error during product update:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-export const imageDlt=asyncHandler(async(req,res)=>{
-    const { productId } = req.params;
-    const { imageId } = req.body;
+    export const imageDlt = asyncHandler(async (req, res) => {
+        const { productId, imageId } = req.params;
 
-    try {
-        await product.findByIdAndUpdate(productId, {
-            $pull: { image: imageId }
-        });
+        try {
+            // Remove the imageId from the product's image array
+            await product.findByIdAndUpdate(
+                productId,
+                { $pull: { image: imageId } },
+                { new: true }
+            );
 
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Error deleting image:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
+            // Optionally delete the image from the imageModel if needed:
+            await imageModel.findByIdAndDelete(imageId);
 
+            res.json({ success: true });
+        } catch (error) {
+            console.error("Error deleting image:", error);
+            res.status(500).json({ success: false, message: "Server error" });
+        }
+    });
 

@@ -227,9 +227,7 @@
                         placeholder="Enter your passkey"
                         required
                     >
-                    <span class="password-toggle" onclick="togglePasswordVisibility()">
-                        👁️
-                    </span>
+  
                 </div>
             </div>
 
@@ -246,18 +244,7 @@
 </div>
 
 <script>
-    function togglePasswordVisibility() {
-        const passkeyInput = document.getElementById('passkey');
-        const toggleIcon = document.querySelector('.password-toggle');
-        
-        if (passkeyInput.type === 'password') {
-            passkeyInput.type = 'text';
-            toggleIcon.textContent = '👁️';
-        } else {
-            passkeyInput.type = 'password';
-            toggleIcon.textContent = '👁️';
-        }
-    }
+
 
     document.querySelector('form').addEventListener('submit', function(e) {
         const btn = document.querySelector('.submit-btn');

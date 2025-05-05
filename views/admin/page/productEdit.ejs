@@ -1,8 +1,6 @@
 <%- include('../partials/header') %>
 <head>
     <style>
-        /* ... (keep existing styles from the original edit form) ... */
-        /* Add new styles from the add form */
         .category-group {
             display: flex;
             flex-direction: column;
@@ -38,14 +36,13 @@
 
 <%- include('../partials/navbar') %>
 
-<div class="app-content content ">
-    <div class="content-wrapper  " style="margin-top: 50px;">
+<div class="app-content content">
+    <div class="content-wrapper" style="margin-top: 50px;">
         <div class="content-header row">
             <div class="content-header-left col-md-6 col-12 mb-2">
                 <h3 class="content-header-title text-dark">Edit Product</h3>
             </div>
         </div>
-
         <div class="content-body">
             <section id="edit-product">
                 <div class="row justify-content-center">
@@ -61,173 +58,107 @@
                                     <!-- Basic Info -->
                                     <div class="form-group">
                                         <label for="title">Product Title</label>
-                                        <input type="text" id="title" name="title" class="form-control" 
-                                            value="<%= product.title %>" required />
+                                        <input type="text" id="title" name="title" class="form-control" value="<%= product.title %>" required />
                                     </div>
-                                    <input type="text"  name="sa">
+
                                     <!-- Brand Section -->
                                     <label for="brand">Brand</label>
                                     <div class="category-group">
-                                    <% brand.forEach((b, index) => { %>
-                                        <div class="category-item">
-                                        <input type="radio" id="brand<%= index %>" 
-                                            name="brandradio" 
-                                            value="vali" 
-                                            <%= product.brand && product.brand._id.toString() === b._id.toString() ? 'checked' : '' %> />
-                                        <label for="brand<%= index %>"><%= b.name %></label>
-                                        </div>
-                                    <% }); %>
+                                        <% brand.forEach((b, index) => { %>
+                                            <div class="category-item">
+                                                <input type="radio" id="brand<%= index %>" name="brandradio" value="<%= b._id %>" <%= product.brand && product.brand._id.toString() === b._id.toString() ? 'checked' : '' %> />
+                                                <label for="brand<%= index %>"><%= b.name %></label>
+                                            </div>
+                                        <% }); %>
                                     </div>
 
                                     <!-- Description -->
                                     <div class="form-group">
                                         <label for="description">Description</label>
-                                        <textarea id="description" name="description" 
-                                            class="form-control" rows="4"><%= product.description %></textarea>
+                                        <textarea id="description" name="description" class="form-control" rows="4"><%= product.description %></textarea>
                                     </div>
 
                                     <!-- Pricing -->
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label for="productPrice">Product Price</label>
-                                            <input type="number" id="productPrice" name="productPrice" 
-                                                class="form-control" value="<%= product.pricing?.price %>" required />
+                                            <input type="number" id="productPrice" name="productPrice" class="form-control" value="<%= product.pricing?.price %>" required />
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label for="salePrice">Sale Price</label>
-                                            <input type="number" id="salePrice" name="salePrice" 
-                                                class="form-control" value="<%= product.pricing?.salePrice %>" required />
+                                            <input type="number" id="salePrice" name="salePrice" class="form-control" value="<%= product.pricing?.salePrice %>" required />
                                         </div>
                                     </div>
 
-
                                     <!-- Product Specifications -->
                                     <h3 class="mt-4">Product Specifications</h3>
-                                    <div class="form-group">
-                                        <label for="bandColour">Band Colour</label>
-                                        <input type="text" id="bandColour" name="bandColour" 
-                                            class="form-control" value="<%= product.bandColour %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="bandMaterial">Band Material Type</label>
-                                        <input type="text" id="bandMaterial" name="bandMaterial" 
-                                            class="form-control" value="<%= product.bandMaterial %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="warranty">Warranty (months)</label>
-                                        <input type="number" id="warranty" name="warranty" 
-                                            class="form-control" value="<%= product.warranty %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="movementType">Watch Movement Type</label>
-                                        <input type="text" id="movementType" name="movementType" 
-                                            class="form-control" value="<%= product.movementType %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="itemWeight">Item Weight</label>
-                                        <input type="text" id="itemWeight" name="itemWeight" 
-                                            class="form-control" value="<%= product.itemWeight %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="modelNumber">Model Number</label>
-                                        <input type="text" id="modelNumber" name="modelNumber" 
-                                            class="form-control" value="<%= product.modelNumber %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="caseShape">Case Shape</label>
-                                        <input type="text" id="caseShape" name="caseShape" 
-                                            class="form-control" value="<%= product.caseShape %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="specialFeatures">Special Features</label>
-                                        <input type="text" id="specialFeatures" name="specialFeatures" 
-                                            class="form-control" value="<%= product.specialFeatures %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="modelYear">Model Year</label>
-                                        <input type="text" id="modelYear" name="modelYear" 
-                                            class="form-control" value="<%= product.modelYear %>" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="caseDiameter">Case Diameter</label>
-                                        <input type="text" id="caseDiameter" name="caseDiameter" 
-                                            class="form-control" value="<%= product.caseDiameter %>" required />
-                                    </div>
+                                    <div class="form-group"><label for="bandColour">Band Colour</label><input type="text" id="bandColour" name="bandColour" class="form-control" value="<%= product.bandColour %>" required /></div>
+                                    <div class="form-group"><label for="bandMaterial">Band Material Type</label><input type="text" id="bandMaterial" name="bandMaterial" class="form-control" value="<%= product.bandMaterial %>" required /></div>
+                                    <div class="form-group"><label for="warranty">Warranty (months)</label><input type="number" id="warranty" name="warranty" class="form-control" value="<%= product.warranty %>" required /></div>
+                                    <div class="form-group"><label for="movementType">Watch Movement Type</label><input type="text" id="movementType" name="movementType" class="form-control" value="<%= product.movementType %>" required /></div>
+                                    <div class="form-group"><label for="itemWeight">Item Weight</label><input type="text" id="itemWeight" name="itemWeight" class="form-control" value="<%= product.itemWeight %>" required /></div>
+                                    <div class="form-group"><label for="modelNumber">Model Number</label><input type="text" id="modelNumber" name="modelNumber" class="form-control" value="<%= product.modelNumber %>" required /></div>
+                                    <div class="form-group"><label for="caseShape">Case Shape</label><input type="text" id="caseShape" name="caseShape" class="form-control" value="<%= product.caseShape %>" required /></div>
+                                    <div class="form-group"><label for="specialFeatures">Special Features</label><input type="text" id="specialFeatures" name="specialFeatures" class="form-control" value="<%= product.specialFeatures %>" required /></div>
+                                    <div class="form-group"><label for="modelYear">Model Year</label><input type="text" id="modelYear" name="modelYear" class="form-control" value="<%= product.modelYear %>" required /></div>
+                                    <div class="form-group"><label for="caseDiameter">Case Diameter</label><input type="text" id="caseDiameter" name="caseDiameter" class="form-control" value="<%= product.caseDiameter %>" required /></div>
 
                                     <!-- Images Section -->
                                     <div class="form-group">
                                         <label>Product Images</label>
                                         <div id="image-wrapper">
-                                            <input type="file" name="photos" accept="image/*" 
-                                                class="form-control-file" />
+                                            <input type="file" name="photos" accept="image/*" class="form-control-file" />
                                         </div>
-                                        <button type="button" id="add-image-btn" class="small-button">
-                                            + Add Image
-                                        </button>
+                                        <button type="button" id="add-image-btn" class="small-button">+ Add Image</button>
+
+                                        <div class="form-group">
+                                            <label for="imagePosition">Enter Position for New Image:</label>
+                                            <input style="width: 300px;" type="number" id="imagePosition" class="form-control" placeholder="Enter a position number" min="1" />
+                                        </div>
+
                                         <% product.image.forEach(function(img, index) { %>
                                             <div class="col-md-4 text-center mb-3 position-relative">
                                                 <label>Image <%= index + 1 %>:</label>
-                                                <img src="<%= img.filepath || img %>" class="img-fluid rounded shadow-sm" 
-                                                     style="height: 120px; object-fit: cover;" alt="Product Image" />
-                                                
-                                                <!-- Hidden input to keep track of image ID or path -->
+                                                <img src="<%= img.filepath %>" class="img-fluid rounded shadow-sm" style="height: 120px; object-fit: cover;" alt="Product Image" />
                                                 <input type="hidden" name="existingImages[]" value="<%= img._id || img %>">
-                                        
-                                                <!-- Delete button -->
-                                                <button type="button" class="btn btn-danger btn-sm delete-image-btn ml-2"
-                                                data-image="<%= img._id || img %>" 
-                                                data-product-id="<%= product._id %>"
-                                                style="position: absolute; top: 2px;">
-                                            🗑️
-                                        </button>
-                                        
+                                                <button type="button" class="btn btn-danger btn-sm delete-image-btn ml-2" data-image="<%= img._id || img %>" data-product-id="<%= product._id %>" style="position: absolute; top: 2px;">🗑️</button>
                                             </div>
                                         <% }); %>
-                                        
-
+                                    </div>
                                     <!-- Category Section -->
                                     <div class="form-group">
                                         <label>Category</label>
                                         <div class="category-group">
                                             <% if (categry && categry.length > 0) { %>
+                                                <% 
+                                                  const selectedCategoryNames = product.category.map(cat => 
+                                                    (typeof cat === 'object' && cat.name) ? cat.name : cat.toString()
+                                                  );
+                                                %>
                                                 <% categry.forEach((category, index) => { %>
                                                     <div class="category-item">
-                                                        <input type="checkbox" id="category<%= index %>" 
-                                                            name="categorybox[]" value="<%= category.name %>"
-                                                            <%= Array.isArray(product.categry) && product.categry.includes(category.name) ? 'checked' : '' %> />
-                                                        <label for="category<%= index %>"><%= category.name %></label>
+                                                        <input type="checkbox" id="category<%= index %>" name="categorybox[]" value="<%= category.name %>" <%= selectedCategoryNames.includes(category.name) ? 'checked' : '' %> />
+                                                        <label style="margin-top: 13px;" for="category<%= index %>"><%= category.name %></label>
                                                     </div>
                                                 <% }); %>
                                             <% } %>
                                         </div>
                                     </div>
+
+
                                     
+
                                     <!-- Stock & Listing -->
                                     <div class="form-group">
                                         <label for="inStock">In Stock</label>
-                                        <input type="number" id="inStock" name="inStock" 
-                                            class="form-control" value="<%= product.inStock %>" />
+                                        <input type="number" id="inStock" name="inStock" class="form-control" value="<%= product.inStock %>" />
                                     </div>
-
                                     <div class="form-group form-check">
-                                        <input type="checkbox" name="isListed" 
-                                            class="form-check-input" id="isListed" 
-                                            <%= product.isListed ? 'checked' : '' %> />
+                                        <input type="checkbox" name="isListed" class="form-check-input" id="isListed" <%= product.isListed ? 'checked' : '' %> />
                                         <label class="form-check-label" for="isListed">Is Listed</label>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-block mt-3">
-                                        Update Product
-                                    </button>
+                                    <button type="submit" class="btn btn-primary btn-block">Update Product</button>
                                 </form>
                             </div>
                         </div>
@@ -239,18 +170,34 @@
 </div>
 
 <script>
-    // Image Upload Dynamic Fields
-    let imageIndex = 1;
-    document.getElementById('add-image-btn')?.addEventListener('click', function() {
+    document.getElementById('add-image-btn')?.addEventListener('click', function () {
         const wrapper = document.getElementById('image-wrapper');
+        const positionInput = document.getElementById('imagePosition');
+        const position = positionInput.value;
+
         const input = document.createElement('input');
         input.type = 'file';
         input.name = 'photos';
         input.accept = 'image/*';
         input.className = 'form-control-file';
-        wrapper.appendChild(input);
-        imageIndex++;
+
+        const existingInputs = wrapper.querySelectorAll('input[type="file"]');
+
+        if (position && !isNaN(position) && position > 0) {
+            const index = parseInt(position) - 1;
+            if (index < existingInputs.length) {
+                wrapper.insertBefore(input, existingInputs[index]);
+            } else {
+                wrapper.appendChild(input);
+            }
+        } else {
+            wrapper.appendChild(input);
+        }
+
+        positionInput.value = '';
     });
+
+    // Attach delete handler to all delete buttons
     document.querySelectorAll('.delete-image-btn').forEach(button => {
         button.addEventListener('click', function () {
             const imageId = this.getAttribute('data-image');
@@ -277,8 +224,5 @@
             }
         });
     });
-    </script>
-    
-
+</script>
 <%- include('../partials/footer') %>
-</html>

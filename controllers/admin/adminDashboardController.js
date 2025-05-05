@@ -3,6 +3,17 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import { admin } from "../../models/adminModel.js";
 
+export const profileEdit = asyncHandler(async (req, res) => {
+    if(req.session.admin){
+    const { fistname, Lastname, email, number } = req.body;
+    const change=await admin.findByIdAndUpdate(req.params.id,{fistname,Lastname,email,number})
+    console.log(change,"3456789");
+    
+    return res.redirect('/admin/dashboard')
+    }
+    return res.redirect('admin/login')
+});
+
 export const userEdit = asyncHandler(async (req, res) => {
     const userid = req.params.id;
     const value = await User.findOne({ _id: userid });
@@ -59,5 +70,5 @@ export const adminEdit = asyncHandler(async (req, res) => {
         { new: true }
     );
     console.log("Updated", updated);
-    res.redirect('/admin/userDetails')
+    res.redirect("/admin/userDetails");
 });

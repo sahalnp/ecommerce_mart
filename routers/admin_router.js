@@ -6,6 +6,7 @@ import {
     loadUser_Edit,
     adminLogout,
     userDetails,
+    editAdmin,
 } from "../controllers/admin/adminPageLoader.js";
 import {
     adminSignup,
@@ -18,6 +19,7 @@ import {
     userEdit,
     userDelete,
     adminEdit,
+    profileEdit,
 } from "../controllers/admin/adminDashboardController.js";
 
 import {
@@ -27,6 +29,7 @@ import {
     loadAdd_product,
     productAdd,
     productEdit,
+    productListing,
 } from "../controllers/admin/productController.js";
 import { isAdminloggedIn } from "../middleware/adminAuthMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
@@ -86,11 +89,15 @@ adminRouter.post("/admin/editCategory/:id", Editcatgory);
 
 adminRouter.get("/admin/category/delete/:id", categorydlt);
 
+adminRouter.get("/admin/edit/:id",editAdmin)
+adminRouter.post('/admin/edit/:id',profileEdit)
+
 adminRouter.get("/admin/products", getAllProducts);
 
 adminRouter.get("/admin/product/edit/:id", editProduct);
-adminRouter.post("/admin/product/edit/:id",productEdit)
+adminRouter.post("/admin/product/edit/:id", upload.array("photos"), productEdit)
 adminRouter.post('/admin/product/:productId/delete-image',imageDlt)
+adminRouter.post('/admin/product/listing/:id',productListing)
 
 adminRouter.get("/admin/brand", brandList);
 

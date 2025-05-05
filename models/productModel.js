@@ -69,10 +69,6 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
-        modelYear: {
-            type: String,
-            required: true,
-        },
 
         caseDiameter: {
             type: String,
@@ -106,6 +102,10 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        isCart:{
+            type:Boolean,
+            default:false
+        }
     },
     { timestamps: true }
 );
