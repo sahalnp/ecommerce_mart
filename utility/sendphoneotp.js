@@ -8,24 +8,27 @@ const client = new twilio(
     process.env.TWILIO_AUTH_TOKEN
 );
 const phoneGenerateOtp = () => Math.floor(100000 + Math.random() * 900000);
-const now = new Date();
 
-export const sendsms = async (req, res,next) => {
+export const sendsms = async (req, res, next) => {
     req.session.phoneotp = phoneGenerateOtp();
-    console.log("The otp send to phone:", req.session.phoneotp)
-    req.session.phone_otp_Expire = settimer(now);
+    console.log("The OTP sent to phone:", req.session.phoneotp);
+
+    req.session.phone_otp_Expire = settimer(new Date());
     console.log(req.session.phone_otp_Expire);
-    const new_number = req.session.newnumber;
+
     const msgoption = {
         from: process.env.TWILIO_NUMBER,
-        to: new_number,
+        to: req.session.newnumber,
         body: `Your OTP is: ${req.session.phoneotp}`,
     };
+
     try {
         const sms = await client.messages.create(msgoption);
-        console.log("The message is ", sendsms);
+        console.log("The message is ", sms);
     } catch (error) {
-        console.log("the error is ", error);
+        console.error("The error is ", error);
+        return res.status(500).json({ message: "Failed to send OTP" });
     }
+
     next();
 };

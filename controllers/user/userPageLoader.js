@@ -1,91 +1,176 @@
 import asyncHandler from "express-async-handler";
 import { product } from "../../models/productModel.js";
+import { User } from "../../models/userModel.js";
+import { Cart } from "../../models/cartModel.js";
+
+export const home = asyncHandler(async (req, res) => {
+    const latestProducts = await product
+        .find()
+        .sort({ createdAt: -1 })
+        .limit(3)
+        .populate("image")
+        .populate("brand");
+
+    if (req.session.users) {
+        let username =
+            req.session.users.firstname + " " + req.session.users.Lastname;
+        req.session.userName = req.session.user_name || username;
+
+        return res.render("users/page/index", {
+            username: req.session.userName,
+            user: req.session.users,
+            prod: latestProducts,
+        });
+    }
+
+    return res.render("users/page/index", {
+        username: null,
+        user: null,
+        prod: latestProducts,
+    });
+});
 
 export const loadEditProfile = asyncHandler(async (req, res) => {
     if (req.session.users) {
         res.render("users/profileEdit", {
             user: req.session.users,
-            username: req.session.username,
+            username: req.session.userName,
         });
     }
     res.redirect("/login");
 });
 
 export const laodShop = asyncHandler(async (req, res) => {
+    
     if (req.session.users) {
-        const find = await product.find().populate('image');
+        const find = await product.find().populate("image");
+        const userfind = await User.findById(req.session.users._id);
+        // change wishlist id to string to check and add a new new field(wish) to product model and assing true or false
+        const productsWishlist = find.filter((product) => {
+            return userfind.wishList.some(
+                (id) => id.toString() === product._id.toString()
+            );
+        });
         return res.render("users/page/shop", {
-            username: req.session.username,
+            username: req.session.userName,
             product: find,
+            user: req.session.users,
+            wish: productsWishlist,
+
         });
     }
     return res.redirect("/login");
 });
-export const laodProduct=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        const find=await product.findById(req.params.id).populate('image').populate('brand')
-        const percent = Math.floor(((find.pricing.price - find.pricing.salePrice) / find.pricing.price) * 100);
-        
-        res.render('users/page/productDetails',{
-            username:req.session.username,
-            product:find,
-            discount:percent
-        })
+
+export const laodProduct = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        const find = await product
+            .findById(req.params.id)
+            .populate("image")
+            .populate("brand");
+        const percent = Math.floor(
+            ((find.pricing.price - find.pricing.salePrice) /
+                find.pricing.price) *
+                100
+        );
+        res.render("users/page/productDetails", {
+            username: req.session.userName,
+            product: find,
+            discount: percent,
+            cart: "Add to Cart",
+            user: req.session.users,
+        });
     }
-})
-export const addTocart=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/cart',{
-            username:req.session.username
-        })
+});
+export const loadcart = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        const find = await Cart.find({ UserId: req.session.users._id });
+        const total = [];
+        const prod = [];
+        for (let i = 0; i < find.length; i++) {
+            const singleProduct = await product
+                .findById(find[i].productId)
+                .populate("image");
+            const value = find[i].quantity * singleProduct.pricing.salePrice;
+            prod.push(singleProduct);
+            total.push(value);
+        }
+        const subtotal = total.reduce((sum, curr) => sum + curr, 0);
+
+        res.render("users/page/cart", {
+            username: req.session.userName,
+            products: prod,
+            subtotal: subtotal,
+            cart: find,
+            user: req.session.users,
+        });
     }
-})
-export const about=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/about',{
-            username:req.session.username
-        })
+});
+export const about = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        res.render("users/page/about", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const blog=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/blog',{
-            username:req.session.username
-        })
+});
+export const blog = asyncHandler(async (req, res) => {
+    if (req.session.admin) {
+        res.render("users/page/blog", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const blogDetails=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/blog-details',{
-            username:req.session.username
-        })
+});
+export const blogDetails = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        res.render("users/page/blog-details", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const elements=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/elements',{
-            username:req.session.username
-        })
+});
+
+export const confirmaton = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        res.render("users/page/confirmation", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const confirmaton=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/confirmation',{
-            username:req.session.username
-        })
+});
+export const checkout = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        res.render("users/page/checkout", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const checkout=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/checkout',{
-            username:req.session.username
-        })
+});
+export const contact = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        res.render("users/page/contact", {
+            username: req.session.userName,
+            user: req.session.users,
+        });
     }
-})
-export const contact=asyncHandler(async(req,res)=>{
-    if(req.session.admin){
-        res.render('users/page/contact',{
-            username:req.session.username
-        })
+    res.redirect("/login");
+});
+export const wishlist = asyncHandler(async (req, res) => {
+    if (req.session.users) {
+        const find = await User.findById(req.session.users._id).populate(
+            "wishList"
+        );
+
+        const findProd = await product
+            .find({ _id: find.wishList })
+            .populate("image");
+        req.session.exist = findProd._id;
+
+        res.render("users/page/whishlist", {
+            username: req.session.userName,
+            user: req.session.users,
+            wishlist: findProd,
+        });
     }
-})
+});

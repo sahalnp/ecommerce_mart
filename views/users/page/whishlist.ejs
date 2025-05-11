@@ -1,0 +1,140 @@
+<%- include('../partials/header') %>
+<head>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background: #f9f9f9;
+        }
+
+        .wishlist-container {
+            max-width: 900px;
+            margin: 3rem auto 2rem auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .wishlist-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s ease;
+        }
+
+        .wishlist-item:hover {
+            background: #fafafa;
+        }
+
+        .wishlist-item img {
+            width: 90px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+            margin-left: 1.5rem;
+        }
+
+        .item-details h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #222;
+        }
+
+        .item-details p {
+            margin: 0.4rem 0;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .wishlist-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .wishlist-actions button {
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 6px;
+            background: #2d2d2d;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
+        }
+
+        .wishlist-actions button:hover {
+            background: #444;
+        }
+
+        .wishlist-actions button:last-child {
+            background: #e53935;
+        }
+
+        .wishlist-actions button:last-child:hover {
+            background: #c62828;
+        }
+
+        .box {
+            height: 400px;
+            background: linear-gradient(to right, #e3f2fd, #ffffff);
+        }
+
+        .wishlist-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: gray;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<main>
+    <!-- Hero Area Start -->
+    <div class="slider-area box">
+        <div class="single-slider slider-height2 d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-12 d-flex flex-column align-items-center">
+                        <div class="hero-cap text-center">
+                            <h2 style="margin-bottom: 110px">Wishlist</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Box -->
+    <div class="wishlist-container">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Your Wishlist</h2>
+
+        <% if (wishlist && wishlist.length > 0) { %> 
+            <% wishlist.forEach(item => { %>
+                <div class="wishlist-item">
+                    <img src="<%= item.image[0].filepath %>" alt="Watch Image" />
+                    <div class="item-details">
+                        <h4><%= item.title %></h4>
+                        <p>Price: ₹<%= item.pricing.price %></p>
+                    </div>
+                    <div class="wishlist-actions">
+                        <button>Add to Cart</button>
+                        <button>Remove</button>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="wishlist-empty">
+                No product added to wishlist.
+            </div>
+        <% } %>
+    </div>
+</main>
+
+<%- include('../partials/footer') %>

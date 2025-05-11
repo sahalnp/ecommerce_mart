@@ -14,7 +14,7 @@ export const loginUser = async (req, res) => {
     
     req.session.users = user;
     
-    console.log("user is ", req.session.users);
+    console.log("user is ",req.session.users );
     req.session.user_emailornumber = emailornumber;
 
     if (!user) {
@@ -38,16 +38,13 @@ export const signupUser = async (req, res, next) => {
     const { countryCode, number } = req.body;
     const fullPhoneNumber = `${countryCode}${number}`;
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    req.session.users = {
+    req.session.newUsers = {
         firstname: req.body.firstname,
         Lastname: req.body.lastname,
         email: req.body.email,
         number: fullPhoneNumber,
         password: hashedPassword,
     };
-    req.session.email = req.session.users.email;
-    req.session.newnumber = req.session.users.number;
-    console.log(req.session.newnumber, "number");
 
     console.log(req.session.users);
 
@@ -73,7 +70,7 @@ export const send_otp = async (req, res, next) => {
     req.session.otp = generateotp();
 
     
-    await sendotp(req.session.email,req.session.otp); // Send OTP to user's email
+    await sendotp(req.session.users.email,req.session.otp); // Send OTP to user's email
     const now = new Date();
     req.session.otp_Expire = settimer(now);
     next();
@@ -116,9 +113,6 @@ export const logout = (req, res) => {
 };
 
 export const phoneverifyotp = async (req, res) => {
-    console.log("Received OTP:", req.body.otp);
-    console.log("Stored OTP:", req.session.phoneotp);
-    console.log("Expiry Time:", req.session.phone_otp_Expire);
 
     try {
         if (
@@ -126,12 +120,12 @@ export const phoneverifyotp = async (req, res) => {
             new Date(req.session.phone_otp_Expire) < new Date()
         ) {
             return res.render("users/Auth/phoneotp", {
-                phone: req.session.newnumber,
+                phone: req.session.users.number,
                 error: "Invalid OTP: Please try again",
                 time: null,
             });
         } else {
-            await User.create(req.session.users);
+            await User.create(req.session.newUser);
             return res.redirect("/login");
         }
     } catch (error) {
@@ -183,13 +177,13 @@ export const new_pass = async (req, res) => {
     res.redirect("/login");
 };
 export const resend_otp_email = async (req, res) => {
-    console.log(req.session.email);
-    const username=await User.findOne({email:req.session.email})
+    console.log(req.session.users.email);
+    const username=await User.findOne({email:req.session.users.email})
     console.log(username.firstname);
     const resetUrl=`${req.protocol}://${req.get('host')}/reset`;
 
 
     const resend_otp = generateotp();
-    await forgetPassMail(req.session.email,resetUrl,username.firstname);
+    await forgetPassMail(req.session.users.email,resetUrl,username.firstname);
     res.render("users/Auth/otp", { title: "OTP", error: null, time: "Pass" });
 };

@@ -31,7 +31,7 @@ import {
     productEdit,
     productListing,
 } from "../controllers/admin/productController.js";
-import { isAdminloggedIn } from "../middleware/adminAuthMiddleware.js";
+import { isAdminloggedIn } from "../middleware/authMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 import {
     addCategory,

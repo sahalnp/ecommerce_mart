@@ -303,17 +303,13 @@ export const editProduct = asyncHandler(async (req, res) => {
 
     export const imageDlt = asyncHandler(async (req, res) => {
         const { productId, imageId } = req.params;
-
         try {
-            // Remove the imageId from the product's image array
             await product.findByIdAndUpdate(
                 productId,
                 { $pull: { image: imageId } },
                 { new: true }
             );
-
-            // Optionally delete the image from the imageModel if needed:
-            await imageModel.findByIdAndDelete(imageId);
+            // await imageModel.findByIdAndDelete(imageId);
 
             res.json({ success: true });
         } catch (error) {
