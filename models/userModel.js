@@ -23,10 +23,20 @@ const userSchema = new mongoose.Schema({
     state: { type: String, default: null },
     city: { type: String, default: null },
     pincode: { type: Number, default: null },
-    wishList: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
-    }],
+    wishList: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "product",
+        },
+    ],
+    status: {
+        type: Boolean,
+        default: true,
+    },
+    isDlt:{
+        type:Boolean,
+        default:false
+    },
     createdAt: { type: Date, default: Date.now },
 });
 export const User = mongoose.model("User", userSchema);

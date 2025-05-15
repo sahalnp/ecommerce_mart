@@ -58,5 +58,5 @@ export const updateStatus=asyncHandler(async(req,res)=>{
     
     res.redirect('/admin/brand')
 
-
 })
+

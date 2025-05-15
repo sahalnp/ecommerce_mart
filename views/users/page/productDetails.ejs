@@ -279,6 +279,7 @@
 
                 <% if (product.inStock > 0) { %>
                 <div class="stock-status">In Stock</div>
+                
                 <% } else { %>
                 <div class="text-danger">Out of stock</div>
                 <% } %>
@@ -332,18 +333,26 @@
                         </button>
                     </div>
 
-                    <div class="action-buttons">
-                        <button type="submit" class="btn btn-add-to-cart">
-                            <i class="fas fa-shopping-cart me-2"></i> <%= cart
-                            %>
-                        </button>
+                  <div class="action-buttons">
+    <% if (exist == true) { %>
+        <!-- Just a link, no form submission -->
+        <a href="/cart" class="btn btn-add-to-cart">
+            <i class="fas fa-shopping-cart me-2"></i> Go to cart
+        </a>
+    <% } else { %>
+        <!-- This button will submit the form to add the product to cart -->
+        <button type="submit" class="btn btn-add-to-cart">
+            <i class="fas fa-shopping-cart me-2"></i> <%= cart %>
+        </button>
+    <% } %>
 
-                        <button type="button" class="btn btn-buy-now">
-                            <i class="fas fa-bolt"></i> Buy Now
-                        </button>
+    <button type="button" class="btn btn-buy-now">
+        <i class="fas fa-bolt"></i> Buy Now
+    </button>
 
-                        <div class="cart-toast">Item added to cart! 🎉</div>
-                    </div>
+    <div class="cart-toast">Item added to cart! 🎉</div>
+</div>
+
                 </form>
 
                 <div class="product-specs">
@@ -461,7 +470,7 @@
       });
     });
   
-    // Show toast and redirect after item is added to cart
+
     function addToCart() {
   const toast = document.querySelector('.cart-toast');
   if (toast) {

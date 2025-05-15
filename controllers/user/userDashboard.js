@@ -19,56 +19,63 @@ export const addtoCart = asyncHandler(async (req, res) => {
     const UserId = req.session.users._id;
     const productId = req.body.productId;
 
-    const find = await Cart.find({
-        UserId: UserId,
-        productId: productId,
-    });
-    let show=false
-    const exist = await Cart.find({ productId });
-    if (exist){
-        show:true
-    }
     await Cart.create({
         UserId,
         productId,
         quantity: req.body.quantity,
-        exist:show
     });
     res.redirect("/cart");
 });
 export const addTowhish = asyncHandler(async (req, res) => {
     const productId = req.params.id;
-    const userId=req.session.users._id
+    const userId = req.session.users._id;
     console.log(req.params.id);
-    
+
     try {
         await User.findByIdAndUpdate(
             userId,
             { $addToSet: { wishList: productId } },
             { new: true }
         );
-        
-          res.json({ success: true });
-          
 
+        res.json({ success: true });
     } catch (error) {
-        console.log("Failed to add in the wishlist",error);
-        res.status(500).json({ success: false, message: "Failed to add to wishlist" });
+        console.log("Failed to add in the wishlist", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to add to wishlist",
+        });
     }
 });
 export const removeFromWish = asyncHandler(async (req, res) => {
     try {
-    const productId = req.params.id;
-    const userId =req.session.users._id;  
-    await User.findByIdAndUpdate(userId, {
-        $pull: { wishList: productId },
-    },
-    {new:true}
-);
-    
-    res.json({ success: true });
+        const productId = req.params.id;
+        const userId = req.session.users._id;
+        await User.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { wishList: productId },
+            },
+            { new: true }
+        );
+        res.json({ success: true });
     } catch (error) {
-        console.log(error,"ERROR");
-        
+        console.log(error, "ERROR");
     }
 });
+export const quantchnge=asyncHandler(async(req,res)=>{
+    const quantity=req.body.quantity
+    const productId=req.body.productId
+    const UserId=req.session.users._id
+
+    
+    
+    const updatedItem = await Cart.findOneAndUpdate(
+        { UserId, productId },
+        { quantity: quantity },
+        { new: true }
+    );
+    console.log(updatedItem);
+    
+
+})

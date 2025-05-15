@@ -36,7 +36,7 @@ import {
     loadEditProfile,
     wishlist,
 } from "../controllers/user/userPageLoader.js";
-import { addtoCart,  addTowhish, editProfile, removeFromWish } from "../controllers/user/userDashboard.js";
+import { addtoCart,  addTowhish, editProfile, quantchnge, removeFromWish } from "../controllers/user/userDashboard.js";
 
 export const UserRouter = express.Router();
 
@@ -77,6 +77,7 @@ UserRouter.get("/product/:id", laodProduct);
 UserRouter.post("/product/:id",addtoCart)
 
 UserRouter.get("/cart", loadcart);
+UserRouter.post('/cart/quantity',quantchnge)
 
 UserRouter.get("/about", about);
 
@@ -93,4 +94,5 @@ UserRouter.get("/confirmation", confirmaton);
 UserRouter.get("/checkout", checkout);
 
 UserRouter.get("/contact", contact);
+
 export default UserRouter;

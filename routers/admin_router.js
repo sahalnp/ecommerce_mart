@@ -20,6 +20,7 @@ import {
     userDelete,
     adminEdit,
     profileEdit,
+    userStatus,
 } from "../controllers/admin/adminDashboardController.js";
 
 import {
@@ -108,5 +109,6 @@ adminRouter.get("/admin/brand/add", loadBrandAdd);
 adminRouter.post("/admin/brand/add", addBrand);
 
 adminRouter.post("/admin/brand/update-status/:id", updateStatus);
+adminRouter.post('/admin/user/update-status/:id',userStatus)
 
 export default adminRouter;

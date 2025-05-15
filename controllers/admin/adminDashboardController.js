@@ -17,7 +17,8 @@ export const profileEdit = asyncHandler(async (req, res) => {
 export const userEdit = asyncHandler(async (req, res) => {
     const userid = req.params.id;
     const value = await User.findOne({ _id: userid });
-
+    console.log(req.body.status,"sdfghjjvcvbn");
+    
     let hashedPassword = value.password;
 
     if (req.body.password) {
@@ -33,21 +34,23 @@ export const userEdit = asyncHandler(async (req, res) => {
                 email: req.body.email,
                 number: req.body.number,
                 password: hashedPassword,
+                status:req.body.status
             },
         },
         { new: true }
     );
 
-    console.log(updated);
+    console.log(updated,"qwertyuio");
 
-    res.redirect("/admin/dashboard");
+    res.redirect("/admin/userDetails");
 });
-export const userDelete = asyncHandler(async (req, res) => {
+export const userDelete = asyncHandler(async (req, res) => {  
     const userid = req.params.id;
-
-    await User.findOneAndDelete({
-        _id: userid,
-    });
+    const finds=await User.findById('681f35aa5ce97761c32b8f2a')
+    const find=await User.findByIdAndUpdate(userid,{isDlt:true})
+    console.log(find,"wertyu");
+    res.redirect('/admin/userDetails')
+    
 });
 export const adminEdit = asyncHandler(async (req, res) => {
     const adminid = req.params.id;
@@ -72,3 +75,13 @@ export const adminEdit = asyncHandler(async (req, res) => {
     console.log("Updated", updated);
     res.redirect("/admin/userDetails");
 });
+
+export const userStatus=asyncHandler(async(req,res)=>{
+    console.log(req.body.status);
+    
+    const find = await User.findByIdAndUpdate(req.params.id,{status:req.body.status});
+    console.log(find);
+    
+    res.redirect('/admin/userDetails')
+
+})

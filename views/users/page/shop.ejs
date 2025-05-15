@@ -1,14 +1,42 @@
 <%- include('../partials/header') %>
+<head>
+    <style>
+        .hero-cap .name {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+.slider-area {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
 
+.single-slider {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-cap h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #0d1b2a; /* dark navy-like color */
+}
+
+    </style>
+</head>
 <main>
     <!-- Hero Area Start-->
-    <div class="slider-area">
+    <div class="slider-area" style=" height: 400px;">
         <div class="single-slider slider-height2 d-flex align-items-center">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="hero-cap text-center">
-                            <h2>Watch Shop</h2>
+                            <h2 class="name">Watch Shop</h2>
                         </div>
                     </div>
                 </div>
@@ -69,7 +97,12 @@
                                         <img src="<%= product[index].image[0]?.filepath || 'default-image-path.jpg' %>"  height="350px" alt="<%= product[index].title %>"  />
                                     </a>
                                     <div class="img-cap">
-                                        <a href="/cart/<%= product[index]._id %>"><span>Add to cart</span></a>
+                                        <%   const inCart = cartItems && cartItems.some(item => item.productId.toString() === product[index]._id.toString()); %>
+                                        <% if (inCart) { %>
+                                          <a href="/cart"><span>Go to cart</span></a>
+                                        <% } else { %>
+                                         <a  onclick="addToCart('<%= product[index]._id %>')"><span>Add to cart</span></a>
+                                         <% } %>
                                     </div>
                                     <div class="favorit-items" style="top: 0px;">
                                         <% if (wish.some(w => w._id.toString() === product[index]._id.toString())) { %>
@@ -130,6 +163,38 @@
 </main>
 
 <script>
+
+      async function addToCart(productId) {
+        try {
+          console.log(productId,"id");
+          
+        const res = await axios.post(
+        `/product/add-to-cart`,  // Change this route as needed
+        { productId, quantity: 1 },
+        { withCredentials: true }
+      );
+
+      console.log("Added to cart", res.data);
+
+
+    // Show toast
+    const toast = document.querySelector('.cart-toast');
+    if (toast) {
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+    
+    // Optional: update UI or reload page here if needed
+    // window.location.reload();
+
+  } catch (error) {
+    console.error("Add to cart failed:", error);
+    alert("Failed to add item to cart.");
+  }
+}
+
 document.addEventListener("click", function (e) {
     const icon = e.target.closest(".heart-toggle");
     if (!icon) return;
@@ -162,6 +227,7 @@ async function addWishlist(productId) {
         console.error("Add wishlist error: ", err);
     }
 }
+
 
 async function removeFromWishlist(productId) {
     try {

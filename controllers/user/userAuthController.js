@@ -22,6 +22,11 @@ export const loginUser = async (req, res) => {
             error: "User does not exist. Please sign up.",
         }); //sending login page if user doesnot exist
     }
+    if(user.isDlt==false){
+         return res.render("users/Auth/login", {
+            error: "User deleted by admin",
+        }); 
+    }
 
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password

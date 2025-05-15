@@ -3,11 +3,55 @@
   <style>
     .quantitybox{
       background-color: black;
-      color:white
+      color: white;
     }
-    .box {
-    height: 400px;
+            .hero-cap .name {
+    font-size: clamp(2rem, 5vw, 3.5rem);
 }
+.slider-area {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.single-slider {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-cap h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #0d1b2a; /* dark navy-like color */
+}
+    .proceed-btn {
+      background-color: #6a63ed;
+      color: rgb(255, 255, 255);
+      border: none;
+      padding: 12px 24px;
+      font-weight: 500;
+      border-radius: 30px;
+      text-align: center;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+    .proceed-btn:hover {
+      background-color: #534be8;
+      text-decoration: none;
+      color: black;
+    }
+    .empty-cart-container {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .empty-cart-container h4 {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <main>
@@ -18,7 +62,7 @@
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="hero-cap text-center">
-                            <h2 style="margin-bottom: 110px;">Cart List</h2>
+                            <h2 class="name">Cart List</h2>
                         </div>
                     </div>
                 </div>
@@ -30,178 +74,120 @@
     <section class="cart_area section_padding">
         <div class="container">
             <div class="cart_inner">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Product</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% for (let i = 0; i < products.length; i++) { %>
-                            <tr>
-                                <td>
-                                    <div class="media">
-                                        <div class="d-flex">
-                                            <img
-                                                src="<%= products[i].image[0].filepath || '/default.png' %>"
-                                                alt="Product"
-                                            />
+                <% if (products && products.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (let i = 0; i < products.length; i++) { %>
+                                <tr>
+                                    <td>
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <img
+                                                    src="<%= products[i].image[0].filepath || '/default.png' %>"
+                                                    alt="Product"
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="media-body">
-                                        <h5><%= products[i].title %></h5>
-                                    </div>
-                                </td>
-                                <td>
-                                    ₹&nbsp;<%=
-                                    Number(products[i].pricing.price).toFixed(2)
-                                    %>
-                                </td>
-                                <td>
-
+                                    </td>
+                                    <td>
+                                        <div class="media-body">
+                                            <h5><%= products[i].title %></h5>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        ₹&nbsp;<%= Number(products[i].pricing.salePrice) %>
+                                    </td>
+                                    <td>
                                         <input
                                             type="hidden"
                                             name="productId"
                                             value="<%= products[i]._id %>"
-                                            
                                         />
-                                        <div class="qty-selector">
-                                          <button class="qty-btn quantitybox" onclick="changeQty(this, -1)">-</button>
-                                          <span class="qty-value p-3">1</span>
-                                          <button class="qty-btn quantitybox" onclick="changeQty(this, 1)">+</button>
-                                      </div>
+                                        <div class="qty-selector" data-product-id="<%= products[i]._id %>">
+                                            <% const Cart = cartItems && cartItems.find(item => item.productId.toString() === products[i]._id.toString()); %> 
+                                            <button class="qty-btn quantitybox" onclick="changeQty(this, -1)">-</button>
+                                            <span class="qty-value p-3" name="quantity"><%= Cart.quantity %></span>
+                                            <button class="qty-btn quantitybox"  onclick="changeQty(this, 1)">+</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                    
+                                      ₹&nbsp;<%= total[i].toFixed(2) %>
 
-                                    </form>
-                                </td>
-                                <td>
-                                    ₹&nbsp;<%= (products[i].pricing.price *
-                                    cart[i].quantity).toFixed(2) %>
-                                </td>
-                            </tr>
-                            <% } %>
+                                    </td>
+                                </tr>
+                                <% } %>
 
-                            <!-- Subtotal Row -->
+                                <!-- Subtotal Row -->
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><h5>Subtotal</h5></td>
+                                    <td>
+                                        <h5>₹&nbsp;<%= subtotal.toFixed(2) %></h5>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td><h5>Subtotal</h5></td>
-                                <td>
-                                    <h5>₹&nbsp;<%= subtotal.toFixed(2) %></h5>
-                                </td>
-                            </tr>
-
-                            <!-- Shipping Options -->
-                            <!-- <tr class="shipping_area">
-                                <td></td>
-                                <td></td>
-                                <td><h5>Shipping</h5></td>
-                                <td>
-                                    <div class="shipping_box">
-                                        <ul class="list">
-                                            <li>
-                                                Flat Rate: $5.00
-                                                <input
-                                                    type="radio"
-                                                    name="shipping"
-                                                />
-                                            </li>
-                                            <li>
-                                                Free Shipping
-                                                <input
-                                                    type="radio"
-                                                    name="shipping"
-                                                />
-                                            </li>
-                                            <li>
-                                                Flat Rate: $10.00
-                                                <input
-                                                    type="radio"
-                                                    name="shipping"
-                                                />
-                                            </li>
-                                            <li class="active">
-                                                Local Delivery: $2.00
-                                                <input
-                                                    type="radio"
-                                                    name="shipping"
-                                                />
-                                            </li>
-                                        </ul>
-                                        <h6>
-                                            Calculate Shipping
-                                            <i
-                                                class="fa fa-caret-down"
-                                                aria-hidden="true"
-                                            ></i>
-                                        </h6>
-                                        <select class="shipping_select">
-                                            <option value="1">
-                                                Bangladesh
-                                            </option>
-                                            <option value="2">India</option>
-                                            <option value="3">Pakistan</option>
-                                        </select>
-                                        <select
-                                            class="shipping_select section_bg"
-                                        >
-                                            <option value="1">
-                                                Select a State
-                                            </option>
-                                            <option value="2">
-                                                Select a State
-                                            </option>
-                                        </select>
-                                        <input
-                                            class="post_code"
-                                            type="text"
-                                            placeholder="Postcode/Zipcode"
-                                        />
-                                        <a class="btn_1" href="#"
-                                            >Update Details</a
-                                        >
-                                    </div>
-                                </td>
-                            </tr> -->
-
-                            <!-- Cart Actions -->
-                            
-                        </tbody>
-                    </table>
-
-                    <!-- Checkout Buttons -->
-                    <div class="checkout_btn_inner float-right">
-                        <a class="btn_1" href="#">Continue Shopping</a>
-                        <a class="btn_1 checkout_btn_1" href="#"
-                            >Proceed to checkout</a
-                        >
+                        <!-- Checkout Buttons -->
+                        <div class="checkout_btn_inner float-right">
+                            <a class="proceed-btn" href="/shop">Continue shopping</a>
+                            <a class="proceed-btn" href="/checkout">Proceed to Buy</a>
+                        </div>
                     </div>
-                </div>
+                <% } else { %>
+                    <!-- Empty Cart Display -->
+                    <div class="empty-cart-container">
+                        <h4>Your cart is empty</h4>
+                        <a href="/shop" class="proceed-btn">Browse Products</a>
+                    </div>
+                <% } %>
             </div>
         </div>
     </section>
 </main>
 
-  <script>
-    function changeQty(button, delta) {
-        const qtySpan = button.parentElement.querySelector(".qty-value");
-        let quantity = parseInt(qtySpan.textContent);
+<script>
+ async function changeQty(button, delta) {
+  const qtySelector = button.parentElement;
+  const qtySpan = qtySelector.querySelector(".qty-value");
+  const productId = qtySelector.getAttribute("data-product-id");
 
-        quantity += delta;
-        if (quantity < 1) quantity = 1;
+  let quantity = parseInt(qtySpan.textContent);
+  quantity += delta;
 
-        qtySpan.textContent = quantity;
-    }
+  // Clamp the quantity between 1 and 10
+  if (quantity < 1) quantity = 1;
+  if (quantity > 10) quantity = 10;
+
+  qtySpan.textContent = quantity;
+
+  // Send to backend via Axios
+  try {
+    const res = await axios.post('/cart/quantity', {
+      productId,
+      quantity
+    });
+    console.log(res.data.message); // Optionally show success message
+  } catch (error) {
+    console.error("Failed to update quantity", error);
+    // Optionally revert quantity
+  }
+}
+
+
 </script>
-
-
 
 <%- include('../partials/footer') %>
