@@ -1,0 +1,215 @@
+<%- include('../partials/authHeader', { title: "Password Reset" }) %>  
+<head>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 7px;
+    border: 1px solid #ced4da;
+    font-size: 1rem; /* Ensure normal readable size */
+    background-color: #fff;
+    color: #212529;
+}
+
+.form-control:-webkit-autofill {
+    font-size: 1rem !important; /* Override autofill small font */
+    background-color: #fff !important;
+    -webkit-text-fill-color: #212529 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.form-control:focus {
+    border-color: #495057;
+    box-shadow: none; /* Remove blue glow */
+    outline: none;
+}
+
+        .forgot-password-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background-color: #495057; /* Neutral gray */
+            color: white;
+            text-align: center;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 1.5rem 1rem;
+        }
+        
+        .card-title {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-control {
+            padding: 0.75rem 1rem;
+            border-radius: 7px;
+            border: 1px solid #ced4da;
+        }
+        
+        .form-control:focus {
+            border-color: #495057;
+            box-shadow: 0 0 0 0.2rem rgba(73, 80, 87, 0.25);
+        }
+        
+        .btn-primary {
+            background-color: #495057;
+            border-color: #495057;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            border-radius: 7px;
+        }
+        
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #343a40;
+            border-color: #343a40;
+        }
+        
+        .text-info {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #6c757d !important;
+        }
+        
+        .text-info a {
+            color: #131aec;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .text-info a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            border-radius: 7px;
+            font-size: 0.9rem;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="forgot-password-container">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-key-fill icon-lock"></i>
+                    <h4 class="card-title">Forgot Password</h4>
+                    <p class="mb-0">Enter your email to reset your password</p>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Success message -->
+                    <div class="alert alert-success d-none" id="successAlert" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Password reset link sent! Please check your email.
+                    </div>
+                    
+                    <!-- Error message -->
+                    <div class="alert alert-danger d-none" id="errorAlert" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="errorMessage">Email not found in our records.</span>
+                    </div>
+                    
+                    <form id="forgotPasswordForm" onsubmit="return handleSubmit(event)">
+                        <div class="mb-4">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email" 
+                                value="<%= value %>"
+                                placeholder="Enter your registered email"
+                                required
+                            >
+                            <div class="form-text">              
+                                 We'll send you a link to reset your password.
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            Send Reset Link
+                        </button>
+                    </form>
+                    
+                    <div class="text-info">
+                        <span>Remembered your password? </span>
+                        <a href="/login">Back to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+      async function handleSubmit(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const successAlert = document.getElementById('successAlert');
+    const errorAlert = document.getElementById('errorAlert');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Hide alerts
+    successAlert.classList.add('d-none');
+    errorAlert.classList.add('d-none');
+
+    // Validate email
+    if (!isValidEmail(email)) {
+        errorMessage.textContent = 'Please enter a valid email address.';
+        errorAlert.classList.remove('d-none');
+        return false;
+    }
+
+    try {
+        const response = await axios.post('/resetpassEmail', { email });
+
+        if (response.data.exist) {
+            successAlert.classList.remove('d-none');
+            document.getElementById('forgotPasswordForm').reset();
+        } else {
+           errorMessage.innerHTML = 'Email does not exist. Please <a href="/signup">signup</a>';
+            errorAlert.classList.remove('d-none');
+        }
+    } catch (error) {
+        console.log(error);
+        
+        errorMessage.textContent = 'Something went wrong. Please try again.';
+        errorAlert.classList.remove('d-none');
+        console.error(error);
+    }
+}
+
+// Email validation regex
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

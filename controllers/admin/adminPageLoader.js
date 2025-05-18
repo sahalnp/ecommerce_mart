@@ -80,12 +80,8 @@ export const editAdmin = asyncHandler(async (req, res) => {
     }
 });
 export const userDetails = asyncHandler(async (req, res) => {
-    const s = await User.findById("681f35aa5ce97761c32b8f2a");
-    console.log(s, "sdfghjkl");
-
-    
     const adminData = await admin.findOne({ _id: req.session.admin._id });
-    const find = await User.find({ role: 0 });
+    const find = await User.find();
     if (!req.session.admin) {
         return res.redirect("/admin/login");
     }

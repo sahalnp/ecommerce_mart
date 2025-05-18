@@ -1,0 +1,488 @@
+
+
+:root { --amazon-orange: #FF9900; --amazon-dark: #131921; --amazon-blue: #232F3E; --amazon-yellow: #FEBD69; --light-gray: #EAEDED; --border-color: #DDD; --button-color: #FFD814; --button-hover: #F
+
+pasted
+
+
+<%- include('../partials/header') %> <head> <title> Checkout</title> <link rel="stylesheet" href="\assets\css\checkout.css"> <style> .hero-cap .name { font-size: clamp(2rem, 5vw, 3.5rem); } .slider-area { height: 400px; display: flex; align-items: ce
+
+pasted
+
+change the color of shopping box  to the backgorund color and backoground clor ot white
+
+I'll update the CSS to swap the colors of the shopping boxes (sections) with the background color. I'll change the section backgrounds to the current background color (light gray) and change the page background to white.
+
+
+Modified Checkout CSS
+Code 
+I've swapped the colors as requested:
+
+Changed the page background color from light gray (
+#EAEDED) to white
+Changed all the sections (shopping boxes) background color from white to light gray (
+#EAEDED)
+The key changes I made:
+
+Modified body background color to white
+Changed the .section background color to light gray
+Updated the .place-order-container background to light gray
+Added a style for .checkout-sidebar to match the light gray background
+Updated the .step background to white so it shows correctly against the now-white page background
+This creates a nice contrast where the shopping boxes stand out with their light gray background against the white page, which is the reverse of the original color scheme.
+
+Would you like me to make any additional color adjustments to the checkout page?
+
+
+
+
+why place order is under i wnat after oreder total
+
+I see the issue - the "Place your order" button is currently placed under the order summary in the sidebar, but you want it to appear after the order total. Let me fix that by reorganizing the elements in the sidebar.
+
+
+Modified Checkout CSS
+Code 
+
+Making edits...
+ 
+
+
+
+:root {
+    --amazon-orange: #FF9900;
+    --amazon-dark: #131921;
+    --amazon-blue: #232F3E;
+    --amazon-yellow: #FEBD69;
+    --light-gray: #EAEDED;
+    --border-color: #DDD;
+    --button-color: #FFD814;
+    --button-hover: #F7CA00;
+    --text-color: #0F1111;
+    --secondary-text: #565959;
+    --success-color: #007600;
+    --link-color: #007185;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: white; /* Changed from light-gray to white */
+    color: var(--text-color);
+    line-height: 1.4;
+    font-size: 14px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 14px;
+}
+
+/* Header Styles */
+.header {
+    background-color: var(--amazon-dark);
+    padding: 10px 0;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 14px;
+}
+
+.logo {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    color: white;
+    font-size: 12px;
+}
+
+.security-badge svg {
+    margin-right: 5px;
+    fill: white;
+}
+
+/* Progress Tracker */
+.checkout-steps {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0 30px;
+    position: relative;
+}
+
+.checkout-steps::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.step {
+    position: relative;
+    z-index: 2;
+    background-color: white; /* Changed from light-gray to white */
+    padding: 0 10px;
+    text-align: center;
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--amazon-yellow);
+    color: var(--text-color);
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.step.active .step-number {
+    background-color: var(--amazon-orange);
+}
+
+.step.completed .step-number {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.step-label {
+    font-size: 12px;
+    color: var(--secondary-text);
+}
+
+.step.active .step-label {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+/* Main Content */
+.checkout-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* Left Column */
+.checkout-main {
+    flex: 1 1 650px;
+}
+
+/* Right Column */
+.checkout-sidebar {
+    flex: 1 1 300px;
+}
+
+/* Common Section Styles */
+.section {
+    background-color: var(--light-gray); /* Changed from white to light-gray */
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.section-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--amazon-blue);
+    color: white;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Shipping Address */
+.address-option {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    position: relative;
+}
+
+.address-option.selected {
+    border: 2px solid var(--amazon-orange);
+}
+
+.address-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.address-details {
+    margin-left: 25px;
+}
+
+.address-name {
+    font-weight: bold;
+}
+
+.address-link {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 12px;
+    margin-left: 25px;
+}
+
+.address-link:hover {
+    text-decoration: underline;
+    color: #C7511F;
+}
+
+/* Payment Method */
+.payment-option {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+.payment-option.selected {
+    border: 2px solid var(--amazon-orange);
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.payment-details {
+    margin-left: 25px;
+    margin-top: 10px;
+}
+
+.card-info {
+    display: flex;
+    align-items: center;
+}
+
+.card-icon {
+    width: 40px;
+    height: 25px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Add New Payment Method */
+.new-payment {
+    margin-top: 15px;
+    margin-left: 25px;
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-col {
+    flex: 1;
+}
+
+/* Review Items */
+.review-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.product-item {
+    display: flex;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.product-image {
+    width: 80px;
+    height: 80px;
+    margin-right: 15px;
+    background-color: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.product-image img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.product-price {
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.product-quantity {
+    color: var(--secondary-text);
+    font-size: 13px;
+}
+
+.delivery-info {
+    color: var(--success-color);
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Order Summary */
+.order-summary-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.summary-total {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+    margin-bottom: 15px; /* Added spacing before the button */
+}
+
+/* Place Order Button */
+.place-order-container {
+    background-color: var(--light-gray); /* Changed from white to light-gray */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-place-order {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--button-color);
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(213, 217, 217, .5);
+    margin-bottom: 10px;
+}
+
+.btn-place-order:hover {
+    background-color: var(--button-hover);
+}
+
+.order-total {
+    font-size: 13px;
+    text-align: right;
+}
+
+.order-total-amount {
+    font-weight: bold;
+}
+
+.agreement-text {
+    font-size: 12px;
+    color: var(--secondary-text);
+    margin-top: 10px;
+}
+
+/* Prime delivery */
+.prime-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #232F3E;
+    color: white;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-right: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-container {
+        flex-direction: column;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* For the checkout-sidebar (in paste-2.txt) */
+.checkout-sidebar {
+    background-color: var(--light-gray); /* Changed from white to light-gray */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}

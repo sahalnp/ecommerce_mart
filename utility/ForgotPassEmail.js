@@ -1,59 +1,59 @@
-import { transporter } from "../config/sendMail.js"; // Import the Nodemailer transporter
+    import { transporter } from "../config/sendMail.js"; // Import the Nodemailer transporter
 
 
- export function forgetPassMail(email,resetUrl,userName) {
-  const mailOptions = {
-    from: 'muhammedparveshm@gmail.com',
-    to: email,
-    subject: 'Password reset mail',
-    html : `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Password Reset</title>
-    </head>
-    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
-        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-            <tr>
-                <td>
-                    <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;">
-                        <tr>
-                            <td align="center" bgcolor="#007bff" style="padding: 40px 0;">
-                                <h1 style="color: #ffffff;">Password Reset</h1>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#ffffff" style="padding: 40px 30px;">
-                                <p>Dear ${userName},</p>
-                                <p>We have received a request to reset your password. To reset your password, click the button below:</p>
-                                <p style="text-align: center;">
-                                    <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
-                                </p>
-                                <p>If you didn't request a password reset, you can ignore this email. Your password will remain unchanged.</p>
-                                <p>Thank you for using our service!</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td bgcolor="#f4f4f4" style="text-align: center; padding: 20px 0;">
-                                <p>&copy; 2023 Craftopia</p>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+    export function forgetPassMail(email,resetUrl,userName) {
+    const mailOptions = {
+        from: 'sahalnp60@gmail.com',
+        to: email,
+        subject: 'Password reset mail',
+       html: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Reset</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+          <tr>
+            <td align="center" bgcolor="#007bff" style="padding: 30px;">
+              <h1 style="color: #ffffff; font-family: Arial, sans-serif;">Reset Your Password</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px; font-family: Arial, sans-serif; color: #333;">
+              <p>Hi <strong>${userName}</strong>,</p>
+              <p>We received a request to reset your password. Click the button below to reset it:</p>
+              <p style="text-align: center; margin: 30px 0;">
+                <a href="${resetUrl}" style="background-color: #007bff; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
+              </p>
+              <p>If you didn't request this, you can safely ignore this email.</p>
+              <p style="margin-top: 40px;">Regards,<br/>The Craftopia Team</p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" bgcolor="#f4f4f4" style="padding: 20px; font-size: 0.85rem; color: #888;">
+              &copy; ${new Date().getFullYear()} Craftopia. All rights reserved.
+            </td>
+          </tr>
         </table>
-    </body>
-    </html>
-    `
-  };
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
+    };
 
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending mail:', error);
-    } else {
-      console.log('mail sent:', info.response);
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+        console.error('Error sending mail:', error);
+        } else {
+        console.log('mail sent:', info.response);
+        }
+    });
     }
-  });
-}

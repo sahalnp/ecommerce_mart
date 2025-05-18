@@ -47,7 +47,7 @@ export const userEdit = asyncHandler(async (req, res) => {
 export const userDelete = asyncHandler(async (req, res) => {  
     const userid = req.params.id;
     const finds=await User.findById('681f35aa5ce97761c32b8f2a')
-    const find=await User.findByIdAndUpdate(userid,{isDlt:true})
+    const find=await User.findByIdAndUpdate(userid,{isDlt:true,status:false})
     console.log(find,"wertyu");
     res.redirect('/admin/userDetails')
     

@@ -1,4 +1,4 @@
-<%- include('partials/header') %>
+<%- include('../partials/header') %>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -48,7 +48,8 @@
     <div class="container">
        
         <h2>Edit Profile</h2>
-        <form action="/profile/edit/<%= user._id %>" method="post">
+        <form action="/profile/edit/<%= user._id %>" method="POST">
+             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <label for="firstname">First Name</label>
             <input type="text" id="firstname" name="firstname" placeholder="Enter first name" value="<%= user.firstname %>">
 
@@ -68,4 +69,4 @@
         </form>
     </div>
     </div>
-    <%- include('partials/footer') %>
+    <%- include('../partials/footer') %>

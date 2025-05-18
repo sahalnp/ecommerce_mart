@@ -19,10 +19,16 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     role: { type: Number, default: 0 },
     number: { type: String, required: true },
-    country: { type: String, default: null },
-    state: { type: String, default: null },
-    city: { type: String, default: null },
-    pincode: { type: Number, default: null },
+    addresses: [
+    {
+      
+        country: { type: String, default: null },
+        state: { type: String, default: null },
+        city: { type: String, default: null },
+        pincode: { type: Number, default: null },
+    }
+    ],
+
     wishList: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -33,9 +39,9 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
-    isDlt:{
-        type:Boolean,
-        default:false
+    isDlt: {
+        type: Boolean,
+        default: false,
     },
     createdAt: { type: Date, default: Date.now },
 });

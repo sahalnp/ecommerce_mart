@@ -65,3 +65,4 @@ export const sendotp = async (email, otp) => {
     console.log("Error sending OTP email:", error);
   }
 };
+

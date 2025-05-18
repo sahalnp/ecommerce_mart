@@ -22,19 +22,19 @@ export const loginUser = async (req, res) => {
             error: "User does not exist. Please sign up.",
         }); //sending login page if user doesnot exist
     }
-    if(user.isDlt==false){
+    if(user.isDlt==true){
          return res.render("users/Auth/login", {
-            error: "User deleted by admin",
+            error: "User was deleted by admin",
         }); 
     }
 
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
     if (!passwordMatch) {
-        return res.render("users/Auth/login", {
-            error: "Incorrect password. Please try again.",
-        }); //sending login page and sending a message passsword not coorect
+         req.flash('error', 'Incorrect password');
+        return res.redirect('/login');
     }
+
     return res.redirect("/");
 };
 
@@ -51,7 +51,6 @@ export const signupUser = async (req, res, next) => {
         password: hashedPassword,
     };
 
-    console.log(req.session.users);
 
     const existingUser = await User.findOne({
         email: req.session.users.email,
@@ -110,7 +109,7 @@ export const logout = (req, res) => {
             }
             res.clearCookie("auth");
             console.log("User logged out");
-            return res.redirect("/");
+            return res.redirect("/login");
         });
     } else {
         return res.redirect("/");
@@ -173,12 +172,12 @@ export const reset_verify_otp = (req, res) => {
     }
 };
 export const new_pass = async (req, res) => {
-   if(req.body.password!==confirmPassword){
-    req.session.pass="Password don't Matches"
-   } 
     const { password } = req.body;
+    
     const hashPassword = await bcrypt.hash(password, 10);
-    await User.findOneAndUpdate({ password: hashPassword });
+    await User.findOneAndUpdate({email:req.session.EMAIL},{  password: hashPassword }, { new: true });
+    console.log(m,"dsfiodsjfoidsjhfl");
+    
     res.redirect("/login");
 };
 export const resend_otp_email = async (req, res) => {
@@ -186,9 +185,20 @@ export const resend_otp_email = async (req, res) => {
     const username=await User.findOne({email:req.session.users.email})
     console.log(username.firstname);
     const resetUrl=`${req.protocol}://${req.get('host')}/reset`;
-
-
-    const resend_otp = generateotp();
     await forgetPassMail(req.session.users.email,resetUrl,username.firstname);
     res.render("users/Auth/otp", { title: "OTP", error: null, time: "Pass" });
 };
+export const resetPassEmail=asyncHandler(async(req,res)=>{
+    const email=req.body.email
+    const find = await User.findOne({email})
+    req.session.EMAIL=email
+    if (find){
+        const resetUrl = `${req.protocol}://${req.get('host')}/forgotPassword`;
+        forgetPassMail(email, resetUrl, `${find.firstname} ${find.lastname}`);
+         return res.json({ exist: true });
+    }
+    else{
+         return res.json({ exist: false });
+    }
+    
+})

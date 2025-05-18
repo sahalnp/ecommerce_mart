@@ -325,6 +325,7 @@
                                 <h4 class="widget_title">Newsletter</h4>
 
                                 <form action="#">
+                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <div class="form-group">
                                         <input type="email" class="form-control" onfocus="this.placeholder = ''"
                                             onblur="this.placeholder = 'Enter email'" placeholder='Enter email' required>

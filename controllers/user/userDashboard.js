@@ -64,18 +64,22 @@ export const removeFromWish = asyncHandler(async (req, res) => {
     }
 });
 export const quantchnge=asyncHandler(async(req,res)=>{
-    const quantity=req.body.quantity
-    const productId=req.body.productId
+   try {
+    const { productId, quantity } = req.body;
     const UserId=req.session.users._id
-
-    
-    
     const updatedItem = await Cart.findOneAndUpdate(
         { UserId, productId },
         { quantity: quantity },
         { new: true }
     );
-    console.log(updatedItem);
+     res.json({ message: 'Quantity updated' });
+   } catch (error) {
+     console.log(error,"Quantity doesnot changed");  
+   }
+})
+export const checkout=asyncHandler(async(req,res)=>{
+    const find=await User.findById(req.session.users._id)
+    console.log(find,"sdfdsfjsldjf");
+    req.session.address=find.addresses
     
-
 })

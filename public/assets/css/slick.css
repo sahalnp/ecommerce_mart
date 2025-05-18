@@ -117,3 +117,15 @@
 .slick-arrow.slick-hidden {
     display: none;
 }
+.dropdown-menu .dropdown-item:hover {
+    background-color: rgb(79, 89, 224);
+    color: white;
+}
+.dropdown-menu .dropdown-item {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item i {
+    color: inherit; /* Makes icon color follow text color */
+}
+

@@ -9,6 +9,7 @@ import {
     reset_verify_otp,
     new_pass,
     send_otp,
+    resetPassEmail,
 } from "../controllers/user/userAuthController.js";
 import { isUserloggedIn } from "../middleware/authMiddleware.js";
 import {
@@ -20,29 +21,34 @@ import {
     auth_google_callback,
     reset_pass_otp,
     pass_reset,
+    resetpass,
+    loadresetpassEmail,
+    loadLogin,
 } from "../controllers/user/authViewController.js";
 import { sendsms } from "../utility/sendphoneotp.js";
 import {
     about,
     blog,
     blogDetails,
-    checkout,
     confirmaton,
     contact,
     home,
     laodProduct,
     laodShop,
+    loadAddress,
     loadcart,
-    loadEditProfile,
+    loadCheckout,
+    loadProfile,
     wishlist,
 } from "../controllers/user/userPageLoader.js";
-import { addtoCart,  addTowhish, editProfile, quantchnge, removeFromWish } from "../controllers/user/userDashboard.js";
+import { addtoCart,  addTowhish, checkout, editProfile, quantchnge, removeFromWish } from "../controllers/user/userDashboard.js";
+
 
 export const UserRouter = express.Router();
 
-UserRouter.get("/", home);
+UserRouter.get("/", isUserloggedIn,home);
 
-UserRouter.get("/login", isUserloggedIn);
+UserRouter.get("/login", loadLogin);
 UserRouter.post("/login", loginUser);
 
 UserRouter.get("/signup", loadsignup);
@@ -54,9 +60,11 @@ UserRouter.post("/otp", verifyotp);
 UserRouter.get("/phoneotp", sendsms, phoneotp);
 UserRouter.post("/phoneotp", phoneverifyotp);
 
-UserRouter.get("/account", account);
+UserRouter.get("/account",isUserloggedIn, account);
 
 UserRouter.get("/logout", logout);
+UserRouter.get('/resetpassEmail',loadresetpassEmail)
+UserRouter.post('/resetpassEmail',resetPassEmail)
 
 UserRouter.get("/reset", reset_pass_otp);
 UserRouter.post("/reset", email_check);
@@ -69,30 +77,34 @@ UserRouter.post("/forgotPassword", new_pass);
 UserRouter.get("/auth/google", auth_google);
 UserRouter.get("/auth/google/callback", auth_google_callback);
 
-UserRouter.get("/profile/edit/:id", loadEditProfile);
+UserRouter.get("/profile/edit/:id",isUserloggedIn,loadProfile);
 UserRouter.post("/profile/edit/:id", editProfile);
 
-UserRouter.get("/shop", laodShop);
-UserRouter.get("/product/:id", laodProduct);
-UserRouter.post("/product/:id",addtoCart)
+UserRouter.get("/shop", isUserloggedIn,laodShop);
+UserRouter.get("/product/:id", isUserloggedIn,laodProduct);
+UserRouter.post("/product/:id",isUserloggedIn,addtoCart)
 
-UserRouter.get("/cart", loadcart);
-UserRouter.post('/cart/quantity',quantchnge)
+UserRouter.get("/cart", isUserloggedIn,loadcart);
+UserRouter.post('/cart/quantity', isUserloggedIn, quantchnge);
 
-UserRouter.get("/about", about);
 
-UserRouter.get("/blog", blog);
+UserRouter.get("/about", isUserloggedIn, about);
 
-UserRouter.get("/blog-details", blogDetails);
+UserRouter.get("/blog", isUserloggedIn,blog);
 
-UserRouter.get('/wishlist',wishlist)
-UserRouter.post('/wishlist/add/:id',addTowhish)
-UserRouter.post('/wishlist/remove/:id',removeFromWish)
+UserRouter.get("/blog-details",isUserloggedIn, blogDetails);
 
-UserRouter.get("/confirmation", confirmaton);
+UserRouter.get('/wishlist',isUserloggedIn,wishlist)
+UserRouter.post('/wishlist/add/:id',isUserloggedIn,addTowhish)
+UserRouter.post('/wishlist/remove/:id',isUserloggedIn,removeFromWish)
 
-UserRouter.get("/checkout", checkout);
+UserRouter.get("/confirmation",isUserloggedIn, confirmaton);
 
-UserRouter.get("/contact", contact);
+UserRouter.get("/checkout",isUserloggedIn, loadCheckout);
+UserRouter.post('/checkout',checkout)
+
+UserRouter.get("/contact",isUserloggedIn, contact);
+
+UserRouter.get("/address",isUserloggedIn,loadAddress)
 
 export default UserRouter;

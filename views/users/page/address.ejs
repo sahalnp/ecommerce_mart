@@ -46,35 +46,114 @@
         </div>
     </div>
         <div class="checkout-container" style="padding: 50px;">
-  <div class="checkout-main">
-    <!-- Shipping Address Section -->
-    <div class="section">
-      <div class="section-header">
-        <!-- You can put section title here -->
-        <h3>Select Shipping Address</h3>
-      </div>
-
-      <% address.array.forEach((add, index) => { %>
-        <div class="address-option">
-          <input 
-            type="radio" 
-            id="address<%= index %>" 
-            name="address" 
-            value="<%= add._id || index %>" 
-            <%= index === 0 ? 'checked' : '' %> 
-          />
-          <label for="address<%= index %>" class="address-name"><%= add.name %></label>
-          <div class="address-details">
-            <%= add.detail %>
-          </div>
-        </div>
-      <% }) %>
-
-      <a href="/address" class="address-link">Add a new address</a>
-    </div>
-  </div>
-</div>
-
+            <div class="checkout-main">
+                <!-- Shipping Address Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-number">1</div>
+                        <div class="section-title">Shipping address</div>
+                    </div>
+                    
+                    <div class="address-option selected">
+                        <input type="radio" id="address1" name="address" checked>
+                        <label for="address1" class="address-name">John Doe</label>
+                        <div class="address-details">
+                            123 Main Street, Apt 4B<br>
+                            New York, NY 10001<br>
+                            United States<br>
+                            Phone: (212) 555-1234
+                        </div>
+                    </div>
+                    
+                    <div class="address-option">
+                        <input type="radio" id="address2" name="address">
+                        <label for="address2" class="address-name">John Doe (Work)</label>
+                        <div class="address-details">
+                            456 Office Plaza, Suite 200<br>
+                            New York, NY 10002<br>
+                            United States<br>
+                            Phone: (212) 555-5678
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="address-link" onclick="toggleNewAddressForm(); return false;">Add a new address</a>
+                    
+                    <!-- New Address Form - Hidden by default -->
+                    <div id="new-address-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="fullName">Full name</label>
+                            <input type="text" id="fullName" placeholder="First and last name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone number</label>
+                            <input type="tel" id="phone" placeholder="Phone number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address1">Address line 1</label>
+                            <input type="text" id="address1" placeholder="Street address, P.O. box, company name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Address line 2 (optional)</label>
+                            <input type="text" id="address2" placeholder="Apartment, suite, unit, building, floor, etc.">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="state">State / Province / Region</label>
+                                    <select id="state">
+                                        <option value="">Select state</option>
+                                        <option value="AL">Alabama</option>
+                                        <option value="AK">Alaska</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="AR">Arkansas</option>
+                                        <option value="CA">California</option>
+                                        <option value="CO">Colorado</option>
+                                        <option value="CT">Connecticut</option>
+                                        <!-- More states would be added in a real implementation -->
+                                        <option value="NY">New York</option>
+                                        <option value="TX">Texas</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="zipCode">ZIP Code</label>
+                                    <input type="text" id="zipCode">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Country/Region</label>
+                            <select id="country">
+                                <option value="US" selected>United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="UK">United Kingdom</option>
+                                <option value="AU">Australia</option>
+                                <!-- More countries would be added in a real implementation -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="checkbox" id="defaultAddress">
+                            <label for="defaultAddress" style="display: inline;">Make this my default address</label>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <button class="btn-place-order" style="width: auto; padding: 8px 15px; margin-right: 10px;" onclick="saveNewAddress()">Add address</button>
+                            <button style="padding: 8px 15px; background: none; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer;" onclick="toggleNewAddressForm()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Payment Method Section -->
                 <div class="section">
@@ -223,6 +302,7 @@
             
             <div class="checkout-sidebar">
                 <!-- Order Summary -->
+                <div class="section">
                     <div class="order-summary-title">Order Summary</div>
                     
                     <div class="summary-row">
@@ -245,12 +325,9 @@
                         <div>Order total:</div>
                         <div>$250.67</div>
                     </div>
-                </div>
-                
-                <!-- Place Order Button -->
-                <div class="place-order-container">
+                    
+                    <!-- Moved Place Order Button inside Order Summary section -->
                     <button class="btn-place-order" onclick="placeOrder()">Place your order</button>
-                    <div class="order-total">Order total: <span class="order-total-amount">$250.67</span></div>
                     <div class="agreement-text">
                         By placing your order, you agree to Amazon's privacy notice and conditions of use.
                     </div>
@@ -298,5 +375,36 @@
             
             e.target.value = formattedValue;
         });
+        
+        // Toggle new address form visibility
+        function toggleNewAddressForm() {
+            const addressForm = document.getElementById('new-address-form');
+            if (addressForm.style.display === 'none') {
+                addressForm.style.display = 'block';
+            } else {
+                addressForm.style.display = 'none';
+            }
+        }
+        
+        // Save new address (simulated functionality)
+        function saveNewAddress() {
+            const fullName = document.getElementById('fullName').value;
+            const address1 = document.getElementById('address1').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipCode = document.getElementById('zipCode').value;
+            
+            // Basic validation
+            if (!fullName || !address1 || !city || !state || !zipCode) {
+                alert('Please fill out all required fields');
+                return;
+            }
+            
+            // In a real implementation, this would send data to the server
+            alert('New address saved successfully!');
+            
+            // Hide the form
+            toggleNewAddressForm();
+        }
     </script>
 <%- include('../partials/footer') %>

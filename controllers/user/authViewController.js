@@ -2,10 +2,7 @@ import asyncHandler from "express-async-handler";
 import passport from "passport";
 
 export const loadLogin = asyncHandler(async (req, res) => {
-    if (req.session.users) {
-        res.redirect("/");
-    }
-    res.render("/users/Auth/login", { error: null });
+    res.render("users/Auth/login", {title: "Login", error: null });
 });
 export const loadsignup = (req, res) => {
     res.render("users/Auth/signup.ejs", {
@@ -69,7 +66,7 @@ export const auth_google_callback = (req, res, next) => {
     )(req, res, next);
 };
 export const resetpass = (req, res) => {
-    res.render("users/reset_pass", { title: "Reset Password" });
+    res.render("users/Auth/resetPassword", { title: "Reset Password" });
 };
 export const reset_pass_otp = (req, res) => {
     res.render("users/Auth/reset_pass_otp", {
@@ -79,5 +76,8 @@ export const reset_pass_otp = (req, res) => {
     });
 };
 export const pass_reset = (req, res) => {
-    res.render("users/Auth/reset_pass");
+    res.render("users/Auth/resetPassword");
 };
+export const loadresetpassEmail=asyncHandler(async(req,res)=>{
+    res.render('users/Auth/reset_passEmail',{exist:null,value:null})
+})
