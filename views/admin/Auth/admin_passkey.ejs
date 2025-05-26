@@ -2,185 +2,122 @@
 
 <style>
   body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4f6ef9, #764ba2);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    padding: 20px;
+    font-family: sans-serif;
     margin: 0;
-  }
-  
-  .login-container {
-    width: 100%;
-    max-width: 450px;
-    padding: 15px;
-  }
-  
-  .login-card {
-    background: white;
-    border-radius: 12px;
-    padding: 2.5rem;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .login-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-  }
-  
-  .login-header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-  
-  .login-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 0.5rem;
-  }
-  
-  .login-subtitle {
-    color: #666;
-    font-size: 0.9rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-    position: relative;
-  }
-  
-  .form-label {
-    display: block;
-    margin-bottom: 0.75rem;
-    font-weight: 500;
-    color: #444;
-    font-size: 0.95rem;
-  }
-  
-  .form-control {
-    width: 100%;
-    padding: 0.9rem 1rem;
-    font-size: 1rem;
-    border: 1px solid #faf9f9;
-    border-radius: 6px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    box-sizing: border-box;
-  }
-  
-  .form-control:focus {
-    outline: none;
-    border-color: #5d87ff;
-    box-shadow: 0 0 0 3px rgba(93, 135, 255, 0.25);
-  }
-  
-  .form-control::placeholder {
-    color: #aaa;
-  }
-  
-  .btn {
-    width: 100%;
-    padding: 0.9rem;
-    font-size: 1rem;
-    font-weight: 600;
-    background-color: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
-    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25);
-  }
-  
-  .btn:hover {
-    background-color: #4338ca;
-  }
-  
-  .btn:active {
-    transform: scale(0.98);
-  }
-  
-  .alert {
-    margin-bottom: 1.5rem;
     padding: 1rem;
-    background: #ef4444;
-    color: white;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.15);
   }
-  
-  .alert-icon {
-    margin-right: 0.75rem;
-    font-size: 1.25rem;
-  }
-  
-  .icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 42px;
-    cursor: pointer;
-    color: #777;
-    font-size: 1.25rem;
-  }
-  
-  .brand {
-    text-align: center;
-    margin-top: 2rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
+
+  .login-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
   input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0 1000px white inset !important;
   box-shadow: 0 0 0 1000px white inset !important;
+  -webkit-box-shadow: 0 0 0 1000px white inset !important;
   -webkit-text-fill-color: #000 !important;
 }
 
+
+  .login-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.875rem;
+    color: #666;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #4f46e5;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background-color: #4338ca;
+  }
+
+  .alert {
+    background-color: #ef4444;
+    color: white;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    text-align: center;
+  }
 </style>
 
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <div class="icon">🔐</div>
-      <h2 class="login-title">Admin Passkey</h2>
-      <p class="login-subtitle">Enter your passkey to continue</p>
-    </div>
-    
-    <% if (error) { %>
-      <div class="alert">
-        <span class="alert-icon">⚠️</span>
-        <span><%= error %></span>
-      </div>
-    <% } %>
-    
-    <form action="/admin/login/passkey" method="POST">
-      <div class="form-group">
-        <label for="passkey" class="form-label">Passkey</label>
-        <input
-          type="password"
-          id="passkey"
-          name="passkey"
-          class="form-control"
-          style="border-color: #000;"
-          required
-          placeholder="Enter your secure passkey"
-          autocomplete="current-password"
-        >
-      </div>
-      
-      <button type="submit" class="btn">login</button>
-    </form>
+<div class="login-card">
+  <div class="login-header">
+    <div style="font-size: 1.8rem;">🔐</div>
+    <h2 class="login-title">Admin Passkey</h2>
+    <p class="login-subtitle">Enter your passkey to continue</p>
   </div>
 
+  <% if (error) { %>
+    <div class="alert"><%= error %></div>
+  <% } %>
+
+  <form action="/admin/login/passkey" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    
+    <div class="form-group">
+      <label for="passkey">Passkey</label>
+      <input
+        type="password"
+        id="passkey"
+        name="passkey"
+        required
+        placeholder="Enter passkey"
+        autocomplete="current-password"
+      >
+    </div>
+
+    <button type="submit" class="btn">Login</button>
+  </form>
+</div>
 
 <%- include('../partials/authFooter') %>

@@ -199,6 +199,7 @@
                     method="POST"
                     enctype="multipart/form-data"
                 >
+                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <!-- 🔹 BASIC INFO -->
                     <h3>Basic Info</h3>
                     <label for="title">Product Title</label>

@@ -12,6 +12,7 @@
         <div class="card" style="width: 100%; max-width: 500px; height: auto;">
           <div class="card-body">
             <form action="/admin/brand/add" method="POST">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <div class="form-group">
                 <label for="brandName">Brand Name</label>
                 <input

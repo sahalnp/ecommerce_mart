@@ -1,3 +1,4 @@
+
 <%- include('../partials/header') %>
 <head>
     <style>
@@ -27,11 +28,12 @@
         .hero-cap h2 {
             font-size: 3rem;
             font-weight: bold;
-            color: #0d1b2a; /* dark navy-like color */
+            color: #0d1b2a;
         }
+
         .proceed-btn {
             background-color: #6a63ed;
-            color: rgb(255, 255, 255);
+            color: #ffffff;
             border: none;
             padding: 12px 24px;
             font-weight: 500;
@@ -40,20 +42,24 @@
             display: inline-block;
             transition: background-color 0.3s ease;
         }
+
         .proceed-btn:hover {
             background-color: #534be8;
             text-decoration: none;
             color: black;
         }
+
         .empty-cart-container {
             text-align: center;
             padding: 50px 20px;
         }
+
         .empty-cart-container h4 {
             margin-bottom: 20px;
         }
     </style>
 </head>
+
 <main>
     <!-- Hero Area Start -->
     <div class="slider-area box">
@@ -92,58 +98,36 @@
                                 <td>
                                     <div class="media">
                                         <div class="d-flex">
-                                            <img
-                                                src="<%= products[i].image[0].filepath || '/default.png' %>"
-                                                alt="Product"
-                                            />
+                                            <a href="/product/<%= products[i]._id %>"><img src="<%= products[i].image[0].filepath || '/default.png' %>" alt="Product" /></a>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="media-body">
-                                        <h5><%= products[i].title %></h5>
+                                       <a href="/product/<%= products[i]._id %>"><h5><%= products[i].title %></h5></a>
+
                                     </div>
                                 </td>
+                                <td>₹ <%= Number(products[i].pricing.salePrice) %></td>
                                 <td>
-                                    ₹&nbsp;<%=
-                                    Number(products[i].pricing.salePrice) %>
-                                </td>
-                                <td>
-                                    <input
-                                        type="hidden"
-                                        name="productId"
-                                        value="<%= products[i]._id %>"
-                                    />
+                                    <input type="hidden" name="productId" value="<%= products[i]._id %>" />
                                     <div
                                         class="qty-selector"
                                         data-product-id="<%= products[i]._id %>"
+                                        data-price="<%= Number(products[i].pricing.salePrice) %>"
+                                        data-total-id="total-<%= products[i]._id %>"
                                     >
-                                        <% const Cart = cartItems &&
-                                        cartItems.find(item =>
-                                        item.productId.toString() ===
-                                        products[i]._id.toString()); %>
-                                        <button
-                                            class="qty-btn quantitybox"
-                                            onclick="changeQty(this, -1)"
-                                        >
-                                            -
-                                        </button>
-                                        <span
-                                            class="qty-value p-3"
-                                            name="quantity"
-                                            ><%= Cart.quantity %></span
-                                        >
-                                        <button
-                                            class="qty-btn quantitybox"
-                                            onclick="changeQty(this, 1)"
-                                        >
-                                            +
-                                        </button>
+                                        <% const Cart = cartItems && cartItems.find(item => item.productId.toString() === products[i]._id.toString()); %>
+                                        <button class="qty-btn quantitybox" onclick="changeQty(this, -1)">-</button>
+                                        <span class="qty-value p-3" name="quantity"><%= Cart.quantity %></span>
+                                        <button class="qty-btn quantitybox" onclick="changeQty(this, 1)">+</button>
                                     </div>
                                 </td>
-                                <td>₹&nbsp;<%= total[i].toFixed(2) %></td>
+                                <td id="total-<%= products[i]._id %>">₹ <%= total[i].toFixed(2) %></td>
                             </tr>
                             <% } %>
+                                <!-- Toast Container -->
+            <div id="toast-container" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050;"></div>
 
                             <!-- Subtotal Row -->
                             <tr>
@@ -151,25 +135,18 @@
                                 <td></td>
                                 <td></td>
                                 <td><h5>Subtotal</h5></td>
-                                <td>
-                                    <h5>₹&nbsp;<%= subtotal.toFixed(2) %></h5>
-                                </td>
+                                <td><h5 id="subtotal">₹ <%= subtotal.toFixed(2) %></h5></td>
                             </tr>
                         </tbody>
                     </table>
 
                     <!-- Checkout Buttons -->
                     <div class="checkout_btn_inner float-right">
-                        <a class="proceed-btn" href="/shop"
-                            >Continue shopping</a
-                        >
-                        <a class="proceed-btn" href="/checkout"
-                            >Proceed to Buy</a
-                        >
+                        <a class="proceed-btn" href="/shop">Continue shopping</a>
+                        <a class="proceed-btn" href="/checkout">Proceed to Buy</a>
                     </div>
                 </div>
                 <% } else { %>
-                <!-- Empty Cart Display -->
                 <div class="empty-cart-container">
                     <h4>Your cart is empty</h4>
                     <a href="/shop" class="proceed-btn">Browse Products</a>
@@ -179,37 +156,126 @@
         </div>
     </section>
 </main>
+
 <script>
-    async function changeQty(button, delta) {
-        const qtySelector = button.parentElement;
-        const qtySpan = qtySelector.querySelector(".qty-value");
-        const productId = qtySelector.getAttribute("data-product-id");
-        let quantity = parseInt(qtySpan.textContent);
-        quantity += delta;
+const csrfToken = "<%= csrfToken %>";
 
-        // Clamp the quantity between 1 and 10
-        if (quantity < 1) quantity = 1;
-        if (quantity > 10) quantity = 10;
+function showToast(message) {
+    const toastContainer = document.getElementById("toast-container");
+    if (!toastContainer) return;
 
-        qtySpan.textContent = quantity;
+    const toast = document.createElement("div");
+    toast.className = "toast-message";
+    toast.textContent = message;
+    toast.style.cssText = `
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        opacity: 0.9;
+        transition: opacity 0.5s ease;
+        font-weight: 500;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        max-width: 250px;
+    `;
 
-        // Send to backend via Axios
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+async function changeQty(button, delta) {
+    const qtySelector = button.parentElement;
+    const qtySpan = qtySelector.querySelector(".qty-value");
+    const productId = qtySelector.getAttribute("data-product-id");
+    const price = parseFloat(qtySelector.getAttribute("data-price"));
+    const totalId = qtySelector.getAttribute("data-total-id");
+
+    let quantity = parseInt(qtySpan.textContent);
+    quantity += delta;
+
+    // If user tries to increase beyond 10, show toast and stop
+    if (quantity > 10) {
+        showToast("Maximum quantity reached");
+        return;
+    }
+
+    // If quantity hits 0, remove the row and update UI
+    if (quantity === 0) {
+        const row = qtySelector.closest("tr");
+        row.remove();
+        showToast("Item removed from cart");
+
+        // Update backend
         try {
-            const res = await axios.post("/cart/quantity", {
+            await axios.post("/cart/quantity", {
                 productId,
                 quantity,
                 _csrf: csrfToken,
             });
-            console.log(res.data.message);
-            window.location.reload(); 
         } catch (error) {
             console.error("Failed to update quantity", error);
-            // Optionally revert quantity
         }
+
+        updateSubtotal();
+
+        // Check if any items are left
+        const remainingSelectors = document.querySelectorAll(".qty-selector");
+        if (remainingSelectors.length === 0) {
+            const cartInner = document.querySelector(".cart_inner");
+            cartInner.innerHTML = `
+                <div class="empty-cart-container">
+                    <h4>Your cart is empty</h4>
+                    <a href="/shop" class="proceed-btn">Browse Products</a>
+                </div>
+            `;
+        }
+
+        return;
     }
+
+    // Update the quantity display
+    qtySpan.textContent = quantity;
+
+    // Update total for this product
+    const newTotal = (price * quantity).toFixed(2);
+    document.getElementById(totalId).innerHTML = "₹ " + newTotal;
+
+    // Update subtotal
+    updateSubtotal();
+
+    // Update backend
+    try {
+        const res = await axios.post("/cart/quantity", {
+            productId,
+            quantity,
+            _csrf: csrfToken,
+        });
+        console.log(res.data.message);
+    } catch (error) {
+        console.error("Failed to update quantity", error);
+    }
+}
+
+function updateSubtotal() {
+    let subtotal = 0;
+    const selectors = document.querySelectorAll(".qty-selector");
+    selectors.forEach(selector => {
+        const qty = parseInt(selector.querySelector(".qty-value").textContent);
+        const price = parseFloat(selector.getAttribute("data-price"));
+        subtotal += qty * price;
+    });
+
+    const subtotalElement = document.getElementById("subtotal");
+    if (subtotalElement) {
+        subtotalElement.innerHTML = "₹ " + subtotal.toFixed(2);
+    }
+}
 </script>
-<script>
-    const csrfToken = "<%= csrfToken %>"; // Or fetch from meta tag if preferred
-</script>
+
 
 <%- include('../partials/footer') %>

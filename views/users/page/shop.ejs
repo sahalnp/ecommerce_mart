@@ -2,32 +2,45 @@
 <head>
     <style>
         .hero-cap .name {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-}
-.slider-area {
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.single-slider {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-cap h2 {
-    font-size: 3rem;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+        .slider-area {
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .cart-toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #28a745; /* green */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     font-weight: bold;
-    color: #0d1b2a; /* dark navy-like color */
+    z-index: 9999;
+    display: none;
+    transition: opacity 0.3s ease;
 }
 
+        .single-slider {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hero-cap h2 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #0d1b2a;
+        }
     </style>
 </head>
+
 <main>
     <!-- Hero Area Start-->
     <div class="slider-area">
@@ -43,25 +56,17 @@
             </div>
         </div>
     </div>
-    <!-- Hero Area End-->
 
     <!-- Latest Products Start -->
     <section class="popular-items latest-padding">
         <div class="container">
             <div class="row product-btn justify-content-between mb-40">
                 <div class="properties__button">
-                    <!-- Nav Button -->
                     <nav>
                         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">
-                                New Arrivals
-                            </a>
-                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">
-                                Price high to low
-                            </a>
-                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">
-                                Most Popular
-                            </a>
+                            <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">New Arrivals</a>
+                            <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Price high to low</a>
+                            <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Most Popular</a>
                         </div>
                     </nav>
                 </div>
@@ -72,7 +77,7 @@
                 <!-- Select items -->
                 <div class="select-this">
                     <form action="#">
-                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <div class="select-itms">
                             <select name="select" id="select1">
                                 <option value="">40 per page</option>
@@ -95,23 +100,22 @@
                             <div class="single-popular-items mb-50 text-center">
                                 <div class="popular-img">
                                     <a href="/product/<%= product[index]._id %>">
-                                        <img src="<%= product[index].image[0]?.filepath || 'default-image-path.jpg' %>"  height="350px" alt="<%= product[index].title %>"  />
+                                        <img src="<%= product[index].image[0]?.filepath || 'default-image-path.jpg' %>" height="350px" alt="<%= product[index].title %>" />
                                     </a>
                                     <div class="img-cap">
-                                        <%   const inCart = cartItems && cartItems.some(item => item.productId.toString() === product[index]._id.toString()); %>
+                                        <% const inCart = cartItems && cartItems.some(item => item.productId.toString() === product[index]._id.toString()); %>
                                         <% if (inCart) { %>
-                                          <a href="/cart"><span>Go to cart</span></a>
+                                            <a href="/cart"><span>Go to cart</span></a>
                                         <% } else { %>
-                                         <a  onclick="addToCart('<%= product[index]._id %>')"><span>Add to cart</span></a>
-                                         <% } %>
+                                            <a onclick="addToCart('<%= product[index]._id %>')"><span>Add to cart</span></a>
+                                        <% } %>
                                     </div>
                                     <div class="favorit-items" style="top: 0px;">
                                         <% if (wish.some(w => w._id.toString() === product[index]._id.toString())) { %>
-                                        <img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="<%= product[index]._id %>" style="cursor: pointer" alt="like-icon" />
+                                            <img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="<%= product[index]._id %>" style="cursor: pointer" alt="like-icon" />
                                         <% } else { %>
-                                        <span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="<%= product[index]._id %>" style="cursor: pointer"></span>
+                                            <span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="<%= product[index]._id %>" style="cursor: pointer"></span>
                                         <% } %>
-
                                     </div>
                                 </div>
                                 <div class="popular-caption">
@@ -125,10 +129,8 @@
                 </div>
                 <% }); %>
             </div>
-            <!-- End Nav Card -->
         </div>
     </section>
-    <!-- Latest Products End -->
 
     <!-- Shop Method Start -->
     <div class="shop-method-area">
@@ -139,7 +141,6 @@
                         <div class="single-method mb-40">
                             <i class="ti-package"></i>
                             <h6>Free Shipping Method</h6>
-                            <p></p>
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6">
@@ -160,90 +161,83 @@
             </div>
         </div>
     </div>
-    <!-- Shop Method End -->
+
+    <!-- Cart Toast -->
+    <div class="cart-toast">✅ Item added to cart!</div>
 </main>
 
 <script>
+    const csrfToken = "<%= csrfToken %>";
 
-      async function addToCart(productId) {
+    async function addToCart(productId) {
         try {
-          console.log(productId,"id");
-          
-        const res = await axios.post(
-        `/product/add-to-cart`,  // Change this route as needed
-        { productId, quantity: 1 },
-        { withCredentials: true }
-      );
+            const res = await axios.post(`/product/add-to-cart`, { productId, quantity: 1 }, {
+                withCredentials: true,
+                headers: {
+                    'CSRF-Token': csrfToken,
+                }
+            });
 
-      console.log("Added to cart", res.data);
+            console.log("Added to cart", res.data);
 
+            // Show toast
+            const toast = document.querySelector('.cart-toast');
+            if (toast) {
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    window.location.reload();
+                }, 3000);
+            }
 
-    // Show toast
-    const toast = document.querySelector('.cart-toast');
-    if (toast) {
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 3000);
+            // Optionally update button/link text or disable it
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+            alert("Failed to add item to cart.");
+        }
     }
-    
-    // Optional: update UI or reload page here if needed
-    // window.location.reload();
 
-  } catch (error) {
-    console.error("Add to cart failed:", error);
-    alert("Failed to add item to cart.");
-  }
-}
+    document.addEventListener("click", function (e) {
+        const icon = e.target.closest(".heart-toggle");
+        if (!icon) return;
 
-document.addEventListener("click", function (e) {
-    const icon = e.target.closest(".heart-toggle");
-    if (!icon) return;
+        const isLiked = icon.getAttribute("data-liked") === "true";
+        const productId = icon.getAttribute("data-product-id");
 
-    const isLiked = icon.getAttribute("data-liked") === "true";
-    const productId = icon.getAttribute("data-product-id");
+        if (!productId) return alert("Product ID not found.");
 
-    if (!productId) return alert("Product ID not found.");
+        if (isLiked) {
+            icon.setAttribute("data-liked", "false");
+            removeFromWishlist(productId);
+        } else {
+            icon.setAttribute("data-liked", "true");
+            addWishlist(productId);
+        }
+    });
 
-    if (isLiked) {
-        icon.setAttribute("data-liked", "false");
-        // Remove from Wishlist
-        removeFromWishlist(productId);
-    } else {
-        icon.setAttribute("data-liked", "true");
-        // Add to Wishlist
-        addWishlist(productId);
+    async function addWishlist(productId) {
+        try {
+            const res = await axios.post(`/wishlist/add/${productId}`, {}, { withCredentials: true });
+            console.log("Added to wishlist", res.data);
+            const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
+            icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
+        } catch (err) {
+            alert("Adding to wishlist failed");
+            console.error("Add wishlist error: ", err);
+        }
     }
-});
 
-async function addWishlist(productId) {
-    try {
-        const res = await axios.post(`/wishlist/add/${productId}`, {}, { withCredentials: true });
-        console.log("Added to wishlist", res.data);
-        // Update the heart icon to indicate it's liked
-        const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-        icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
-    } catch (err) {
-        alert("Adding to wishlist failed");
-        console.error("Add wishlist error: ", err);
+    async function removeFromWishlist(productId) {
+        try {
+            const res = await axios.post(`/wishlist/remove/${productId}`, {}, { withCredentials: true });
+            console.log("Removed from wishlist", res.data);
+            const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
+            icon.outerHTML = `<span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="${productId}" style="cursor: pointer"></span>`;
+        } catch (err) {
+            alert("Removing from wishlist failed");
+            console.error("Remove wishlist error: ", err);
+        }
     }
-}
-
-
-async function removeFromWishlist(productId) {
-    try {
-        const res = await axios.post(`/wishlist/remove/${productId}`, {}, { withCredentials: true });
-        console.log("Removed from wishlist", res.data);
-        // Update the heart icon to indicate it's not liked
-        const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-        icon.outerHTML = `<span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="${productId}" style="cursor: pointer"></span>`;
-    } catch (err) {
-        alert("Removing from wishlist failed");
-        console.error("Remove wishlist error: ", err);
-    }
-}
-
 </script>
-
 
 <%- include('../partials/footer') %>

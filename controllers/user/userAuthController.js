@@ -14,7 +14,7 @@ export const loginUser = async (req, res) => {
     
     req.session.users = user;
     
-    console.log("user is ",req.session.users );
+    // console.log("user is ",req.session.users );
     req.session.user_emailornumber = emailornumber;
 
     if (!user) {

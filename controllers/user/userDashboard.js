@@ -18,12 +18,15 @@ export const addtoCart = asyncHandler(async (req, res) => {
     await Cart;
     const UserId = req.session.users._id;
     const productId = req.body.productId;
-
-    await Cart.create({
+    const find=await Cart.findOne({UserId,productId})
+    if (!find){
+        await Cart.create({
         UserId,
         productId,
         quantity: req.body.quantity,
     });
+    }
+   
     res.redirect("/cart");
 });
 export const addTowhish = asyncHandler(async (req, res) => {
@@ -63,23 +66,84 @@ export const removeFromWish = asyncHandler(async (req, res) => {
         console.log(error, "ERROR");
     }
 });
-export const quantchnge=asyncHandler(async(req,res)=>{
-   try {
-    const { productId, quantity } = req.body;
-    const UserId=req.session.users._id
-    const updatedItem = await Cart.findOneAndUpdate(
-        { UserId, productId },
-        { quantity: quantity },
-        { new: true }
-    );
-     res.json({ message: 'Quantity updated' });
-   } catch (error) {
-     console.log(error,"Quantity doesnot changed");  
-   }
-})
-export const checkout=asyncHandler(async(req,res)=>{
-    const find=await User.findById(req.session.users._id)
-    console.log(find,"sdfdsfjsldjf");
-    req.session.address=find.addresses
+export const quantchnge = asyncHandler(async (req, res) => {
+    try {
+
+        const { productId, quantity } = req.body;
+        const UserId = req.session.users._id;
+        if(quantity==0){
+            await Cart.findOneAndDelete({
+                UserId,productId
+            })
+        }
+        else{
+            await Cart.findOneAndUpdate(
+            { UserId, productId },
+            { quantity: quantity },
+            { new: true }
+        );
+        }
+        res.json({ message: "Quantity updated" });
+    } catch (error) {
+        console.log(error, "Quantity doesnot changed");
+    }
+});
+export const checkout = asyncHandler(async (req, res) => {
+    const find = await User.findById(req.session.users._id);
+    req.session.address = find.addresses;
+});
+export const addAddress = asyncHandler(async (req, res) => {
+    const {
+        name,
+        number,
+        street,
+        localPlace,
+        landmark,
+        city,
+        district,
+        state,
+        pincode,
+        country,
+        addressType,
+    } = req.body;
     
-})
+    const find = await User.findById(req.session.users._id);
+    
+    const duplicate = find.addresses.find(
+        (addr) =>
+            addr.name === name &&
+            addr.number === number &&
+            addr.street === street &&
+            addr.localPlace === localPlace &&
+            addr.landmark === landmark &&
+            addr.city === city &&
+            addr.district === district &&
+            addr.state === state &&
+            addr.pincode === pincode &&
+            addr.country === country &&
+            addr.addressType === addressType
+    );
+    if (duplicate) {
+        res.render("users/page/address", {
+            username: req.session.userName,
+            user: req.session.users,
+            error: "The address exist.Please add new",
+        });
+    } else {
+        find.addresses.push({
+            name,
+            number,
+            street,
+            localPlace,
+            landmark,
+            city,
+            district,
+            state,
+            pincode,
+            country,
+            addressType,
+        });
+        await find.save();
+    }
+    res.redirect('/checkout')
+});

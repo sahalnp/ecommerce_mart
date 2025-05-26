@@ -12,6 +12,7 @@ export const loadAdd_product = async (req, res) => {
 
     if (req.session.admin) {
         res.render("admin/page/adminAddProduct", {
+            csrfToken: req.csrfToken(),
             admin: admminData,
             brands,
             categories,
@@ -175,124 +176,107 @@ export const editProduct = asyncHandler(async (req, res) => {
     const fndCat = await categoryModel.find();
 
     res.render("admin/page/productEdit", {
+         csrfToken: req.csrfToken(),
         product: findProduct,
         admin: req.session.admin,
         activePage: "productEdit",
         brand: fndBrand,
         categry: fndCat,
+
     });
 });
-    export const productEdit = asyncHandler(async (req, res) => {
-        try {
-            const id = req.params.id;
-            const existingProduct = await product.findById(id);
-            if (!existingProduct) {
-                return res.status(404).json({ error: "Product not found" });
-            }
 
-            const basePath = `${req.protocol}://${req.get("host")}/uploads`;
-            const imageIds = [];
-
-            // // Handle image uploading
-            // if (Array.isArray(req.files) && req.files.length > 0) {
-            //     // Check if the image already exists
-            //     let imgFind = await imageModel.findOne({ filepath: `${basePath}/${req.files[0].filename}` });
-
-            //     if (!imgFind) {
-
-            //         for (let file of req.files) {
-            //             const savedImage = await imageModel.create({
-            //                 filename: file.filename,
-            //                 filepath: `${basePath}/${file.filename}`,
-            //             });
-            //             imageIds.push(savedImage._id); 
-            //         }
-            //     }
-            // } else {
-            //     console.log("No new images uploaded.");
-            // }
-
-
-            for (let file of req.files) {
-                const savedImage = await imageModel.create({
-                    filename: file.filename,
-                    filepath: `${basePath}/${file.filename}`,
-                });
-                imageIds.push(savedImage._id);
-            }
-            
-            const existingImageIds = req.body.existingImages || [];
-        
-            const allImageIds = [...existingImageIds, ...imageIds]; 
-            const {
-                title,
-                productPrice,
-                salePrice,
-                description,
-                genderCategory,
-                bandColour,
-                bandMaterial,
-                warranty,
-                movementType,
-                itemWeight,
-                countryOrigin,
-                modelNumber,
-                caseShape,
-                specialFeatures,
-                modelYear,
-                caseDiameter,
-                inStock,
-                isListed,
-            } = req.body;
-            let isList=true
-            if (isListed=='undefined'){
-                isList=false
-            }
-            const categoryDocs = await categoryModel.find({
-                name: { $in: req.body.categorybox },
-            });
-
-            const categoryIds = categoryDocs.map((category) => category._id);
-
-            // Handle brand
-            const brandDoc = await brandModel.findById(req.body.brandradio);
-            if (!brandDoc) {
-                return res.status(400).json({ error: "Invalid brand selected" });
-            }
-
-            await product.findByIdAndUpdate(id, {
-                title,
-                pricing: {
-                    price: productPrice,
-                    salePrice: salePrice,
-                },
-                brand: brandDoc._id,
-                description,
-                bandColour,
-                bandMaterial,
-                warranty,
-                movementType,
-                itemWeight,
-                countryOrigin,
-                modelNumber,
-                caseShape,
-                specialFeatures,
-                modelYear,
-                caseDiameter,
-                category: categoryIds,
-                genderCategory,
-                isListed:isList,
-                inStock,
-                image: allImageIds, 
-                isActive: true,
-            });
-
-            res.redirect("/admin/products");
-        } catch (error) {
-            console.error("Error during product update:", error);
-            res.status(500).json({ error: "Internal Server Error" });
+export const productEdit = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        const existingProduct = await product.findById(id);
+        if (!existingProduct) {
+            return res.status(404).json({ error: "Product not found" });
         }
-    });
+        const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+        const imageIds = [];
+        for (let file of req.files) {
+            const savedImage = await imageModel.create({
+                filename: file.filename,
+                filepath: `${basePath}/${file.filename}`,
+            });
+            imageIds.push(savedImage._id);
+        }
+        
+        // const existingImageIds = req.body.existingImages || [];
+        const existingImageIds = Array.isArray(req.body.existingImages)
+        ? req.body.existingImages
+        : req.body.existingImages
+        ? [req.body.existingImages]
+        : [];
+    
+        const allImageIds = [...existingImageIds, ...imageIds]; 
+        const {
+            title,
+            productPrice,
+            salePrice,
+            description,
+            genderCategory,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            inStock,
+            isListed,
+        } = req.body;
+        // let isList=true
+        // if (isListed=='undefined'){
+        //     isList=false
+        // }
+        const isList = req.body.isListed === "on" ? true : false;
+        const categoryDocs = await categoryModel.find({
+            name: { $in: req.body.categorybox },
+        });
+        const categoryIds = categoryDocs.map((category) => category._id);
+        // Handle brand
+        const brandDoc = await brandModel.findById(req.body.brandradio);
+        if (!brandDoc) {
+            return res.status(400).json({ error: "Invalid brand selected" });
+        }
+        await product.findByIdAndUpdate(id, {
+            title,
+            pricing: {
+                price: productPrice,
+                salePrice: salePrice,
+            },
+            brand: brandDoc._id,
+            description,
+            bandColour,
+            bandMaterial,
+            warranty,
+            movementType,
+            itemWeight,
+            countryOrigin,
+            modelNumber,
+            caseShape,
+            specialFeatures,
+            modelYear,
+            caseDiameter,
+            category: categoryIds,
+            genderCategory,
+            isListed:isList,
+            inStock,
+            image: allImageIds, 
+            isActive: true,
+        });
+        res.redirect("/admin/products");
+    } catch (error) {
+        console.error("Error during product update:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
     export const productListing=asyncHandler(async(req,res)=>{
         const { id } = req.params;

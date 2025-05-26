@@ -10,15 +10,15 @@ export const home = asyncHandler(async (req, res) => {
         .limit(3)
         .populate("image")
         .populate("brand");
-        let username =
-            req.session.users.firstname + " " + req.session.users.Lastname;
-        req.session.userName = req.session.user_name || username;
+    let username =
+        req.session.users.firstname + " " + req.session.users.Lastname;
+    req.session.userName = req.session.user_name || username;
 
-        return res.render("users/page/index", {
-            username: req.session.userName,
-            user: req.session.users,
-            prod: latestProducts,
-        });
+    return res.render("users/page/index", {
+        username: req.session.userName,
+        user: req.session.users,
+        prod: latestProducts,
+    });
 
     // return res.render("users/page/index", {
     //     username: null,
@@ -52,7 +52,6 @@ export const laodShop = asyncHandler(async (req, res) => {
         wish: productsWishlist,
         cartItems: cartfind,
     });
-
 });
 
 export const laodProduct = asyncHandler(async (req, res) => {
@@ -112,7 +111,6 @@ export const about = asyncHandler(async (req, res) => {
     });
 });
 export const blog = asyncHandler(async (req, res) => {
-    
     return res.render("users/page/blog", {
         username: req.session.userName,
         user: req.session.users,
@@ -132,10 +130,20 @@ export const confirmaton = asyncHandler(async (req, res) => {
     });
 });
 export const loadCheckout = asyncHandler(async (req, res) => {
+   const find = await User.findOne({ _id: req.session.users._id });
+   const address = find.addresses.filter(addr => addr.status === true);
+   const cartfind = await Cart.find({ UserId: req.session.users._id });
+   console.log(cartfind);
+   const productIds = cartfind.map(item => item.productId); // Getting ids
+
+   const products = await product.find({ _id: { $in: productIds } }); //Getting products
+   console.log(products,"dfghjk");
+   
     return res.render("users/page/checkout", {
         username: req.session.userName,
         user: req.session.users,
-        address:null
+        address: address,
+        product:products
     });
 });
 export const contact = asyncHandler(async (req, res) => {
@@ -158,7 +166,25 @@ export const wishlist = asyncHandler(async (req, res) => {
         user: req.session.users,
         wishlist: findProd,
     });
-})
-export const loadAddress=asyncHandler(async(req,res)=>{
-    res.render('users/page/address')
-})
+});
+export const loadAddress = asyncHandler(async (req, res) => {
+    res.render("users/page/address", {
+        username: req.session.userName,
+        user: req.session.users,
+        error: null,
+    });
+});
+export const dltAddress = asyncHandler(async (req, res) => {
+    console.log(req.params.id);
+    const find = await User.findById(req.session.users._id);
+    const address = find.addresses.id(req.params.id);
+    if (address) {
+        address.status = "unlist";
+        await find.save();
+        res.redirect("/checkout");
+    } else {
+        res.status(404).send("Address not found");
+    }
+
+    res.redirect("/checkout");
+});

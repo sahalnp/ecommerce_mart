@@ -1,3 +1,4 @@
+
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
@@ -58,9 +59,26 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // CSRF Protection
-app.use(csrfProtection);
 app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
+  const skipCSRFPaths = [
+    "/admin/product/edit", 
+    "/admin/upload"        
+  ];
+
+  if (
+    req.method === "POST" &&
+    skipCSRFPaths.some(path => req.path.startsWith(path))
+  ) {
+    return next(); 
+  }
+
+  csrf(req, res, next); 
+});
+
+app.use((req, res, next) => {
+  if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();
+  }
   next();
 });
 app.use((err, req, res, next) => {

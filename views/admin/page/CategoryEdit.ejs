@@ -10,6 +10,7 @@
           </div>
           <div class="card-body">
             <form action="/admin/editCategory/<%= category._id %>" method="POST">
+               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <input type="hidden" name="id" value="<%= category._id %>" />
         
               <div class="mb-3">

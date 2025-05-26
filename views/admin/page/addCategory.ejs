@@ -75,6 +75,7 @@
         <div class="container">
             <h2>Add Category</h2>
             <form action="/admin/addCategory" method="POST">
+                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <!-- Category Input -->
                 <div class="d-flex gap-4">
                     <input

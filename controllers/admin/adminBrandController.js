@@ -38,6 +38,7 @@ export const loadEditBrand = asyncHandler(async (req, res) => {
     res.render("admin/page/brandEdit", {
         activePage: "brandEdit",
         brand: find,
+        admin: req.session.admin,
     });
 });
 export const editBrand= asyncHandler(async(req,res)=>{
