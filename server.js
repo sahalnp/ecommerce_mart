@@ -52,8 +52,6 @@ app.use(
     },
   })
 );
-
-// Flash Messages
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -72,7 +70,8 @@ app.use((req, res, next) => {
     return next(); 
   }
 
-  csrf(req, res, next); 
+ csrfProtection(req, res, next);
+ 
 });
 
 app.use((req, res, next) => {
@@ -81,12 +80,7 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use((err, req, res, next) => {
-  if (err.code === "EBADCSRFTOKEN") {
-    return res.status(403).send("Form tampered with");
-  }
-  next(err);
-});
+
 
 // View Engine
 app.set("view engine", "ejs");
