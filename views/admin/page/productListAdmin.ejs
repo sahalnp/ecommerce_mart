@@ -64,6 +64,7 @@
 
                                         <td>
                                             <form action="/admin/product/listing/<%= product._id %>" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <select name="isListed" 
                                                         class="form-select form-select-sm <%= product.isListed ? 'bg-primary text-white' : 'bg-danger text-white' %>" 
                                                         onchange="this.form.submit()">

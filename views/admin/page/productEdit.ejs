@@ -53,6 +53,7 @@
                             </div>
                             <div class="card-body">
                                 <form method="POST" action="/admin/product/edit/<%= product._id %>" enctype="multipart/form-data">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="hidden" name="id" value="<%= product._id %>" />
 
                                     <!-- Basic Info -->

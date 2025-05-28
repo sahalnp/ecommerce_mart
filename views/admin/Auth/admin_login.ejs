@@ -43,6 +43,7 @@
             <h2 class="text-center text-light mb-4">Admin Login</h2>
             <div class="card shadow rounded-4">
                 <form class="card-body cardbody-color p-4" action="/admin/login" method="POST">
+                   <input type="hidden" name="_csrf" value="<%= csrfToken %>"> 
                     <div class="text-center mb-4">
                         <img
                             src="https://cdn.pixabay.com/photo/2016/03/31/19/56/avatar-1295397__340.png"

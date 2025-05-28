@@ -132,10 +132,34 @@ export const confirmaton = asyncHandler(async (req, res) => {
     });
 });
 export const loadCheckout = asyncHandler(async (req, res) => {
+    const find = await User.findOne({ _id: req.session.users._id });
+    const address = find.addresses.filter(item => item.status === false);
+    console.log(address,"ghjk");
+    
+    const cartfind = await Cart.find({ UserId: req.session.users._id });
+    const productIds = cartfind.map(item => item.productId); 
+    const products = await product.find({ _id: { $in: productIds } }).populate("image"); 
+    let prodtotal = 0; // ✅ Initialize before loop
+
+    products.forEach(product => {
+    prodtotal += product.pricing.price;
+    });
+    const tax=prodtotal+10
+    let ship=0.00
+    if(prodtotal<500){
+        ship=40.00
+    } 
+    const total=tax+ship   
     return res.render("users/page/checkout", {
         username: req.session.userName,
         user: req.session.users,
-        address:null
+        address:null,
+        addr: address,
+        product:products,
+        prodtotal:prodtotal,
+        ship:ship,
+        tax:tax,
+        total:total
     });
 });
 export const contact = asyncHandler(async (req, res) => {
@@ -148,17 +172,41 @@ export const wishlist = asyncHandler(async (req, res) => {
     const find = await User.findById(req.session.users._id).populate(
         "wishList"
     );
+    let exist=false
 
     const findProd = await product
         .find({ _id: find.wishList })
         .populate("image");
+    if(findProd){
+        exist=true
+    }
 
+    
     return res.render("users/page/whishlist", {
         username: req.session.userName,
         user: req.session.users,
         wishlist: findProd,
+        exist:exist
     });
 })
-export const loadAddress=asyncHandler(async(req,res)=>{
-    res.render('users/page/address')
-})
+export const loadAddress = asyncHandler(async (req, res) => {
+    res.render("users/page/address", {
+        username: req.session.userName,
+        user: req.session.users,
+        error: null,
+    });
+});
+export const dltAddress = asyncHandler(async (req, res) => {
+    console.log(req.params.id);
+    const find = await User.findById(req.session.users._id);
+    const address = find.addresses.id(req.params.id);
+    if (address) {
+        address.status = "unlist";
+        await find.save();
+        res.redirect("/checkout");
+    } else {
+        res.status(404).send("Address not found");
+    }
+
+    res.redirect("/checkout");
+});

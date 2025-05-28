@@ -8,6 +8,7 @@
     </div>
     <div class="card-body">
       <form action="/admin/brand/edit/<%= brand._id %>" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div class="mb-3">
           <label for="brandName" class="form-label">Brand Name</label>
           <input

@@ -1,60 +1,9 @@
-
-
-:root { --amazon-orange: #FF9900; --amazon-dark: #131921; --amazon-blue: #232F3E; --amazon-yellow: #FEBD69; --light-gray: #EAEDED; --border-color: #DDD; --button-color: #FFD814; --button-hover: #F
-
-pasted
-
-
-<%- include('../partials/header') %> <head> <title> Checkout</title> <link rel="stylesheet" href="\assets\css\checkout.css"> <style> .hero-cap .name { font-size: clamp(2rem, 5vw, 3.5rem); } .slider-area { height: 400px; display: flex; align-items: ce
-
-pasted
-
-change the color of shopping box  to the backgorund color and backoground clor ot white
-
-I'll update the CSS to swap the colors of the shopping boxes (sections) with the background color. I'll change the section backgrounds to the current background color (light gray) and change the page background to white.
-
-
-Modified Checkout CSS
-Code 
-I've swapped the colors as requested:
-
-Changed the page background color from light gray (
-#EAEDED) to white
-Changed all the sections (shopping boxes) background color from white to light gray (
-#EAEDED)
-The key changes I made:
-
-Modified body background color to white
-Changed the .section background color to light gray
-Updated the .place-order-container background to light gray
-Added a style for .checkout-sidebar to match the light gray background
-Updated the .step background to white so it shows correctly against the now-white page background
-This creates a nice contrast where the shopping boxes stand out with their light gray background against the white page, which is the reverse of the original color scheme.
-
-Would you like me to make any additional color adjustments to the checkout page?
-
-
-
-
-why place order is under i wnat after oreder total
-
-I see the issue - the "Place your order" button is currently placed under the order summary in the sidebar, but you want it to appear after the order total. Let me fix that by reorganizing the elements in the sidebar.
-
-
-Modified Checkout CSS
-Code 
-
-Making edits...
- 
-
-
-
 :root {
     --amazon-orange: #FF9900;
     --amazon-dark: #131921;
     --amazon-blue: #232F3E;
     --amazon-yellow: #FEBD69;
-    --light-gray: #EAEDED;
+    --light-gray: #F3F3F3;
     --border-color: #DDD;
     --button-color: #FFD814;
     --button-hover: #F7CA00;
@@ -68,302 +17,304 @@ Making edits...
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
 }
 
 body {
-    background-color: white; /* Changed from light-gray to white */
+    font-family: "Amazon Ember", Arial, sans-serif;
+    background-color: white;
     color: var(--text-color);
     line-height: 1.4;
     font-size: 14px;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 14px;
-}
-
-/* Header Styles */
+/* Header */
 .header {
     background-color: var(--amazon-dark);
-    padding: 10px 0;
+    padding: 14px 0;
+    border-bottom: 1px solid #3a4553;
 }
 
 .header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 14px;
+    padding: 0 20px;
 }
 
 .logo {
     color: white;
     font-size: 24px;
     font-weight: bold;
+    text-decoration: none;
 }
 
-.security-badge {
+.checkout-progress {
+    color: white;
+    font-size: 14px;
+}
+
+.security-info {
+    color: #cccccc;
+    font-size: 12px;
     display: flex;
     align-items: center;
-    color: white;
-    font-size: 12px;
 }
 
-.security-badge svg {
+.lock-icon {
     margin-right: 5px;
-    fill: white;
 }
 
-/* Progress Tracker */
-.checkout-steps {
+/* Hero Section */
+.hero-cap .name {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.slider-area {
+    height: 400px;
     display: flex;
-    justify-content: space-between;
-    margin: 20px 0 30px;
-    position: relative;
-}
-
-.checkout-steps::before {
-    content: '';
-    position: absolute;
-    top: 14px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: var(--border-color);
-    z-index: 1;
-}
-
-.step {
-    position: relative;
-    z-index: 2;
-    background-color: white; /* Changed from light-gray to white */
-    padding: 0 10px;
-    text-align: center;
-}
-
-.step-number {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background-color: var(--amazon-yellow);
-    color: var(--text-color);
-    font-weight: bold;
-    margin-bottom: 8px;
+    text-align: center;
+    margin-bottom: 0;
 }
 
-.step.active .step-number {
-    background-color: var(--amazon-orange);
-}
-
-.step.completed .step-number {
-    background-color: var(--success-color);
-    color: white;
-}
-
-.step-label {
-    font-size: 12px;
-    color: var(--secondary-text);
-}
-
-.step.active .step-label {
-    color: var(--text-color);
-    font-weight: bold;
-}
-
-/* Main Content */
-.checkout-container {
+.single-slider {
+    height: 100%;
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Left Column */
-.checkout-main {
-    flex: 1 1 650px;
+.hero-cap h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #0d1b2a;
 }
 
-/* Right Column */
-.checkout-sidebar {
-    flex: 1 1 300px;
-}
-
-/* Common Section Styles */
-.section {
-    background-color: var(--light-gray); /* Changed from white to light-gray */
-    border-radius: 8px;
+/* Main Container - Fixed alignment */
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start; /* Ensures both columns start at the same height */
+}
+
+.checkout-container.pt-5 {
+    padding-top: 20px !important; /* Override Bootstrap's pt-5 if it's causing issues */
+}
+
+/* Left Column - Main Content */
+.checkout-main {
+    flex: 2;
+    margin-top: 0;
+}
+
+/* Right Column - Order Summary */
+.checkout-sidebar {
+    flex: 1;
+    max-width: 300px;
+    margin-top: 0;
+}
+
+/* Section Styles */
+.section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.section:first-child {
+    margin-top: 0;
 }
 
 .section-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.section-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background-color: var(--amazon-blue);
-    color: white;
-    font-weight: bold;
-    margin-right: 10px;
+    background-color: var(--light-gray);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
 }
 
 .section-title {
     font-size: 18px;
     font-weight: bold;
+    color: var(--text-color);
 }
 
-/* Shipping Address */
+.section-content {
+    padding: 18px;
+}
+
+/* Address Section */
 .address-option {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #e7e7e7;
 }
 
-.address-option.selected {
-    border: 2px solid var(--amazon-orange);
+.address-option:last-child {
+    border-bottom: none;
 }
 
 .address-option input[type="radio"] {
-    margin-right: 10px;
+    margin-right: 12px;
+    margin-top: 2px;
 }
 
-.address-details {
-    margin-left: 25px;
+.address-content {
+    flex: 1;
 }
 
 .address-name {
     font-weight: bold;
+    margin-bottom: 4px;
 }
 
-.address-link {
+.address-details {
+    color: var(--secondary-text);
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.add-address-link {
     color: var(--link-color);
     text-decoration: none;
-    font-size: 12px;
-    margin-left: 25px;
+    font-size: 13px;
+    display: inline-block;
+    margin-top: 10px;
 }
 
-.address-link:hover {
-    text-decoration: underline;
+.add-address-link:hover {
     color: #C7511F;
+    text-decoration: underline;
+}
+
+/* Edit/Delete Address Links */
+.edit-address-link i,
+.delete-address-link i {
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.edit-address-link:hover i {
+    color: #007bff;
+}
+
+.delete-address-link:hover i {
+    color: #dc3545;
 }
 
 /* Payment Method */
 .payment-option {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #e7e7e7;
 }
 
-.payment-option.selected {
-    border: 2px solid var(--amazon-orange);
+.payment-option:last-child {
+    border-bottom: none;
 }
 
 .payment-option input[type="radio"] {
-    margin-right: 10px;
+    margin-right: 12px;
+    margin-top: 2px;
+}
+
+.payment-content {
+    flex: 1;
+}
+
+.payment-label {
+    font-weight: bold;
+    margin-bottom: 4px;
 }
 
 .payment-details {
-    margin-left: 25px;
-    margin-top: 10px;
+    color: var(--secondary-text);
+    font-size: 13px;
 }
 
-.card-info {
-    display: flex;
-    align-items: center;
-}
-
-.card-icon {
-    width: 40px;
-    height: 25px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Add New Payment Method */
-.new-payment {
+.card-form {
     margin-top: 15px;
-    margin-left: 25px;
     display: none;
+}
+
+.card-form.active {
+    display: block;
 }
 
 .form-group {
     margin-bottom: 15px;
 }
 
-.form-group label {
+.form-label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     font-weight: bold;
     font-size: 13px;
 }
 
-.form-group input, .form-group select {
+.form-input {
     width: 100%;
-    padding: 8px;
+    padding: 8px 12px;
     border: 1px solid var(--border-color);
-    border-radius: 3px;
+    border-radius: 4px;
+    font-size: 13px;
 }
 
 .form-row {
     display: flex;
-    gap: 15px;
+    gap: 10px;
 }
 
 .form-col {
     flex: 1;
 }
 
-/* Review Items */
-.review-title {
-    font-size: 16px;
-    font-weight: bold;
+/* Items Review */
+.items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 15px;
+}
+
+.delivery-date {
+    color: var(--success-color);
+    font-weight: bold;
 }
 
 .product-item {
     display: flex;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
+    padding: 15px 0;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.product-item:last-child {
+    border-bottom: none;
 }
 
 .product-image {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     margin-right: 15px;
-    background-color: #f8f8f8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid #e7e7e7;
+    border-radius: 4px;
     overflow: hidden;
 }
 
 .product-image img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-details {
@@ -371,67 +322,112 @@ body {
 }
 
 .product-name {
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 14px;
+    line-height: 1.3;
+    margin-bottom: 6px; /* Slightly reduced from 8px */
+}
+
+.product-name a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.product-name a:hover {
+    color: #C7511F;
+    text-decoration: underline;
 }
 
 .product-price {
-    color: var(--text-color);
     font-weight: bold;
+    color: #B12704;
+    margin-bottom: 3px; /* Reduced from 4px */
 }
 
-.product-quantity {
+/* Updated Product Options - Smaller size and reduced gaps */
+.product-options {
+    font-size: 11px; /* Reduced from 12px */
     color: var(--secondary-text);
-    font-size: 13px;
+    margin-bottom: 6px; /* Reduced from 8px */
+    line-height: 1.2; /* Tighter line spacing */
+}
+
+.product-options p {
+    margin-bottom: 2px; /* Reduced gap between each option line */
+}
+
+.product-options p:last-child {
+    margin-bottom: 0; /* Remove bottom margin from last item */
 }
 
 .delivery-info {
-    color: var(--success-color);
     font-size: 12px;
-    margin-top: 5px;
+    color: var(--success-color);
+    margin-top: 6px; /* Add some space above delivery info */
 }
 
-/* Order Summary */
-.order-summary-title {
-    font-size: 16px;
+.prime-badge {
+    background-color: var(--link-color);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+/* Order Summary Sidebar */
+.order-summary {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    margin-top: 0;
+}
+
+.summary-header {
+    background-color: var(--light-gray);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 8px 8px 0 0;
     font-weight: bold;
-    margin-bottom: 15px;
+}
+
+.summary-content {
+    padding: 18px;
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    font-size: 13px;
 }
 
 .summary-total {
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 15px;
-    padding-top: 15px;
     border-top: 1px solid var(--border-color);
-    margin-bottom: 15px; /* Added spacing before the button */
+    padding-top: 8px;
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 /* Place Order Button */
-.place-order-container {
-    background-color: var(--light-gray); /* Changed from white to light-gray */
+.place-order-section {
+    margin-bottom: 20px; /* Add margin bottom instead of top */
+    padding: 18px;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    text-align: center;
+    margin-top: 0;
 }
 
 .btn-place-order {
-    display: block;
-    width: 100%;
-    padding: 12px;
     background-color: var(--button-color);
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
+    border: 1px solid #FCD200;
+    border-radius: 20px;
+    padding: 8px 30px;
+    font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(213, 217, 217, .5);
+    width: 100%;
     margin-bottom: 10px;
 }
 
@@ -439,50 +435,42 @@ body {
     background-color: var(--button-hover);
 }
 
-.order-total {
-    font-size: 13px;
-    text-align: right;
-}
-
-.order-total-amount {
+.order-total-display {
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .agreement-text {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--secondary-text);
-    margin-top: 10px;
+    line-height: 1.4;
 }
 
-/* Prime delivery */
-.prime-badge {
-    display: inline-flex;
-    align-items: center;
-    background-color: #232F3E;
-    color: white;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    margin-right: 5px;
+.agreement-text a {
+    color: var(--link-color);
+    text-decoration: none;
+}
+
+.agreement-text a:hover {
+    text-decoration: underline;
+}
+
+/* Alignment fixes for consistent vertical alignment */
+.checkout-main .section:first-child,
+.checkout-sidebar .place-order-section {
+    margin-top: 0;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .checkout-container {
         flex-direction: column;
+        padding: 10px;
+        align-items: stretch;
     }
     
-    .form-row {
-        flex-direction: column;
-        gap: 10px;
+    .checkout-sidebar {
+        max-width: none;
+        margin-top: 20px;
     }
-}
-
-/* For the checkout-sidebar (in paste-2.txt) */
-.checkout-sidebar {
-    background-color: var(--light-gray); /* Changed from white to light-gray */
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
 }

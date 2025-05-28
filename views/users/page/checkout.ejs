@@ -1,302 +1,197 @@
-<%- include('../partials/header') %>
-<head>
-    <title> Checkout</title>
-    <link rel="stylesheet" href="\assets\css\checkout.css">
-     <style>
-          .hero-cap .name {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-}
-.slider-area {
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
+    <%- include('../partials/header') %>
+    <head>
+        <title>Checkout</title>
+        <link rel="stylesheet" href="\assets\css\checkout.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
-.single-slider {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-cap h2 {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #0d1b2a; /* dark navy-like color */
-}
-
-    </style>
-</head>
-<main>
-    <!-- Hero Area Start-->
-    <div class="slider-area">
-        <div class="single-slider slider-height2 d-flex align-items-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="hero-cap text-center">
-                            <h2 class="name">Checkout</h2>
+    </head>
+    <main>
+        <!-- Hero Area Start-->
+        <div class="slider-area">
+            <div class="single-slider slider-height2 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap text-center">
+                                <h2 class="name">Checkout</h2>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-        <div class="checkout-container" style="padding: 50px;">
-  <div class="checkout-main">
-    <!-- Shipping Address Section -->
-    <div class="section">
-      <div class="section-header">
-        <!-- You can put section title here -->
-        <h3>Select Shipping Address</h3>
-      </div>
 
-      <% address.array.forEach((add, index) => { %>
-        <div class="address-option">
-          <input 
-            type="radio" 
-            id="address<%= index %>" 
-            name="address" 
-            value="<%= add._id || index %>" 
-            <%= index === 0 ? 'checked' : '' %> 
-          />
-          <label for="address<%= index %>" class="address-name"><%= add.name %></label>
-          <div class="address-details">
-            <%= add.detail %>
-          </div>
-        </div>
-      <% }) %>
-
-      <a href="/address" class="address-link">Add a new address</a>
-    </div>
-  </div>
-</div>
-
-                
-                <!-- Payment Method Section -->
+        <!-- Main Content -->
+        <div class="checkout-container pt-5">
+            <!-- Left Column -->
+            <div class="checkout-main">
+                <!-- Shipping Address Section -->
                 <div class="section">
                     <div class="section-header">
-                        <div class="section-number">2</div>
-                        <div class="section-title">Payment method</div>
+                        <div class="section-title">1 &nbsp;&nbsp; Choose a shipping address</div>
                     </div>
-                    
-                    <div class="payment-option selected" onclick="selectPayment(this, 'existing-card')">
-                        <input type="radio" id="card1" name="payment" checked>
-                        <label for="card1">Visa ending in 1234</label>
-                        <div class="payment-details">
-                            <div class="card-info">
-                                <div class="card-icon">
-                                    <img src="/api/placeholder/40/25" alt="Visa">
-                                </div>
-                                <span>John Doe | Exp: 05/2026 | Billing: 123 Main Street</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="payment-option" onclick="selectPayment(this, 'add-card')">
-                        <input type="radio" id="newCard" name="payment">
-                        <label for="newCard">Add a credit or debit card</label>
-                        
-                        <div class="new-payment" id="add-card-form">
-                            <div class="form-group">
-                                <label for="cardNumber">Card number</label>
-                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="cardName">Name on card</label>
-                                <input type="text" id="cardName">
-                            </div>
-                            
-                            <div class="form-row">
-                                <div class="form-col">
-                                    <div class="form-group">
-                                        <label for="expiry">Expiration date</label>
-                                        <div class="form-row">
-                                            <div class="form-col">
-                                                <select id="expiryMonth">
-                                                    <option value="">Month</option>
-                                                    <option value="01">01</option>
-                                                    <option value="02">02</option>
-                                                    <option value="03">03</option>
-                                                    <option value="04">04</option>
-                                                    <option value="05">05</option>
-                                                    <option value="06">06</option>
-                                                    <option value="07">07</option>
-                                                    <option value="08">08</option>
-                                                    <option value="09">09</option>
-                                                    <option value="10">10</option>
-                                                    <option value="11">11</option>
-                                                    <option value="12">12</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-col">
-                                                <select id="expiryYear">
-                                                    <option value="">Year</option>
-                                                    <option value="2025">2025</option>
-                                                    <option value="2026">2026</option>
-                                                    <option value="2027">2027</option>
-                                                    <option value="2028">2028</option>
-                                                    <option value="2029">2029</option>
-                                                    <option value="2030">2030</option>
-                                                </select>
-                                            </div>
-                                        </div>
+                <div class="section-content">
+                    <% if (addr && addr.length > 0) { %>
+                        <% addr.forEach((add, index) => { %>
+                            <div class="address-option">
+                                <input type="radio" id="address<%= index %>" name="address" value="<%= add._id %>" <%= index === 0 ? "checked" : "" %> >
+                                <div class="address-content">
+                                    <div class="address-name">
+                                        <%= add.addressType %>
+                                    </div>
+                                    <br>
+                                    <div class="address-details">
+                                        <%= add.name %><br>
+                                        <%= add.number %><br>
+                                        <%= add.street %>, <%= add.localPlace %><br>
+                                        Near <%= add.landmark %><br>
+                                        <%= add.city %>, <%= add.district %>, <%= add.state %> - <%= add.pincode %><br>
+                                        <%= add.country %>
                                     </div>
                                 </div>
-                                <div class="form-col">
-                                    <div class="form-group">
-                                        <label for="cvv">CVV</label>
-                                        <input type="text" id="cvv">
-                                    </div>
+                                    <a href="/address/delete/<%= add._id %>" class="delete-address-link" title="Delete Address" style="margin-left: 8px; color: red;">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <input type="checkbox" id="sameAsShipping" checked>
-                                <label for="sameAsShipping" style="display: inline;">Use your shipping address as your billing address</label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="payment-option" onclick="selectPayment(this, 'amazon-gift')">
-                        <input type="radio" id="giftCard" name="payment">
-                        <label for="giftCard">Amazon Gift Card</label>
-                    </div>
+            <% }); %>
+        <% } else { %>
+            <div class="address-option">
+                <p>No addresses found</p>
+            </div>
+        <% } %>
+        <a href="/add-address" class="add-address-link">+ Add a new address</a>
+    </div>
                 </div>
-                
+
+                <!-- Payment Method Section -->
+        <div class="section">
+    <div class="section-header">
+        <div class="section-title">2 &nbsp;&nbsp; Choose a payment method</div>
+    </div>
+    <div class="section-content">
+
+        <!-- Cash on Delivery -->
+        <div class="payment-option">
+        <input type="radio" id="cod" name="payment" value="cod" checked>
+        <label for="cod" class="payment-content">
+            <div class="payment-label">Cash on Delivery</div>
+            <div class="payment-details">Pay when you receive the product</div>
+        </label>
+        </div>
+
+        <!-- Razorpay -->
+        <div class="payment-option">
+        <input type="radio" id="razorpay" name="payment" value="razorpay">
+        <label for="razorpay" class="payment-content">
+            <div class="payment-label">Razorpay</div>
+            <div class="payment-details">Pay securely via UPI, card, net banking.</div>
+        </label>
+        </div>
+
+    </div>
+    </div>
+
                 <!-- Review Items Section -->
                 <div class="section">
                     <div class="section-header">
-                        <div class="section-number">3</div>
-                        <div class="section-title">Review items and shipping</div>
+                        <div class="section-title">3 &nbsp;&nbsp; Review items and shipping</div>
                     </div>
-                    
-                    <div class="review-title">Delivery: May 18-19</div>
-                    
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="/api/placeholder/80/80" alt="Product 1">
+                    <div class="section-content">
+                        <div class="items-header">
+                            <div class="delivery-date" id="delivery-date"></div>
                         </div>
-                        <div class="product-details">
-                            <div class="product-name">Echo Dot (5th Gen) | Smart speaker with Alexa</div>
-                            <div class="product-price">$49.99</div>
-                            <div class="product-quantity">Qty: 1</div>
-                            <div class="delivery-info">
-                                <span class="prime-badge">prime</span> FREE Delivery: Sunday, May 18
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="/api/placeholder/80/80" alt="Product 2">
-                        </div>
-                        <div class="product-details">
-                            <div class="product-name">Fire TV Stick 4K streaming device</div>
-                            <div class="product-price">$39.99</div>
-                            <div class="product-quantity">Qty: 1</div>
-                            <div class="delivery-info">
-                                <span class="prime-badge">prime</span> FREE Delivery: Sunday, May 18
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="product-item">
-                        <div class="product-image">
-                            <img src="/api/placeholder/80/80" alt="Product 3">
-                        </div>
-                        <div class="product-details">
-                            <div class="product-name">Kindle Paperwhite (8 GB) – Now with 6.8" display</div>
-                            <div class="product-price">$139.99</div>
-                            <div class="product-quantity">Qty: 1</div>
-                            <div class="delivery-info">
-                                <span class="prime-badge">prime</span> FREE Delivery: Monday, May 19
-                            </div>
-                        </div>
+
+    <% product.forEach((prod) => { %>
+    <div class="product-item">
+        <div class="product-image">
+        <img src="<%= prod.image[0]?.filepath %>" alt="<%= prod.title %>" />
+        </div>
+        <div class="product-details">
+        <div class="product-name">
+            <h4><%= prod.title %></h4>
+        </div>
+        <div class="product-price">
+            ₹<%= prod.pricing?.price || 'N/A' %>
+        </div>
+        <div class="product-options">
+            <p>Brand: <%= prod.brandName || 'N/A' %></p>
+            <p>Color: <%= prod.bandColour %></p>
+            <p>Warranty: <%= prod.warranty %> years</p>
+        </div>
+        <div class="delivery-info">
+            <span class="prime-badge">Prime</span>
+            FREE Delivery <%= new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toDateString() %>
+        </div>
+        </div>
+    </div>
+    <% }) %>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Right Column - Order Summary (MOVED HERE) -->
             <div class="checkout-sidebar">
-                <!-- Order Summary -->
-                    <div class="order-summary-title">Order Summary</div>
-                    
-                    <div class="summary-row">
-                        <div>Items (3):</div>
-                        <div>$229.97</div>
-                    </div>
-                    <div class="summary-row">
-                        <div>Shipping & handling:</div>
-                        <div>$0.00</div>
-                    </div>
-                    <div class="summary-row">
-                        <div>Total before tax:</div>
-                        <div>$229.97</div>
-                    </div>
-                    <div class="summary-row">
-                        <div>Estimated tax to be collected:</div>
-                        <div>$20.70</div>
-                    </div>
-                    <div class="summary-row summary-total">
-                        <div>Order total:</div>
-                        <div>$250.67</div>
+                <div class="place-order-section">
+                    <div class="agreement-text">
+                        By placing your order, you agree to Amazon's <a href="#">privacy notice</a> and <a href="#">conditions of use</a>.
                     </div>
                 </div>
                 
-                <!-- Place Order Button -->
-                <div class="place-order-container">
-                    <button class="btn-place-order" onclick="placeOrder()">Place your order</button>
-                    <div class="order-total">Order total: <span class="order-total-amount">$250.67</span></div>
-                    <div class="agreement-text">
-                        By placing your order, you agree to Amazon's privacy notice and conditions of use.
+                <div class="order-summary">
+                    <div class="summary-header">Order Summary</div>
+                    <div class="summary-content">
+                        <div class="summary-row">
+                            <span>Items (<%= product.lenght %>):</span>
+                            <span>₹<%= prodtotal %> </span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping & handling:</span>
+                             <span><%= ship %></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Total before tax:</span>
+                            <span>₹<%= prodtotal %></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Estimated tax:</span>
+                            <span>10.00</span>
+                        </div>
+                        <div class="summary-row summary-total">
+                            <span>Order total:</span>
+                            <span><%= total %></span>
+                        </div>
+                        <button class="btn-place-order" onclick="placeOrder()">Place your order</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </main>
-    <script>
-        function selectPayment(element, type) {
-     
-            document.querySelectorAll('.payment-option').forEach(option => {
-                option.classList.remove('selected');
-            });
-            
-          
-            element.classList.add('selected');
-            
-            element.querySelector('input[type="radio"]').checked = true;
-            
 
-            document.getElementById('add-card-form').style.display = 'none';
-            
-            if (type === 'add-card') {
-                document.getElementById('add-card-form').style.display = 'block';
-            }
-        }
-        
-        function placeOrder() {
-            // Simulate order placement
-            alert('Thank you for your order! Your order has been placed successfully.');
-        }
-        
-        // Format credit card number with spaces
-        document.getElementById('cardNumber').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-            let formattedValue = '';
-            
-            for (let i = 0; i < value.length; i++) {
-                if (i > 0 && i % 4 === 0) {
-                    formattedValue += ' ';
-                }
-                formattedValue += value[i];
-            }
-            
-            e.target.value = formattedValue;
-        });
-    </script>
-<%- include('../partials/footer') %>
+        <script>
+            // Handle payment method selection
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const cardForm = document.getElementById('cardForm');
+                    if (this.value === 'new') {
+                        cardForm.classList.add('active');
+                    } else {
+                        cardForm.classList.remove('active');
+                    }
+                });
+            });
+            const deliveryDateElement = document.getElementById("delivery-date");
+
+    const today = new Date();
+    today.setDate(today.getDate() + 3); // add 3 days
+
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = today.toLocaleDateString('en-US', options);
+
+    deliveryDateElement.textContent = formattedDate;
+
+    function placeOrder() {
+        // Add your place order logic here
+        alert('Order placed successfully!');
+    }
+        </script>
+    <%- include('../partials/footer') %>

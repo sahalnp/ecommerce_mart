@@ -58,11 +58,31 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // CSRF Protection
-app.use(csrfProtection);
+const skipCSRFPaths = [
+  "/admin/product/edit",
+  "/admin/upload"
+];
+
+// Conditionally apply CSRF
 app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
+  if (
+    req.method === "POST" &&
+    skipCSRFPaths.some(path => req.path.startsWith(path))
+  ) {
+    return next(); // Skip CSRF for selected routes
+  }
+  csrfProtection(req, res, next); // Apply CSRF for others
+});
+
+// Make CSRF token available in EJS
+app.use((req, res, next) => {
+  if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();
+  }
   next();
 });
+
+// CSRF error handler
 app.use((err, req, res, next) => {
   if (err.code === "EBADCSRFTOKEN") {
     return res.status(403).send("Form tampered with");

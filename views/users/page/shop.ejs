@@ -164,39 +164,40 @@
 </main>
 
 <script>
+  const csrfToken = "<%= csrfToken %>"; // Ensure csrfToken is passed from Express
 
-      async function addToCart(productId) {
-        try {
-          console.log(productId,"id");
-          
-        const res = await axios.post(
-        `/product/add-to-cart`,  // Change this route as needed
+  async function addToCart(productId) {
+    try {
+      const res = await axios.post(
+        "/product/add-to-cart",
         { productId, quantity: 1 },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            "CSRF-Token": csrfToken, // For csurf middleware
+            "Content-Type": "application/json"
+          },
+        }
       );
 
       console.log("Added to cart", res.data);
 
+      const toast = document.querySelector(".cart-toast");
+      if (toast) {
+        toast.style.display = "block";
+        setTimeout(() => {
+          toast.style.display = "none";
+          window.location.reload();
+        }, 3000);
+      }
 
-    // Show toast
-    const toast = document.querySelector('.cart-toast');
-    if (toast) {
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 3000);
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+      alert("Failed to add item to cart.");
     }
-    
-    // Optional: update UI or reload page here if needed
-    // window.location.reload();
-
-  } catch (error) {
-    console.error("Add to cart failed:", error);
-    alert("Failed to add item to cart.");
   }
-}
 
-document.addEventListener("click", function (e) {
+  document.addEventListener("click", function (e) {
     const icon = e.target.closest(".heart-toggle");
     if (!icon) return;
 
@@ -206,44 +207,62 @@ document.addEventListener("click", function (e) {
     if (!productId) return alert("Product ID not found.");
 
     if (isLiked) {
-        icon.setAttribute("data-liked", "false");
-        // Remove from Wishlist
-        removeFromWishlist(productId);
+      icon.setAttribute("data-liked", "false");
+      removeFromWishlist(productId);
     } else {
-        icon.setAttribute("data-liked", "true");
-        // Add to Wishlist
-        addWishlist(productId);
+      icon.setAttribute("data-liked", "true");
+      addWishlist(productId);
     }
-});
+  });
 
-async function addWishlist(productId) {
+  async function addWishlist(productId) {
     try {
-        const res = await axios.post(`/wishlist/add/${productId}`, {}, { withCredentials: true });
-        console.log("Added to wishlist", res.data);
-        // Update the heart icon to indicate it's liked
-        const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-        icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
+      const res = await axios.post(
+        `/wishlist/add/${productId}`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "CSRF-Token": csrfToken,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      console.log("Added to wishlist", res.data);
+
+      const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
+      icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
     } catch (err) {
-        alert("Adding to wishlist failed");
-        console.error("Add wishlist error: ", err);
+      alert("Adding to wishlist failed");
+      console.error("Add wishlist error: ", err);
     }
-}
+  }
 
-
-async function removeFromWishlist(productId) {
+  async function removeFromWishlist(productId) {
     try {
-        const res = await axios.post(`/wishlist/remove/${productId}`, {}, { withCredentials: true });
-        console.log("Removed from wishlist", res.data);
-        // Update the heart icon to indicate it's not liked
-        const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-        icon.outerHTML = `<span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="${productId}" style="cursor: pointer"></span>`;
-    } catch (err) {
-        alert("Removing from wishlist failed");
-        console.error("Remove wishlist error: ", err);
-    }
-}
+      const res = await axios.post(
+        `/wishlist/remove/${productId}`,
+        {},
+        {
+          withCredentials: true,
+          headers: {
+            "CSRF-Token": csrfToken,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      console.log("Removed from wishlist", res.data);
 
+      const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
+      icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios/50/like--v1.png" data-liked="false" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
+    } catch (err) {
+      alert("Removing from wishlist failed");
+      console.error("Remove wishlist error: ", err);
+    }
+  }
 </script>
+
+
 
 
 <%- include('../partials/footer') %>

@@ -102,10 +102,6 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
-        isCart:{
-            type:Boolean,
-            default:false
-        }
     },
     { timestamps: true }
 );

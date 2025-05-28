@@ -31,7 +31,6 @@ export const loginUser = async (req, res) => {
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
     if (!passwordMatch) {
-         req.flash('error', 'Incorrect password');
         return res.redirect('/login');
     }
 

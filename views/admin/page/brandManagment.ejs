@@ -64,6 +64,7 @@
                                                 </td>
                                                 <td>
                                                     <form action="/admin/brand/update-status/<%= singleBrand._id %>" method="POST">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                             <select 
                                                             class="form-select <% if (!singleBrand.isListed) { %> bg-danger text-white <% } else { %> bg-success text-white <% } %>"
                                                                 style=" color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;"
