@@ -1,12 +1,11 @@
 <%- include('../partials/header') %>
 <head>
     <title>Checkout</title>
-    <link rel="stylesheet" href="\assets\css\checkout.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
-
+    <link rel="stylesheet" href="/assets/css/checkout.css" />
 </head>
+
 <main>
-    <!-- Hero Area Start-->
+    <!-- Hero Area -->
     <div class="slider-area">
         <div class="single-slider slider-height2 d-flex align-items-center">
             <div class="container">
@@ -23,175 +22,378 @@
 
     <!-- Main Content -->
     <div class="checkout-container pt-5">
-        <!-- Left Column -->
-        <div class="checkout-main">
-            <!-- Shipping Address Section -->
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-title">1 &nbsp;&nbsp; Choose a shipping address</div>
-                </div>
-              <div class="section-content">
-                <% if (address && address.length > 0) { %>
-                    <% address.forEach((add, index) => { %>
-                        <div class="address-option">
-                            <input type="radio" id="address<%= index %>" name="address" value="<%= add._id %>" <%= index === 0 ? "checked" : "" %> >
-                            <div class="address-content">
-                                <div class="address-name">
-                                    <%= add.addressType %>
-                                </div>
-                                <br>
-                                <div class="address-details">
-                                    <%= add.name %><br>
-                                    <%= add.number %><br>
-                                    <%= add.street %>, <%= add.localPlace %><br>
-                                    Near <%= add.landmark %><br>
-                                    <%= add.city %>, <%= add.district %>, <%= add.state %> - <%= add.pincode %><br>
-                                    <%= add.country %>
-                                </div>
-                            </div>
-                                <a href="/address/delete/<%= add._id %>" class="delete-address-link" title="Delete Address" style="margin-left: 8px; color: red;">
-                                    <i class="fas fa-trash-alt"></i>
-                                </a>
-                            </div>
-        <% }); %>
-    <% } else { %>
-        <div class="address-option">
-            <p>No addresses found</p>
-        </div>
-    <% } %>
-    <a href="/add-address" class="add-address-link">+ Add a new address</a>
-</div>
-
-            </div>
-
-            <!-- Payment Method Section -->
-       <div class="section">
-  <div class="section-header">
-    <div class="section-title">2 &nbsp;&nbsp; Choose a payment method</div>
-  </div>
-  <div class="section-content">
-
-    <!-- Cash on Delivery -->
-    <div class="payment-option">
-      <input type="radio" id="cod" name="payment" value="cod" checked>
-      <label for="cod" class="payment-content">
-        <div class="payment-label">Cash on Delivery</div>
-        <div class="payment-details">Pay when you receive the product</div>
-      </label>
-    </div>
-
-    <!-- Razorpay -->
-    <div class="payment-option">
-      <input type="radio" id="razorpay" name="payment" value="razorpay">
-      <label for="razorpay" class="payment-content">
-        <div class="payment-label">Razorpay</div>
-        <div class="payment-details">Pay securely via UPI, card, net banking.</div>
-      </label>
-    </div>
-
-  </div>
-</div>
-
-
-            <!-- Review Items Section -->
-            <div class="section">
-                <div class="section-header">
-                    <div class="section-title">3 &nbsp;&nbsp; Review items and shipping</div>
-                </div>
-                <div class="section-content">
-                    <div class="items-header">
-                        <div class="delivery-date" id="delivery-date"></div>
-                        <div>Items shipped from M4 Mart.com</div>
-                    </div>
-                 
-                    
-
-<% product.forEach((prod) => { %>
-  <div class="product-item">
-    <div class="product-image">
-      <img src="<%= prod.image[0]?.filepath %>" alt="<%= prod.title %>" />
-    </div>
-    <div class="product-details">
-      <div class="product-name">
-        <h4><%= prod.title %></h4>
-      </div>
-      <div class="product-price">
-        ₹<%= prod.pricing?.price || 'N/A' %>
-      </div>
-      <div class="product-options">
-        <p>Brand: <%= prod.brandName || 'N/A' %></p>
-        <p>Color: <%= prod.bandColour %></p>
-        <p>Warranty: <%= prod.warranty %> years</p>
-      </div>
-      <div class="delivery-info">
-        <span class="prime-badge">Prime</span>
-        FREE Delivery <%= new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toDateString() %>
-      </div>
-    </div>
-  </div>
-<% }) %>
-
-                  }
-        <!-- Right Column - Order Summary -->
+        <!-- Right Column - Order Summary (Now First) -->
         <div class="checkout-sidebar">
-            <div class="place-order-section">
-                <div class="order-total-display">Order total: $250.67</div>
-                <div class="agreement-text">
-                    By placing your order, you agree to Amazon's <a href="#">privacy notice</a> and <a href="#">conditions of use</a>.
-                </div>
-            </div>
-            
             <div class="order-summary">
                 <div class="summary-header">Order Summary</div>
                 <div class="summary-content">
                     <div class="summary-row">
-                        <span>Items (3):</span>
-                        <span>$229.97</span>
+                        <span>Items (<%= product.length %>):</span>
+                        <span id="subtotal">₹<%= prodtotal %> </span>
                     </div>
                     <div class="summary-row">
                         <span>Shipping & handling:</span>
-                        <span>$0.00</span>
+                        <span id="shipping-charge"><%= ship %></span>
                     </div>
                     <div class="summary-row">
                         <span>Total before tax:</span>
-                        <span>$229.97</span>
+                        <span id="total-before-tax">₹<%= prodtotal %></span>
                     </div>
                     <div class="summary-row">
                         <span>Estimated tax:</span>
-                        <span>$20.70</span>
+                        <span id="estimated-tax">₹<%= tax.toFixed(2) %></span>
                     </div>
                     <div class="summary-row summary-total">
                         <span>Order total:</span>
-                        <span>$250.67</span>
+                        <span id="order-total"><%= total %></span>
                     </div>
-                    <button class="btn-place-order" onclick="placeOrder()">Place your order</button>
+                    <button class="btn-place-order" onclick="placeOrder()">
+                        Place your order
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Left Column - Main Content -->
+        <div class="checkout-main">
+            <!-- Shipping Address -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        1 &nbsp;&nbsp; Choose a shipping address
+                    </div>
+                </div>
+                <div class="section-content">
+                    <% if (address && address.length > 0) { %> <%
+                    address.forEach((add, index) => { %>
+                    <div class="address-option">
+                        <input 
+                            type="radio" 
+                            id="address<%= index %>" 
+                            name="address" 
+                            value="<%= add._id %>" 
+                            <%= index === 0 ? "checked" : "" %>>
+
+                        <div class="address-content">
+                            <div class="address-name">
+                                <%= add.addressType %>
+                            </div>
+                            <div class="address-details">
+                                <%= add.name %><br />
+                                <%= add.number %><br />
+                                <%= add.street %>, <%= add.localPlace %><br />
+                                Near <%= add.landmark %><br />
+                                <%= add.city %>, <%= add.district %>, <%=
+                                add.state %> - <%= add.pincode %><br />
+                                <%= add.country %>
+                            </div>
+                        </div>
+                        <button
+                            onclick="dlt('<%= add._id %>')"
+                             class="delete-product-link"
+                            title="Delete Address"
+                            id="addDlt"
+                        >
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+
+                    </div>
+                    <% }); %> <% } else { %>
+                    <div class="address-option">
+                        <p>No addresses found</p>
+                    </div>
+                    <% } %>
+                    <a href="/add-address" class="add-address-link"
+                        >+ Add a new address</a
+                    >
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        2 &nbsp;&nbsp; Choose a payment method
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="cod"
+                            name="payment"
+                            value="cod"
+                            checked
+                        />
+                        <label for="cod" class="payment-content">
+                            <div class="payment-label">Cash on Delivery</div>
+                            <div class="payment-details">
+                                Pay when you receive the product
+                            </div>
+                        </label>
+                    </div>
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="razorpay"
+                            name="payment"
+                            value="razorpay"
+                        />
+                        <label for="razorpay" class="payment-content">
+                            <div class="payment-label">Razorpay</div>
+                            <div class="payment-details">
+                                Pay securely via UPI, card, net banking.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Items -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        3 &nbsp;&nbsp; Review items and shipping
+                    </div>
+                </div>
+                 <% if (product.length > 0) { %>
+                <div class="section-content">
+                    <div class="items-header">
+                        <div class="delivery-date" id="delivery-date"></div>
+                    </div>
+                   
+                    <% product.forEach((prod,index) => { %>
+                    <div class="product-item">
+                        <div class="product-actions">
+                            <button 
+                                onclick="removeItem(this, '<%= prod._id %>')"
+                                class="delete-product-link"
+                                title="Remove Item">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                        <div class="product-image">
+                            <img
+                                src="<%= prod.image[0]?.filepath %>"
+                                alt="<%= prod.title %>"
+                            />
+                        </div>
+                        <div class="product-details">
+                            <div class="product-name"><%= prod.title %></div>
+                            <div class="product-price">
+                                ₹<%= prod.pricing?.salePrice || 'N/A' %>
+                            </div>
+                            <div class="product-options">
+                                <p>Brand: <%= prod.brand.name || 'N/A' %></p>
+                                <p>Color: <%= prod.bandColour %></p>
+                                <p>Warranty: <%= prod.warranty %> years</p>
+                            </div>
+
+                            <div
+                                class="quantity-controls"
+                                data-product-id="<%= prod._id %>"
+                                data-price="<%= prod.pricing.salePrice %>"
+                                data-instock="<%= prod.inStock %>"
+                            >
+                                <button onclick="changeQty(this, -1)">−</button>
+                                <span class="qty-value"
+                                    ><%= cart[index].quantity %></span
+                                >
+                                <button onclick="changeQty(this, 1)">+</button>
+                            </div>
+
+                            <div class="delivery-info">
+                                FREE Delivery <%= new Date(Date.now() + 3 * 24 *
+                                60 * 60 * 1000).toDateString() %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+                <% } else { %>
+                <div class="section-content">
+                    <div class="empty-cart-message">
+                        <h4>Your cart is empty</h4>
+                        <a href="/shop" class="proceed-btn">Continue Shopping</a>
+                    </div>
+                </div>
+                <% } %>
             </div>
         </div>
     </div>
 
-    <script>
-        // Handle payment method selection
-        document.querySelectorAll('input[name="payment"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const cardForm = document.getElementById('cardForm');
-                if (this.value === 'new') {
-                    cardForm.classList.add('active');
-                } else {
-                    cardForm.classList.remove('active');
-                }
-            });
-        });
-         const deliveryDateElement = document.getElementById("delivery-date");
-
-  const today = new Date();
-  today.setDate(today.getDate() + 3); // add 3 days
-
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-  const formattedDate = today.toLocaleDateString('en-US', options);
-
-  deliveryDateElement.textContent = formattedDate;
-    </script>
+    <!-- Toast container for messages -->
+    <div id="toast-container"></div>
 </main>
-</body>
-</html>
+
+<script>
+    const csrfToken = "<%= csrfToken %>";
+    async function changeQty(button, delta) {
+        const qtySelector = button.parentElement;
+        const qtySpan = qtySelector.querySelector(".qty-value");
+        const productId = qtySelector.getAttribute("data-product-id");
+        const price = parseFloat(qtySelector.getAttribute("data-price"));
+        const inStock = parseInt(qtySelector.getAttribute("data-instock"), 10);
+
+        let quantity = parseInt(qtySpan.textContent);
+        quantity += delta;
+
+        if (quantity > inStock) {
+            showToast("Maximum stock reached");
+            return;
+        }
+        if (quantity > 10) {
+            showToast("Maximum quantity reached");
+            return;
+        }
+        if (quantity < 1) {
+            showToast("Minimum quantity is 1");
+            return;
+        }
+
+        qtySpan.textContent = quantity;
+        console.log(
+            `Changing quantity for product ${productId} to ${quantity}`
+        );
+
+        try {
+            const res = await axios.post("/cart/quantity", {
+                productId,
+                quantity,
+                _csrf: csrfToken,
+            });
+            console.log("Quantity update response:", res.data);
+            updateSubtotal();
+        } catch (error) {
+            console.error("Failed to update quantity", error);
+            showToast("Failed to update quantity. Try again.");
+        }
+    }
+    async function dlt(id) {
+        try {
+            const res=await axios.post('/address/delete/id',{ _csrf: csrfToken,})
+        } catch (error) {
+            console.log(error,"ERROR");
+            
+        }
+    }
+    function showToast(message) {
+        const toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.className = "toast-message";
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    function updateSubtotal() {
+        const qtyControls = document.querySelectorAll(".quantity-controls");
+        let subtotal = 0;
+
+        qtyControls.forEach((qtySelector) => {
+            const price = parseFloat(qtySelector.getAttribute("data-price"));
+            const quantity = parseInt(
+                qtySelector.querySelector(".qty-value").textContent
+            );
+            subtotal += price * quantity;
+        });
+
+        // Update Subtotal and summary values
+        const subtotalElem = document.getElementById("subtotal");
+        if (subtotalElem) subtotalElem.textContent = `₹${subtotal.toFixed(2)}`;
+
+        const totalBeforeTax = subtotal; // assume no shipping & tax for simplicity here
+        const totalBeforeTaxElem = document.getElementById("total-before-tax");
+        if (totalBeforeTaxElem)
+            totalBeforeTaxElem.textContent = `₹${totalBeforeTax.toFixed(2)}`;
+
+        const tax = subtotal * 0.18; // example 18% tax
+        const taxElem = document.getElementById("estimated-tax");
+        if (taxElem) taxElem.textContent = `₹${tax.toFixed(2)}`;
+
+        const orderTotal = subtotal + tax;
+        const orderTotalElem = document.getElementById("order-total");
+        if (orderTotalElem)
+            orderTotalElem.textContent = `₹${orderTotal.toFixed(2)}`;
+    }
+    async function removeItem(element, productId) {
+        const productItem = element.closest('.product-item');
+        
+        // Visual feedback
+        productItem.style.opacity = "0.5";
+        productItem.style.pointerEvents = "none";
+        
+        try {
+
+            await axios.post("/cart/delete", {
+                productId,
+                _csrf: csrfToken,
+            });
+            
+            // Remove from UI
+            productItem.remove();
+            showToast("Item removed from cart");
+            
+            // Update order summary
+            updateSubtotal();
+            
+            // Update items count in summary
+            const itemCount = document.querySelectorAll('.product-item').length;
+            document.querySelector('.summary-row span:first-child').innerHTML = 
+                `Items (${itemCount}):`;
+            
+            // Check if any items left
+            if (itemCount === 0) {
+                document.querySelector('.items-header').innerHTML = `
+                    <div class="empty-cart-message">
+                        <h4>Your cart is empty</h4>
+                        <a href="/shop" class="proceed-btn">Continue Shopping</a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error("Failed to remove item", error);
+            productItem.style.opacity = "1";
+            productItem.style.pointerEvents = "auto";
+            showToast("Failed to remove item");
+        }
+    }
+
+    // Initial call to set subtotal on page load
+    updateSubtotal();
+
+    // Place order button placeholder
+    function placeOrder() {
+        alert("Order placed! (Demo)");
+    }
+
+    // Delivery date display (3 days from today)
+    document.getElementById(
+        "delivery-date"
+    ).textContent = `Delivery by: ${new Date(
+        Date.now() + 3 * 24 * 60 * 60 * 1000
+    ).toDateString()}`;
+</script>
+
+<%- include('../partials/footer') %>

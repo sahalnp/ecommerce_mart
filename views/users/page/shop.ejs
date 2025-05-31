@@ -162,8 +162,8 @@
         </div>
     </div>
 
-    <!-- Cart Toast -->
-    <div class="cart-toast">✅ Item added to cart!</div>
+    <div class="cart-toast">Item added to cart</div>
+
 </main>
 
 <script>
@@ -176,8 +176,9 @@
                 headers: {
                     'CSRF-Token': csrfToken,
                 }
+                 
             });
-
+            
             console.log("Added to cart", res.data);
 
             // Show toast
@@ -217,7 +218,7 @@
 
     async function addWishlist(productId) {
         try {
-            const res = await axios.post(`/wishlist/add/${productId}`, {}, { withCredentials: true });
+            const res = await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
             console.log("Added to wishlist", res.data);
             const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
             icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
@@ -229,7 +230,7 @@
 
     async function removeFromWishlist(productId) {
         try {
-            const res = await axios.post(`/wishlist/remove/${productId}`, {}, { withCredentials: true });
+            const res = await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
             console.log("Removed from wishlist", res.data);
             const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
             icon.outerHTML = `<span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="${productId}" style="cursor: pointer"></span>`;

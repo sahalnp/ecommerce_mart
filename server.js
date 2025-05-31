@@ -1,4 +1,3 @@
-
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
@@ -13,7 +12,7 @@ import { connectDB } from "./config/db.js";
 import authRoutes from "./routers/user_router.js";
 import adminRouter from "./routers/admin_router.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { limiter } from "./middleware/limiter.js";
+import limiter from './middleware/limiter.js';
 import "./config/passport.js";
 
 dotenv.config();
@@ -25,17 +24,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const csrfProtection = csurf({ cookie: false });
 
-// Static Files
+
 app.use(express.static(path.join(__dirname, "./public")));
 app.use("/uploads", express.static("uploads"));
 
-// Middleware
 app.use(nocache());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
+app.use(errorHandler);
 
-// Session Setup
 app.use(
   session({
     secret: process.env.MONGO_URL,
@@ -52,27 +50,33 @@ app.use(
     },
   })
 );
+<<<<<<< Updated upstream
 // Passport
+=======
+
+>>>>>>> Stashed changes
 app.use(passport.initialize());
 app.use(passport.session());
+const skipCSRFPaths = [
+  "/admin/product/edit",
+  "/admin/upload",
+  "/admin/add_product"
+];
 
-// CSRF Protection
 app.use((req, res, next) => {
-  const skipCSRFPaths = [
-    "/admin/product/edit", 
-    "/admin/upload"        
-  ];
-
-  if (
+  const isPathSkipped =
     req.method === "POST" &&
-    skipCSRFPaths.some(path => req.path.startsWith(path))
-  ) {
-    return next(); 
-  }
+    skipCSRFPaths.some(path => req.path.startsWith(path));
 
+<<<<<<< Updated upstream
  csrfProtection(req, res, next);
  
+=======
+  if (isPathSkipped) return next();
+  return csrfProtection(req, res, next);
+>>>>>>> Stashed changes
 });
+
 
 app.use((req, res, next) => {
   if (req.csrfToken) {
@@ -80,20 +84,25 @@ app.use((req, res, next) => {
   }
   next();
 });
+<<<<<<< Updated upstream
 
 
 // View Engine
+=======
+app.use((err, req, res, next) => {
+  if (err.code === "EBADCSRFTOKEN") {
+    return res.status(403).send("Form tampered with");
+  }
+  next(err);
+});
+>>>>>>> Stashed changes
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
 
-// Routes
 app.use("/", authRoutes);
 app.use("/", adminRouter);
 
-// Global Error Handler (last!)
-app.use(errorHandler);
 
-// Start Server
 app.listen(port, () => {
   console.log(` Server Started on http://localhost:${port}`);
 });

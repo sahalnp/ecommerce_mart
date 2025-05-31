@@ -163,7 +163,8 @@
             <p>Price: ₹<%= item.pricing.price %></p>
           </div>
           <div class="wishlist-actions">
-            <% if (exist==true) { %>
+       <% if (cart.some(c => c.productId.toString() === item._id.toString())) { %>
+
              <a href="/cart"><button type="button">Go to cart</button></a>
             <% } else { %>
                 <button type="button" onclick="addToCart('<%= item._id %>')">Add To Cart</button>
@@ -182,20 +183,22 @@
   <!-- Toast Messages -->
   <div class="cart-toast">Item added to cart! 🎉</div>
   <div class="wishlist-toast">Item removed from wishlist! ❌</div>
-</main>
+</main>z
 
 <!-- Script -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  const csrfToken = "<%= csrfToken %>";
       async function addToCart(productId) {
         try {
           console.log(productId,"id");
           
         const res = await axios.post(
-        `/product/add-to-cart`,  // Change this route as needed
-        { productId, quantity: 1 },
+        `/product/add-to-cart`, 
+        { productId, quantity: 1, _csrf: csrfToken, },
         { withCredentials: true }
       );
+
 
       console.log("Added to cart", res.data);
 
@@ -205,36 +208,20 @@
     if (toast) {
       toast.style.display = 'block';
       setTimeout(() => {
-        toast.style.display = 'none';
+        toast.style.display = 'none'
+        window.location.reload();;
       }, 3000);
     }
     
-    // Optional: update UI or reload page here if needed
-    // window.location.reload();
 
   } catch (error) {
     console.error("Add to cart failed:", error);
     alert("Failed to add item to cart.");
   }
 }
-
-
-  // If you want a separate function to add product to cart via API, you can use this:
-  /*
-  async function addcart(productId) {
-    try {
-      const res = await axios.post(`/cart/add/${productId}`, {}, { withCredentials: true });
-      console.log("Added to cart", res.data);
-      // Optionally show toast or update UI here
-    } catch (error) {
-      console.error("Add to cart error:", error);
-    }
-  }
-  */
-
   async function removeFromWishlist(productId) {
     try {
-      const res = await axios.post(`/wishlist/remove/${productId}`, {}, { withCredentials: true });
+      const res = await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
       console.log("Removed from wishlist", res.data);
 
       const item = document.getElementById(`item-${productId}`);
@@ -245,6 +232,7 @@
         toast.style.display = 'block';
         setTimeout(() => {
           toast.style.display = 'none';
+          window.location.reload();
         }, 3000);
       }
     } catch (err) {

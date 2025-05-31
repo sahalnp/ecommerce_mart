@@ -1,366 +1,237 @@
 <%- include('../partials/header') %>
 <head>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+  <link rel="stylesheet" href="/assets/css/index.css">
+</head>
+
+<main>
+    <!-- Single Slider -->
+    <div class="single-slider slider-height d-flex align-items-center slide-bg">
+        <div class="container">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                    <div class="hero__caption">
+                        <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms">Select Your New Perfect Style</h1>
+                        <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms">
+                            We specialize in offering a curated selection of exquisite timepieces, blending style and functionality for every watch enthusiast. Explore our collection and find your perfect watch today.
+                        </p>
+                        <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s" data-duration="2000ms">
+                            <a href="/shop" class="btn hero-btn">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-none d-sm-block">
+                    <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
+                        <img src="assets/img/hero/watch.png" alt="" class="heartbeat">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- slider Area End-->
+
+    <!-- New Product Start -->
+    <section class="new-product-area section-padding30">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="section-tittle mb-70">
+                        <h2>New Arrivals</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                
+               <% prod.slice(0, 3).forEach(p => { %>
+  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+    <div class="single-new-pro mb-30 text-center">
+      <div class="product-img position-relative">
+        <a href="/product/<%= p._id %>">
+          <img src="<%= p.image[0].filepath %>" alt="Product Image" class="fixed-img">
+        </a>
+
+        <!-- Add to Cart Button -->
+        <div class="addtoCart">
+          <% if (cart.includes(String(p._id))) { %>
+            <button onclick="goToCart()" class="add-cart-btn" style="background-color: #f81f1f;">
+              <i class="fas fa-shopping-cart"></i> Go to Cart
+            </button>
+          <% } else { %>
+            <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn" style="background-color: #f81f1f;">
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Wishlist Icon -->
+        <div class="favorit-items">
+    <i class="heart-icon <%= wish.some(w => w._id.toString() === p._id.toString()) ? 'fas liked' : 'far' %> fa-heart"
+        onclick="toggleWishlist('<%= p._id %>', '<%= wish.some(w => w._id.toString() === p._id.toString()) ? 'true' : 'false' %>')"></i>
+    </div>
+
+
+      <div class="product-caption">
+        <h3><a href="/product/<%= p._id %>"><%= p.title %></a></h3>
+        <span>&#8377;<%= p.pricing.salePrice %></span>
+      </div>
+    </div>
+  </div>
+<% }); %>
+
+            </div>
+        </div>
+    </section>
+    <!-- New Product End -->
+
+    <!-- Popular Items Start -->
+    <div class="popular-items">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-8 col-md-10">
+                    <div class="section-tittle mb-70 text-center">
+                        <h2>Popular Items</h2>
+                        <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="room-btn pt-70">
+                    <a href="/shop" class="btn view-btn1">View More Products</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Popular Items End -->
+
+    <!-- Watch Highlights -->
+    <div class="watch-area section-padding30">
+        <div class="container">
+            <div class="row align-items-center justify-content-between padding-130">
+                <div class="col-lg-5 col-md-6">
+                    <div class="watch-details mb-40">
+                        <h2>Watch of Choice</h2>
+                        <p>Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+                        <a href="/shop" class="btn">Show Watches</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-10">
+                    <div class="choice-watch-img mb-40">
+                        <img src="assets/img/gallery/choce_watch1.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-center justify-content-between">
+                <div class="col-lg-6 col-md-6 col-sm-10">
+                    <div class="choice-watch-img mb-40">
+                        <img src="assets/img/gallery/choce_watch2.png" alt="">
+                    </div>
+                </div>
+                <div class="col-lg-5 col-md-6">
+                    <div class="watch-details mb-40">
+                        <h2>Watch of Choice</h2>
+                        <p>Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+                        <a href="/shop" class="btn">Show Watches</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Methods -->
+    <div class="shop-method-area">
+        <div class="container">
+            <div class="method-wrapper">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="ti-package"></i>
+                            <h6>Free Shipping Method</h6>
+                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="ti-unlock"></i>
+                            <h6>Secure Payment System</h6>
+                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="ti-reload"></i>
+                            <h6>Easy Return Policy</h6>
+                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-toast">Item added to cart!dfgdgg 🎉</div>
+    <div class="wishlist-toast">Item removed from wishlist! ❌</div>
+</main>
+
+
+<script>
+    const csrfToken = "<%= csrfToken %>";
+
+    async function addToCart(productId) {
+    try {
+        const res = await axios.post(`/product/add-to-cart`, {
+            productId,
+            quantity: 1,
+             _csrf: csrfToken,
+        }, {
+            withCredentials: true,
+            headers: { 'CSRF-Token': csrfToken },
+        });
+
+        const toast = document.querySelector('.cart-toast');
+        if (toast) {
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                // Optional: Reload page only after showing toast
+                window.location.reload();
+            }, 2000); // 2 seconds
+        } else {
+            console.warn("Cart toast not found");
         }
-        
-        body {
-            background-color: #f5f5f5;
+    } catch (err) {
+        console.error("Add to cart error:", err);
+        alert("Add to cart failed");
+    }
+}    async function toggleWishlist(productId, liked) {
+        try {
+            if (liked) {
+                await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+            } else {
+                await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+            }
+
+            const icon = document.querySelector(`.heart-icon[onclick*="${productId}"]`);
+            if (icon) {
+                if (liked) {
+                    icon.classList.remove("fas", "liked");
+                    icon.classList.add("far");
+                    icon.setAttribute("onclick", `toggleWishlist('${productId}', false)`);
+                } else {
+                    icon.classList.remove("far");
+                    icon.classList.add("fas", "liked");
+                    icon.setAttribute("onclick", `toggleWishlist('${productId}', true)`);
+                }
+            }
+        } catch (err) {
+            console.error("Wishlist toggle error:", err);
+            alert("Failed to update wishlist.");
         }
-        .fixed-img {
-        height: 360px;
-        width: 100%;
-        object-fit: cover;
-    }
-    .add-cart-btn {
-        background: #000;
-        color: #fff;
-        padding: 12px 25px;
-        border: none;
-        border-radius: 30px;
-        font-weight: 500;
-        font-size: 14px;
-        text-transform: uppercase;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
     }
 
-    .add-cart-btn:hover {
-        background: #333;
-        transform: translateY(-2px);
+    function goToCart() {
+        window.location.href = "/cart";
     }
+</script>
 
-    .add-cart-btn i {
-        font-size: 16px;
-    }
-
-    .addtoCart {
-        position: absolute;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-
-    .product-img:hover .addtoCart {
-        opacity: 1;
-    }
-/*         
-        .hero-container {
-            display: flex;
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            min-height: 500px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        } */
-        
-
-    </style>
-    </head>
-    <main>
-                <!-- Single Slider -->
-                <div class="single-slider slider-height d-flex align-items-center slide-bg">
-                    <div class="container">
-                        <div class="row justify-content-between align-items-center">
-                            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
-                                <div class="hero__caption">
-                                    <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms">Select Your New Perfect Style</h1>
-                                    <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms"> We specialize in offering a curated selection of exquisite timepieces, blending style and functionality for every watch enthusiast. Explore our collection and find your perfect watch today..</p>
-                                    <!-- Hero-btn -->
-                                    <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s" data-duration="2000ms">
-                                        <a href="/shop" class="btn hero-btn">Shop Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-none d-sm-block">
-                                <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
-                                    <img src="assets/img/hero/watch.png" alt="" class=" heartbeat">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- slider Area End-->
-        <!-- ? New Product Start -->
-        <section class="new-product-area section-padding30">
-            <div class="container">
-                <!-- Section title -->
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="section-tittle mb-70">
-                            <h2>New Arrivals</h2>
-                        </div>
-                    </div>
-                </div>
-        
-                <!-- Product cards -->
-                <div class="row">
-                    <% for (let i = 0; i < 3; i++) { %>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-new-pro mb-30 text-center">
-                            <div class="product-img position-relative">
-                                <a href="/product/<%= prod[i]._id %>"> <img src="<%= prod[i].image[0].filepath %>" alt="Product Image" class="fixed-img"></a>
-                                
-                                <!-- Add to Cart Button -->
-                                <div class="addtoCart">
-                                    <button class="add-cart-btn">
-                                        <i class="fas fa-shopping-cart"></i> <!-- Font Awesome Cart Icon -->
-                                        Add to Cart
-                                    </button>
-                                </div>
-        
-                                <!-- Favorite Icon -->
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="product-caption">
-                                <h3><a href="product_details.html"><%= prod[i].title %></a></h3>
-                                <span>&#8377;<%= prod[i].pricing.salePrice %></span>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
-                </div>
-            </div>
-        </section>
-        
-
-        <!--  New Product End -->
-        <!-- ? Popular Items Start -->
-        <div class="popular-items ">
-            <div class="container">
-
-                <div class="row justify-content-center">
-                    <div class="col-xl-7 col-lg-8 col-md-10">
-                        <div class="section-tittle mb-70 text-center">
-                            <h2>Popular Items</h2>
-                            <p>Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                ><img src="assets/img/gallery/popular1.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                               
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets/img/gallery/popular2.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets/img/gallery/popular3.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets/img/gallery/popular4.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets/img/gallery/popular5.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-popular-items mb-50 text-center">
-                            <div class="popular-img">
-                                <img src="assets/img/gallery/popular6.png" alt="">
-                                <div class="img-cap">
-                                    <span>Add to cart</span>
-                                </div>
-                                <div class="favorit-items">
-                                    <span class="flaticon-heart"></span>
-                                </div>
-                            </div>
-                            <div class="popular-caption">
-                                <h3><a href="product_details.html">Thermo Ball Etip Gloves</a></h3>
-                                <span>$ 45,743</span>
-                            </div>
-                        </div>
-                    </div>
-
-                <div class="row justify-content-center">
-                    <div class="room-btn pt-70">
-                        <a href="catagori.html" class="btn view-btn1">View More Products</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Popular Items End -->
-        <!--? Video Area Start -->
-        <div class="video-area">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-lg-12">
-                    <div class="video-wrap">
-                        <div class="play-btn "><a class="popup-video" href="https://www.youtube.com/watch?v=YGQBm9Mnad8"><i class="fas fa-play"></i></a></div>
-                    </div>
-                    </div>
-                </div>
-                <!-- Arrow -->
-                <div class="thumb-content-box">
-                    <div class="thumb-content">
-                        <h3>Next Video</h3>
-                        <a href="#"> <i class="flaticon-arrow"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Video Area End -->
-        <!--? Watch Choice  Start-->
-        <div class="watch-area section-padding30">
-            <div class="container">
-                <div class="row align-items-center justify-content-between padding-130">
-                    <div class="col-lg-5 col-md-6">
-                        <div class="watch-details mb-40">
-                            <h2>Watch of Choice</h2>
-                            <p>Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
-                            <a href="/shop" class="btn">Show Watches</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-10">
-                        <div class="choice-watch-img mb-40">
-                            <img src="assets/img/gallery/choce_watch1.png" alt="">
-                        </div>
-                    </div>
-                </div>
-                <div class="row align-items-center justify-content-between">
-                    <div class="col-lg-6 col-md-6 col-sm-10">
-                        <div class="choice-watch-img mb-40">
-                            <img src="assets/img/gallery/choce_watch2.png" alt="">
-                        </div>
-                    </div>
-                    <div class="col-lg-5 col-md-6">
-                        <div class="watch-details mb-40">
-                            <h2>Watch of Choice</h2>
-                            <p>Enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
-                            <a href="/shop" class="btn">Show Watches</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="hero-container" style="margin-bottom: 100px;">
-            <div class="hero-content">
-                <h1>Discover Timeless Elegance with Timezone</h1>
-                <p> We specialize in offering a curated selection of exquisite timepieces, blending style and functionality for every watch enthusiast. Explore our collection and find your perfect watch today.</p>
-                <a href="/sho" class="shop-btn">Shop</a>
-            </div>
-            <div class="hero-image">
-                <img src="assets/img/gallery/popular4.png" alt="">
-                <div class="testimonial">
-                    <div class="quote">Absolutely love my new watch!</div>
-                    <div class="author">John Doe</div>
-                </div>
-            </div>
-        </div>
-        <!-- Watch Choice  End-->
-        <!--? Shop Method Start-->
-        <div class="shop-method-area">
-            <div class="container">
-                <div class="method-wrapper">
-                    <div class="row d-flex justify-content-between">
-                        <div class="col-xl-4 col-lg-4 col-md-6">
-                            <div class="single-method mb-40">
-                                <i class="ti-package"></i>
-                                <h6>Free Shipping Method</h6>
-                                <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-6">
-                            <div class="single-method mb-40">
-                                <i class="ti-unlock"></i>
-                                <h6>Secure Payment System</h6>
-                                <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
-                            </div>
-                        </div> 
-                        <div class="col-xl-4 col-lg-4 col-md-6">
-                            <div class="single-method mb-40">
-                                <i class="ti-reload"></i>
-                                <h6>Secure Payment System</h6>
-                                <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Shop Method End-->
-    </main>
 <%- include('../partials/footer') %>

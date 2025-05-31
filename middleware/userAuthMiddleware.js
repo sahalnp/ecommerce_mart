@@ -1,5 +1,3 @@
-import { User } from "../models/userModel.js";
-
 /**
  * Middleware to check if a user is logged in.
  * Redirects authenticated users to the home page.
@@ -13,6 +11,9 @@ import { User } from "../models/userModel.js";
 export const isUserloggedIn = async (req, res, next) => {  
     if (req.session.users !== undefined) {
         next();
+    }
+    else{
+      res.redirect('/login')
     }
 };
 export const isUserLoggedOut = (req, res, next) => {

@@ -1,0 +1,251 @@
+<%- include('../partials/header') %>
+<head>
+     <link rel="stylesheet" href="/assets/css/comparison.css">
+</head>
+<main>
+    <!-- Hero Area Start -->
+    <div class="slider-area box">
+        <div class="single-slider slider-height2 d-flex align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="hero-cap text-center">
+                            <h2 class="name">Compare</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<div class="comparison-container">
+  <div class="comparison-section">
+    <div class="comparison-header">
+      <div class="feature-category">Specifications</div>
+
+     <% compare.forEach(cmp => { %>
+  <div class="watch-header">
+    <a href="/product/<%=cmp._id %>"><img src="<%= cmp.image[0]?.filepath || 'default.png' %>" alt="Watch image"></a>
+
+    <div class="watch-name"><%= cmp.title %></div>
+    <div class="watch-price">₹<%= cmp.pricing?.salePrice || 'N/A' %></div>
+
+    <div class="watch-actions">
+     <% if (inCart.some(item => item.productId.toString() === cmp._id.toString())) { %>
+       <a href="/cart" class="cart-btn">
+        <i class="fas fa-shopping-cart"></i> Go to Cart
+       </a>
+       <% } else { %>
+        <button class="cart-btn" onclick="addtoCart('<%= cmp._id %>')">
+        <i class="fas fa-shopping-cart"></i> Add to Cart
+      </button>
+      <% } %>
+      <button class="remove-btn" onclick="removeFromComparison('<%= cmp._id %>')">
+        <i class="fas fa-times"></i> Remove
+      </button>
+    </div>
+  </div>
+<% }) %>
+
+    </div>
+
+    <!-- Title -->
+    <div class="comparison-row">
+      <div class="feature-name">Title</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.title %></div>
+      <% }) %>
+    </div>
+
+    <!-- Brand -->
+    <div class="comparison-row">
+      <div class="feature-name">Brand</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.brand?.name || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+    <!-- Band Colour -->
+    <div class="comparison-row">
+      <div class="feature-name">Band Colour</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.bandColour || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+    <!-- Band Material -->
+    <div class="comparison-row">
+      <div class="feature-name">Band Material</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.bandMaterial || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+    <!-- Warranty -->
+    <div class="comparison-row">
+      <div class="feature-name">Warranty</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.warranty %> year(s)</div>
+      <% }) %>
+    </div>
+
+    <!-- Movement Type -->
+    <div class="comparison-row">
+      <div class="feature-name">Movement Type</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.movementType || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+    <!-- Item Weight -->
+    <div class="comparison-row">
+      <div class="feature-name">Weight</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.itemWeight %> g</div>
+      <% }) %>
+    </div>
+
+    <!-- Model Number -->
+    <div class="comparison-row">
+      <div class="feature-name">Model Number</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.modelNumber || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+    <!-- Case Shape -->
+    <div class="comparison-row">
+      <div class="feature-name">Case Shape</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.caseShape || 'N/A' %></div>
+      <% }) %>
+    </div>
+
+<div class="comparison-row">
+  <div class="feature-name">Special Features</div>
+  <% compare.forEach(cmp => { %>
+    <div class="feature-value">
+      <% if (Array.isArray(cmp.specialFeatures) && cmp.specialFeatures.length > 0) { %>
+        <ul>
+          <% cmp.specialFeatures.forEach(feature => { %>
+            <li><%= feature %></li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        N/A
+      <% } %>
+    </div>
+  <% }) %>
+</div>
+
+
+
+    <!-- Case Diameter -->
+    <div class="comparison-row">
+      <div class="feature-name">Case Diameter</div>
+      <% compare.forEach(cmp => { %>
+        <div class="feature-value"><%= cmp.caseDiameter %> mm</div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+
+
+        
+        <div class="btn-row">
+            <button class="action-btn compare-btn">
+                <i class="fas fa-exchange-alt"></i> Compare More Watches
+            </button>
+            <button class="action-btn reset-btn">
+                <i class="fas fa-redo"></i> Reset Selection
+            </button>
+        </div>
+        
+        <footer>
+            <p>Luxury Watch Comparison Tool &copy; 2023 | Find Your Perfect Timepiece</p>
+            <p>All specifications are for comparison purposes only. Actual product may vary.</p>
+        </footer>
+    </div>
+    
+    <script>
+        const csrfToken = "<%= csrfToken %>";
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+
+                    const parentGroup = this.closest('.filter-group');
+                    const groupBtns = parentGroup.querySelectorAll('.filter-btn');
+                    groupBtns.forEach(b => b.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                });
+            });
+
+            const rows = document.querySelectorAll('.comparison-row');
+            rows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    rows.forEach(r => r.style.opacity = "0.7");
+                    this.style.opacity = "1";
+                    this.style.transform = "scale(1.01)";
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    rows.forEach(r => {
+                        r.style.opacity = "1";
+                        r.style.transform = "scale(1)";
+                    });
+                });
+            });
+        });
+        async function resetOne() {
+            try {
+                const res=await axios.post('/cmp/reset',{
+                     _csrf: csrfToken
+                })
+                showToast("Product removed")
+            } catch (error) {
+                console.log(error,"ERROR");
+                
+            }
+        }
+        async function addtoCart(productId) {
+            try {
+            const res = await axios.post(
+            `/product/add-to-cart`,  
+            { productId, quantity: 1, _csrf: csrfToken, },
+            { withCredentials: true }
+      );
+            const toast = document.querySelector('.cart-toast');
+            if (toast) {
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    window.location.reload();
+                }, 3000);
+            }
+
+        } catch (error) {
+            console.error("Add to cart failed:", error);
+            alert("Failed to add item to cart.");
+        }
+        }
+        async function resetMany(params) {
+            try {
+                await axios.post('/cmp/resetAll',{ _csrf: csrfToken})
+            } catch (error) {
+                console.log(error,"ERROR");
+                
+            }
+        }
+    function showToast(message) {
+      toast.textContent = message;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+    </script>
+</main>
+<%- include('../partials/footer') %>

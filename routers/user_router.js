@@ -36,19 +36,25 @@ import {
     contact,
     dltAddress,
     home,
-    laodProduct,
+    loadProduct,
     laodShop,
     loadAddress,
     loadcart,
     loadCheckout,
     loadProfile,
     wishlist,
+    loadcmp,
 } from "../controllers/user/userPageLoader.js";
 import {
     addAddress,
+    addCart,
+    addCompare,
     addtoCart,
     addTowhish,
+    cartDlt,
     checkout,
+    cmpReset,
+    cmpResetOne,
     editProfile,
     quantchnge,
     removeFromWish,
@@ -91,11 +97,13 @@ UserRouter.get("/profile/edit/:id", isUserloggedIn, loadProfile);
 UserRouter.post("/profile/edit/:id", editProfile);
 
 UserRouter.get("/shop", isUserloggedIn, laodShop);
-UserRouter.get("/product/:id", isUserloggedIn, laodProduct);
-UserRouter.post("/product/:id", isUserloggedIn, addtoCart);
+UserRouter.get("/product/:id", isUserloggedIn, loadProduct);
+UserRouter.post("/product/:id", addtoCart);
 
 UserRouter.get("/cart", isUserloggedIn, loadcart);
-UserRouter.post("/cart/quantity", isUserloggedIn, quantchnge);
+UserRouter.post('/add-to-cart',addCart)
+UserRouter.post("/cart/quantity", quantchnge);
+UserRouter.post('/cart/delete',cartDlt)
 
 UserRouter.get("/about", isUserloggedIn, about);
 
@@ -117,5 +125,12 @@ UserRouter.get("/contact", isUserloggedIn, contact);
 UserRouter.get("/add-address", isUserloggedIn, loadAddress);
 UserRouter.post("/add-address", addAddress);
 
-UserRouter.get("/address/delete/:id", dltAddress);
+UserRouter.get("/address/delete/:id",isUserloggedIn, dltAddress);
+
+UserRouter.get('/compare',isUserloggedIn,loadcmp)
+
+UserRouter.post('/addCompare',addCompare)
+UserRouter.post('/cmp/resetAll',cmpReset)
+UserRouter.post('/cmp/reset',cmpResetOne)
+
 export default UserRouter;

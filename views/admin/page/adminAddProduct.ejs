@@ -102,6 +102,15 @@
             width: auto;
             vertical-align: middle;
         }
+        .brand-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand-item input[type="checkbox"] {
+            vertical-align: middle;
+            margin-top: 7px; 
+        }
 
         .category-group {
             display: flex;
@@ -209,13 +218,11 @@
                     <div class="category-group">
                         <% if (brands && brands.length > 0) { %> <%
                         brands.forEach((brand, index) => { %>
-                        <div class="category-item" style="margin-right: 500px;">
+                        <div class=" brand-item" >
                             <input
                                 type="checkbox"
                                 id="brand<%= index %>"
-                                name="brandbox"
-                                style="margin-bottom: 10px;"
-                                
+                                name="brandbox"                           
                                 value="<%= brand.name %>"
                             />
                             <label style="margin-bottom:10px" for="brand<%= index %>">

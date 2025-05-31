@@ -13,7 +13,7 @@
             type="image/x-icon"
             href="/assets/img/favicon.ico"
         />
-        
+
         <!-- CSS -->
         <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
 
@@ -38,6 +38,15 @@
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         />
+        <style>  header {
+            text-align: center;
+            padding: 40px 0;
+           
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }</style>
     </head>
 
     <body>
@@ -163,20 +172,20 @@
                                                 <a
                                                     class="dropdown-item"
                                                     href="/profile/edit/<%= user._id %>"
-                                                    ><i
-                                                        class="fas fa-user"
-                                                    >&nbsp&nbsp</i>
+                                                    ><i class="fas fa-user"
+                                                        >&nbsp&nbsp</i
+                                                    >
                                                     Profile</a
                                                 >
                                                 <div
-                                                    class="dropdown-divider "
+                                                    class="dropdown-divider"
                                                 ></div>
                                                 <a
-                                                    class="dropdown-item "
+                                                    class="dropdown-item"
                                                     href="/logout"
-                                                    ><i
-                                                        class="fas fa-power-off"
-                                                    >&nbsp</i>
+                                                    ><i class="fas fa-power-off"
+                                                        >&nbsp</i
+                                                    >
                                                     Logout</a
                                                 >
                                             </div>
@@ -189,6 +198,19 @@
                                         ></a>
                                     </li>
                                     <% } %>
+                                    <!-- compare -->
+                                    <li class="d-flex align-items-center" style="margin-right: 15px;"> <!-- added margin-end -->
+    <a
+        href="/compare"
+        class="d-flex align-items-center justify-content-center"
+        style="height: 100%"
+    >
+        <i
+            class="fa-solid fa-sliders"
+            style="font-size: 18px; color: #000; line-height: 1"
+        ></i>
+    </a>
+</li>
                                     <!-- Wishlist -->
                                     <li class="d-flex align-items-center mx-2">
                                         <a
@@ -227,4 +249,3 @@
                 </div>
             </div>
         </header>
-  
