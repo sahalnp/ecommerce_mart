@@ -50,11 +50,7 @@ app.use(
     },
   })
 );
-<<<<<<< Updated upstream
 // Passport
-=======
-
->>>>>>> Stashed changes
 app.use(passport.initialize());
 app.use(passport.session());
 const skipCSRFPaths = [
@@ -68,13 +64,8 @@ app.use((req, res, next) => {
     req.method === "POST" &&
     skipCSRFPaths.some(path => req.path.startsWith(path));
 
-<<<<<<< Updated upstream
  csrfProtection(req, res, next);
  
-=======
-  if (isPathSkipped) return next();
-  return csrfProtection(req, res, next);
->>>>>>> Stashed changes
 });
 
 
@@ -84,18 +75,9 @@ app.use((req, res, next) => {
   }
   next();
 });
-<<<<<<< Updated upstream
 
 
 // View Engine
-=======
-app.use((err, req, res, next) => {
-  if (err.code === "EBADCSRFTOKEN") {
-    return res.status(403).send("Form tampered with");
-  }
-  next(err);
-});
->>>>>>> Stashed changes
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
 

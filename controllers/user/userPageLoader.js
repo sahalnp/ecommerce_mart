@@ -3,7 +3,7 @@ import { product } from "../../models/productModel.js";
 import { User } from "../../models/userModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
-import { compare } from "bcrypt";
+
 
 export const home = asyncHandler(async (req, res) => {
     const latestProducts = await product
@@ -62,27 +62,29 @@ export const laodShop = asyncHandler(async (req, res) => {
 });
 
 export const loadProduct = asyncHandler(async (req, res) => {
+    const UserId=req.session.users._id
+    const productId=req.params.id
     const find = await product
-        .findById(req.params.id)
+        .findById(productId)
         .populate("image")
         .populate("brand");
     const percent = Math.floor(
         ((find.pricing.price - find.pricing.salePrice) / find.pricing.price) *
             100
     );
-    const cartfind = await Cart.findOne({ productId: req.params.id });
-    const cmp=await Compare.findOne({userId:req.session.users._id,productId:req.params.id})
-    console.log(cmp,"fghjkl;");
+    const cartfind = await Cart.findOne({ UserId,productId });
+    const cmp=await Compare.findOne({UserId,productId})
     
     const exist = await Cart.find({
-        UserId: req.session.users._id,
-        productId: req.params.id,
+        UserId,
+        productId,
     });
     let show = false;
-
     if (exist.length > 0) {
         show = true;
     }
+    console.log(find.image[6]);
+    
     return res.render("users/page/productDetails", {
         username: req.session.userName,
         product: find,
@@ -91,7 +93,6 @@ export const loadProduct = asyncHandler(async (req, res) => {
         exist: show,
         cartItems: cartfind,
         cmp
-
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {

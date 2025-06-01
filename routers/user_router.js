@@ -131,6 +131,6 @@ UserRouter.get('/compare',isUserloggedIn,loadcmp)
 
 UserRouter.post('/addCompare',addCompare)
 UserRouter.post('/cmp/resetAll',cmpReset)
-UserRouter.post('/cmp/reset',cmpResetOne)
+UserRouter.post('/cmp/resetOne',cmpResetOne)
 
 export default UserRouter;

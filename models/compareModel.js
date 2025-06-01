@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const compareSchema = new mongoose.Schema({
-  userId: {
+  UserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,

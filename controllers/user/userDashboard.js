@@ -208,7 +208,7 @@ export const addCompare = asyncHandler(async (req, res) => {
 
     await Compare.create({
       productId,
-      userId: req.session.users._id,
+      UserId: req.session.users._id,
     });
 
     res.json({ success: true, message: "Added to comparison" });
@@ -221,12 +221,15 @@ export const cmpReset=asyncHandler(async(req,res)=>{
     await Compare.deleteMany({})
     res.redirect('/shop')
 })
-export const cmpResetOne=asyncHandler(async(req,res)=>{
-    try {
-        const{productId}=req.body
-        await Compare.findOneAndDelete({userId:req.session.users_id,productId})
-    } catch (error) {
-        console.log("ERROR in addCompare:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
-    }
-})
+
+export const cmpResetOne = asyncHandler(async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.session.users._id; 
+    await Compare.findOneAndDelete({productId,userId},{new:true});
+    res.redirect('/compare');
+  } catch (error) {
+    console.log("ERROR in addCompare:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+});
