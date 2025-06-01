@@ -41,18 +41,7 @@
       margin-top: 20px;
     }
     
-    .action-buttons .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-weight: 500;
-      text-decoration: none;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
-      min-height: 48px;
-    }
+
     
     .btn-add-to-cart {
       background-color: #ff9f00;
@@ -71,23 +60,34 @@
       color: white;
       border-color: #fb641b;
     }
-    
+    .btn{
+        background: #ff2020;
+    background-color: rgb(255, 32, 32);
+  font-family: "Josefin Sans",sans-serif;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 30px 28px;
+  border-radius: 30px;
+  display: inline-block;
+  line-height: 0;
+  cursor: pointer;
+  margin-bottom: 0;
+  margin: 10px;
+  cursor: pointer;
+  transition: color 0.4s linear;
+  position: relative;
+  z-index: 1;
+  border: 0;
+  overflow: hidden;
+  margin: 0;
+    }
     .btn-buy-now:hover {
       background-color: #e55a17;
       border-color: #e55a17;
       color: white;
-    }
-    
-    .btn-outline-secondary {
-      background-color: transparent;
-      color: #6c757d;
-      border-color: #6c757d;
-    }
-    
-    .btn-outline-secondary:hover {
-      background-color: #6c757d;
-      color: white;
-      border-color: #6c757d;
     }
     
     /* Primary action buttons row */
@@ -254,7 +254,7 @@
         background: #ffa41c;
         border-color: #ff8f00;
     }
-    
+
 
   .cart-toast {
     position: fixed;

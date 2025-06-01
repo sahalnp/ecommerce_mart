@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virtual Watch Try-On Example</title>
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
+    
+    video, canvas {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scaleX(-1);
+    }
+    
+    .controls {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      color: white;
+      background: rgba(0,0,0,0.7);
+      padding: 15px;
+      border-radius: 10px;
+    }
+    
+    .size-control {
+      margin: 10px 0;
+    }
+  .back-button {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background-color: #6b5fe9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .back-button:hover {
+    background-color: #333;
+  }
+ 
+    input[type="range"] {
+      width: 150px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+  <h3>Watch Controls</h3>
+  <div class="size-control">
+    <label>Size: <span id="sizeValue">120</span>px</label>
+    <input type="range" id="sizeSlider" min="80" max="200" value="120">
+  </div>
+  <div class="size-control">
+    <label>Y Offset: <span id="offsetValue">10</span>px</label>
+    <input type="range" id="offsetSlider" min="-30" max="50" value="10">
+  </div>
+<button onclick="history.back()" class="back-button">← Back</button>
+
+
+</div>
+
+
+  <video id="webcam" autoplay playsinline width="640" height="480"></video>
+  <canvas id="overlay" width="640" height="480"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+  <script>
+    const videoElement = document.getElementById('webcam');
+    const canvasElement = document.getElementById('overlay');
+    const canvasCtx = canvasElement.getContext('2d');
+    
+    // Controls
+    const sizeSlider = document.getElementById('sizeSlider');
+    const offsetSlider = document.getElementById('offsetSlider');
+    const sizeValue = document.getElementById('sizeValue');
+    const offsetValue = document.getElementById('offsetValue');
+    
+    let watchSize = 120;
+    let yOffset = 10;
+    
+    sizeSlider.addEventListener('input', (e) => {
+      watchSize = parseInt(e.target.value);
+      sizeValue.textContent = watchSize;
+    });
+    
+    offsetSlider.addEventListener('input', (e) => {
+      yOffset = parseInt(e.target.value);
+      offsetValue.textContent = yOffset;
+    });
+
+    // Create a sample watch image using canvas (since we can't access external images reliably)
+    function createSampleWatchImage() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 200;
+      canvas.height = 200;
+      const ctx = canvas.getContext('2d');
+      
+      // Draw watch face (outer circle)
+      ctx.beginPath();
+      ctx.arc(100, 100, 80, 0, 2 * Math.PI);
+      ctx.fillStyle = '#2c3e50';
+      ctx.fill();
+      ctx.strokeStyle = '#34495e';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      
+      // Draw watch face (inner circle)
+      ctx.beginPath();
+      ctx.arc(100, 100, 70, 0, 2 * Math.PI);
+      ctx.fillStyle = '#1a1a1a';
+      ctx.fill();
+      
+      // Draw hour markers
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * 30) * Math.PI / 180;
+        const x1 = 100 + Math.cos(angle - Math.PI/2) * 60;
+        const y1 = 100 + Math.sin(angle - Math.PI/2) * 60;
+        const x2 = 100 + Math.cos(angle - Math.PI/2) * 50;
+        const y2 = 100 + Math.sin(angle - Math.PI/2) * 50;
+        
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = '#ecf0f1';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      
+      // Draw hour hand
+      ctx.beginPath();
+      ctx.moveTo(100, 100);
+      ctx.lineTo(100, 60);
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      
+      // Draw minute hand
+      ctx.beginPath();
+      ctx.moveTo(100, 100);
+      ctx.lineTo(130, 70);
+      ctx.strokeStyle = '#e74c3c';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      
+      // Draw center dot
+      ctx.beginPath();
+      ctx.arc(100, 100, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fill();
+      
+      // Draw watch band parts
+      ctx.fillStyle = '#8b4513';
+      ctx.fillRect(85, 20, 30, 40); // top band
+      ctx.fillRect(85, 140, 30, 40); // bottom band
+      
+      return canvas;
+    }
+
+    const productImg = createSampleWatchImage();
+
+    const hands = new Hands({
+      locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.7,
+      minTrackingConfidence: 0.7
+    });
+
+    hands.onResults(onResults);
+
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      // Mirror the canvas horizontally
+      canvasCtx.scale(-1, 1);
+      canvasCtx.translate(-canvasElement.width, 0);
+
+      // Draw webcam frame
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+        const landmarks = results.multiHandLandmarks[0];
+        
+        // Get wrist position (landmark 0)
+        const wrist = landmarks[0];
+        const wristX = wrist.x * canvasElement.width;
+        const wristY = wrist.y * canvasElement.height;
+
+        // Calculate hand orientation for better watch placement
+        const middleFinger = landmarks[9]; // Middle finger MCP
+        const handAngle = Math.atan2(
+          middleFinger.y - wrist.y,
+          middleFinger.x - wrist.x
+        );
+
+        // Draw green dot on wrist for debugging (optional)
+        canvasCtx.beginPath();
+        canvasCtx.arc(wristX, wristY + yOffset, 4, 0, 2 * Math.PI);
+        canvasCtx.fillStyle = '#00ff00';
+        canvasCtx.fill();
+
+        // Draw watch image with rotation based on hand orientation
+        canvasCtx.save();
+        canvasCtx.translate(wristX, wristY + yOffset);
+        canvasCtx.rotate(handAngle + Math.PI/2); // Adjust rotation to match hand orientation
+        
+        const imgW = watchSize;
+        const imgH = watchSize;
+        canvasCtx.drawImage(productImg, -imgW / 2, -imgH / 2, imgW, imgH);
+        canvasCtx.restore();
+
+        // Optional: Draw hand landmarks for debugging
+        /*
+        for (let i = 0; i < landmarks.length; i++) {
+          const landmark = landmarks[i];
+          const x = landmark.x * canvasElement.width;
+          const y = landmark.y * canvasElement.height;
+          canvasCtx.beginPath();
+          canvasCtx.arc(x, y, 2, 0, 2 * Math.PI);
+          canvasCtx.fillStyle = i === 0 ? '#ff0000' : '#ffffff';
+          canvasCtx.fill();
+        }
+        */
+      }
+
+      canvasCtx.restore();
+    }
+
+    const camera = new Camera(videoElement, {
+      onFrame: async () => {
+        await hands.send({image: videoElement});
+      },
+      width: 640,
+      height: 480
+    });
+    camera.start();
+  </script>
+</body>
+</html>

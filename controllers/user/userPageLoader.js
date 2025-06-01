@@ -83,7 +83,7 @@ export const loadProduct = asyncHandler(async (req, res) => {
     if (exist.length > 0) {
         show = true;
     }
-    console.log(find.image[6]);
+    req.session.productId=productId
     
     return res.render("users/page/productDetails", {
         username: req.session.userName,
@@ -241,7 +241,7 @@ export const dltAddress = asyncHandler(async (req, res) => {
         return res.redirect("/checkout");
     } else {
         return res.status(404).send("Address not found");
-    }
+    } 
 });
 export const loadcmp = asyncHandler(async (req, res) => {
     const compare=await Compare.find()
@@ -258,3 +258,9 @@ export const loadcmp = asyncHandler(async (req, res) => {
         inCart:cart
     });
 });
+export const loadtryOn=asyncHandler(async(req,res)=>{
+    const find=await product.findById(req.session.productId).populate('image')
+    res.render('users/page/virtual',{
+        product:find
+    })
+})

@@ -44,6 +44,7 @@ import {
     loadProfile,
     wishlist,
     loadcmp,
+    loadtryOn,
 } from "../controllers/user/userPageLoader.js";
 import {
     addAddress,
@@ -132,5 +133,7 @@ UserRouter.get('/compare',isUserloggedIn,loadcmp)
 UserRouter.post('/addCompare',addCompare)
 UserRouter.post('/cmp/resetAll',cmpReset)
 UserRouter.post('/cmp/resetOne',cmpResetOne)
+
+UserRouter.get('/tryOn',isUserloggedIn,loadtryOn)
 
 export default UserRouter;
