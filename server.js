@@ -53,19 +53,23 @@ app.use(
 // Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+
 const skipCSRFPaths = [
   "/admin/product/edit",
   "/admin/upload",
   "/admin/add_product"
 ];
-
 app.use((req, res, next) => {
   const isPathSkipped =
     req.method === "POST" &&
     skipCSRFPaths.some(path => req.path.startsWith(path));
 
- csrfProtection(req, res, next);
- 
+  if (isPathSkipped) {
+    return next(); 
+  } else {
+    return csrfProtection(req, res, next); 
+  }
 });
 
 
@@ -75,6 +79,14 @@ app.use((req, res, next) => {
   }
   next();
 });
+
+app.use((err, req, res, next) => {
+  if (err.code === "EBADCSRFTOKEN") {
+    return res.status(403).send("Form tampered with");
+  }
+  next(err);
+});
+
 
 
 // View Engine

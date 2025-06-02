@@ -58,6 +58,7 @@ import {
     cmpResetOne,
     editProfile,
     quantchnge,
+    rating,
     removeFromWish,
 } from "../controllers/user/userDashboard.js";
 
@@ -100,6 +101,7 @@ UserRouter.post("/profile/edit/:id", editProfile);
 UserRouter.get("/shop", isUserloggedIn, laodShop);
 UserRouter.get("/product/:id", isUserloggedIn, loadProduct);
 UserRouter.post("/product/:id", addtoCart);
+UserRouter.post('/rating',rating)
 
 UserRouter.get("/cart", isUserloggedIn, loadcart);
 UserRouter.post('/add-to-cart',addCart)
@@ -135,5 +137,4 @@ UserRouter.post('/cmp/resetAll',cmpReset)
 UserRouter.post('/cmp/resetOne',cmpResetOne)
 
 UserRouter.get('/tryOn',isUserloggedIn,loadtryOn)
-
 export default UserRouter;

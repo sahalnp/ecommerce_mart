@@ -98,7 +98,7 @@ adminRouter.post('/admin/edit/:id',profileEdit)
 adminRouter.get("/admin/products",  isAdminloggedIn,getAllProducts);
 
 adminRouter.get("/admin/product/edit/:id", isAdminloggedIn, editProduct);
-adminRouter.post("/admin/product/edit/:id", upload.array("photos"), csrfProtection, productEdit);
+adminRouter.post("/admin/product/edit/:id", upload.array("photos"), productEdit);
 
 adminRouter.post('/admin/product/:productId/delete-image',imageDlt)
 adminRouter.post('/admin/product/listing/:id',productListing)

@@ -90,6 +90,16 @@ const productSchema = new mongoose.Schema(
                 required: true,
             },
         ],
+        rating: {
+            type: Object,
+            default: {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+            },
+            },
 
         inStock: {
             type: Number,

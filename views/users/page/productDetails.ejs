@@ -1,8 +1,10 @@
 <%- include('../partials/header') %>
 <head>
   <link rel="stylesheet" href="/assets/css/prodDetail.css">
+  <!-- Add Swiper CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.css" rel="stylesheet">
   <style>
-  /* Animation for comparison toast */
+
   @keyframes slideIn {
     from {
       transform: translateY(20px);
@@ -13,6 +15,7 @@
       opacity: 1;
     }
   }
+  
   
   @keyframes fadeOut {
     from {
@@ -281,6 +284,48 @@
     .pulse-animation {
       animation: pulse 2s infinite;
     }
+
+    /* Fixed Swiper styles */
+    .mainSwiper {
+      width: 100%;
+      height: 400px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+     .star-rating {
+    direction: ltr;
+    font-size: 1.5rem;
+    unicode-bidi: bidi-override;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .star-rating span {
+    color: #ccc;
+  }
+
+  .star-rating span.active {
+    color: gold;
+  }
+
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+    }
+
+    .thumbnail.active {
+      border: 3px solid #e74c3c !important;
+      transform: scale(1.05);
+    }
+
+    .thumbnail:hover {
+      border: 2px solid #3498db;
+      transform: scale(1.02);
+    }
   </style>
 </head>
 
@@ -319,11 +364,15 @@
       <!-- Product Info -->
       <div class="col-lg-6 product-info">
         <h1 class="product-title mb-3"><%= product.title %></h1>
-
-        <div class="rating mb-3">
-          <span class="text-warning">★★★★☆</span>
-          <span class="text-muted">(1,234 ratings)</span>
-        </div>
+<div class="star-rating small" id="rating-stars">
+  <span data-value="1">&#9733;</span>
+  <span data-value="2">&#9733;</span>
+  <span data-value="3">&#9733;</span>
+  <span data-value="4">&#9733;</span>
+  <span data-value="5">&#9733;</span>
+  
+</div>
+<span class="text-muted medium">&nbsp;(<%= totalUser %> ratings)</span>
 
         <div class="price-section">
           <span class="current-price">₹<%= product.pricing.salePrice %></span>
@@ -458,30 +507,77 @@
 
 </main>
 
+<!-- Add Swiper JS before your custom script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.js"></script>
+
 <script>
   const csrfToken = "<%= csrfToken %>";
+  const productId = "<%= product._id %>";
   const length = <%= product.image.length %>;
   const productImage = "<%= product.image[0].filepath %>";
 
-  // Virtual Try-On Functionality
+  // Initialize Swiper - THIS WAS MISSING!
+  let swiper;
+  
   document.addEventListener("DOMContentLoaded", function () {
-    // Get modal elements
+    // Initialize Swiper
+    swiper = new Swiper('.mainSwiper', {
+      spaceBetween: 10,
+      loop: false,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+
+    // Thumbnail click functionality - FIXED
+    const thumbnails = document.querySelectorAll('.thumbnail');
+    thumbnails.forEach((thumb, index) => {
+      thumb.addEventListener('click', function() {
+        // Remove active class from all thumbnails
+        thumbnails.forEach(t => t.classList.remove('active'));
+        // Add active class to clicked thumbnail
+        this.classList.add('active');
+        // Go to corresponding slide
+        swiper.slideTo(index);
+      });
+    });
+
+    // Update active thumbnail when slide changes
+    swiper.on('slideChange', function() {
+      const activeIndex = swiper.activeIndex;
+      thumbnails.forEach((thumb, index) => {
+        thumb.classList.toggle('active', index === activeIndex);
+      });
+    });
+
+    // Virtual Try-On Functionality
     const tryOnModal = document.getElementById('try-on-modal');
     const tryOnBtn = document.getElementById('try-on-btn');
     const closeModal = document.getElementById('close-modal');
     const watchOverlay = document.getElementById('watch-overlay');
     
     // Open modal when Try On button is clicked
-    tryOnBtn.addEventListener('click', function() {
-      tryOnModal.style.display = 'block';
-      document.body.style.overflow = 'hidden'; // Prevent scrolling
-    });
+    if (tryOnBtn) {
+      tryOnBtn.addEventListener('click', function() {
+        if (tryOnModal) {
+          tryOnModal.style.display = 'block';
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
     
     // Close modal when X is clicked
-    closeModal.addEventListener('click', function() {
-      tryOnModal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    });
+    if (closeModal) {
+      closeModal.addEventListener('click', function() {
+        tryOnModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      });
+    }
     
     // Close modal when clicking outside content
     window.addEventListener('click', function(event) {
@@ -490,7 +586,8 @@
         document.body.style.overflow = 'auto';
       }
     });
-    // Quantity controls
+
+    // Quantity controls - FIXED COMPLETELY
     const decreaseBtn = document.querySelector(".btn-decrease");
     const increaseBtn = document.querySelector(".btn-increase");
     const quantitySpan = document.getElementById("quantity");
@@ -510,15 +607,22 @@
       }, 3000);
     }
 
-    decreaseBtn.addEventListener("click", () => {
+    function updateQuantity(newQuantity) {
+      quantity = newQuantity;
+      quantitySpan.textContent = quantity;
+      quantityInput.value = quantity;
+    }
+
+    // FIXED: Proper event handling with preventDefault
+    decreaseBtn.addEventListener("click", (e) => {
+      e.preventDefault(); // Prevent form submission
       if (quantity > min) {
-        quantity--;
-        quantitySpan.textContent = quantity;
-        quantityInput.value = quantity;
+        updateQuantity(quantity - 1);
       }
     });
 
-    increaseBtn.addEventListener("click", () => {
+    increaseBtn.addEventListener("click", (e) => {
+      e.preventDefault(); // Prevent form submission
       if (quantity >= stock) {
         showToast(`Only ${stock} item(s) available in stock`);
         return;
@@ -527,55 +631,55 @@
         showToast("Maximum quantity allowed is 10");
         return;
       }
-      quantity++;
-      quantitySpan.textContent = quantity;
-      quantityInput.value = quantity;
+      updateQuantity(quantity + 1);
     });
     
     // Make the watch image draggable for positioning
-    let isDragging = false;
-    let currentX;
-    let currentY;
-    let initialX;
-    let initialY;
-    let xOffset = 0;
-    let yOffset = 0;
-    
-    watchOverlay.addEventListener("mousedown", dragStart);
-    watchOverlay.addEventListener("mouseup", dragEnd);
-    watchOverlay.addEventListener("mousemove", drag);
-    
-    function dragStart(e) {
-      initialX = e.clientX - xOffset;
-      initialY = e.clientY - yOffset;
+    if (watchOverlay) {
+      let isDragging = false;
+      let currentX;
+      let currentY;
+      let initialX;
+      let initialY;
+      let xOffset = 0;
+      let yOffset = 0;
       
-      if (e.target === watchOverlay) {
-        isDragging = true;
-      }
-    }
-    
-    function dragEnd(e) {
-      initialX = currentX;
-      initialY = currentY;
+      watchOverlay.addEventListener("mousedown", dragStart);
+      watchOverlay.addEventListener("mouseup", dragEnd);
+      watchOverlay.addEventListener("mousemove", drag);
       
-      isDragging = false;
-    }
-    
-    function drag(e) {
-      if (isDragging) {
-        e.preventDefault();
-        currentX = e.clientX - initialX;
-        currentY = e.clientY - initialY;
+      function dragStart(e) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
         
-        xOffset = currentX;
-        yOffset = currentY;
-        
-        setTranslate(currentX, currentY, watchOverlay);
+        if (e.target === watchOverlay) {
+          isDragging = true;
+        }
       }
-    }
-    
-    function setTranslate(xPos, yPos, el) {
-      el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+      
+      function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        
+        isDragging = false;
+      }
+      
+      function drag(e) {
+        if (isDragging) {
+          e.preventDefault();
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+          
+          xOffset = currentX;
+          yOffset = currentY;
+          
+          setTranslate(currentX, currentY, watchOverlay);
+        }
+      }
+      
+      function setTranslate(xPos, yPos, el) {
+        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+      }
     }
   });
 
@@ -637,8 +741,31 @@
       console.log(error, 'ERROR');
     }
   }
+const stars = document.querySelectorAll('#rating-stars span');
+stars.forEach(star => {
+  star.addEventListener('click', () => {
+    const value = parseInt(star.getAttribute('data-value'));
+
+    stars.forEach(s => {
+      s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= value);
+    });
+
+    rating(productId, value);
+  });
+});
+
+async function rating(productId, rating) {
+  try {
+    await axios.post('/rating', {
+      productId,
+      rating,
+      _csrf: csrfToken 
+    });
+  } catch (error) {
+    console.log(error, 'ERROR');
+  }
+}
+
 </script>
-
-
 
 <%- include('../partials/footer') %>

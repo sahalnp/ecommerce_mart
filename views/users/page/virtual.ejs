@@ -30,48 +30,105 @@
       background: rgba(0,0,0,0.7);
       padding: 15px;
       border-radius: 10px;
+      max-width: 220px;
     }
     
     .size-control {
       margin: 10px 0;
     }
-  .back-button {
-    margin-top: 20px;
-    padding: 8px 16px;
-    background-color: #6b5fe9;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+    
+    .back-button {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background-color: #6b5fe9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
 
-  .back-button:hover {
-    background-color: #333;
-  }
+    .back-button:hover {
+      background-color: #333;
+    }
  
     input[type="range"] {
       width: 150px;
+    }
+
+    .status {
+      margin: 10px 0;
+      padding: 5px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .status.success {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+    }
+
+    .status.error {
+      background-color: rgba(255, 0, 0, 0.2);
+      color: #ff6666;
+    }
+
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      min-height: 18px;
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .message.show-hand {
+      background-color: rgba(255, 165, 0, 0.2);
+      color: #ffa500;
+      border: 1px solid #ffa500;
+    }
+
+    .message.hand-detected {
+      background-color: rgba(0, 255, 0, 0.2);
+      color: #00ff00;
+      border: 1px solid #00ff00;
+    }
+
+    .message.hand-straight {
+      background-color: rgba(0, 255, 255, 0.2);
+      color: #00ffff;
+      border: 1px solid #00ffff;
     }
   </style>
 </head>
 <body>
   <div class="controls">
-  <h3>Watch Controls</h3>
-  <div class="size-control">
-    <label>Size: <span id="sizeValue">120</span>px</label>
-    <input type="range" id="sizeSlider" min="80" max="200" value="120">
+    <h3>Watch Controls</h3>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="size-control">
+      <label>Size: <span id="sizeValue">120</span>px</label>
+      <input type="range" id="sizeSlider" min="20" max="200" value="120">
+    </div>
+    
+    <div class="size-control">
+      <label>Y Offset: <span id="offsetValue">10</span>px</label>
+      <input type="range" id="offsetSlider" min="-30" max="50" value="10">
+    </div>
+
+    <div class="size-control">
+      <label>X Offset: <span id="xOffsetValue">0</span>px</label>
+      <input type="range" id="xOffsetSlider" min="-50" max="50" value="0" />
+    </div>
+
+    <div class="message show-hand" id="handMessage">Show your hand straight to the camera</div>
+    
+    <button onclick="history.back()" class="back-button">← Back</button>
   </div>
-  <div class="size-control">
-    <label>Y Offset: <span id="offsetValue">10</span>px</label>
-    <input type="range" id="offsetSlider" min="-30" max="50" value="10">
-  </div>
-<button onclick="history.back()" class="back-button">← Back</button>
-
-
-</div>
-
 
   <video id="webcam" autoplay playsinline width="640" height="480"></video>
   <canvas id="overlay" width="640" height="480"></canvas>
@@ -87,11 +144,16 @@
     // Controls
     const sizeSlider = document.getElementById('sizeSlider');
     const offsetSlider = document.getElementById('offsetSlider');
+    const xOffsetSlider = document.getElementById('xOffsetSlider');
     const sizeValue = document.getElementById('sizeValue');
     const offsetValue = document.getElementById('offsetValue');
+    const xOffsetValue = document.getElementById('xOffsetValue');
+    const status = document.getElementById('status');
+    const handMessage = document.getElementById('handMessage');
     
     let watchSize = 120;
     let yOffset = 10;
+    let xOffset = 0;
     
     sizeSlider.addEventListener('input', (e) => {
       watchSize = parseInt(e.target.value);
@@ -103,7 +165,12 @@
       offsetValue.textContent = yOffset;
     });
 
-    // Create a sample watch image using canvas (since we can't access external images reliably)
+    xOffsetSlider.addEventListener('input', (e) => {
+      xOffset = parseInt(e.target.value);
+      xOffsetValue.textContent = xOffset;
+    });
+
+    // Create a default sample watch image
     function createSampleWatchImage() {
       const canvas = document.createElement('canvas');
       canvas.width = 200;
@@ -113,9 +180,9 @@
       // Draw watch face (outer circle)
       ctx.beginPath();
       ctx.arc(100, 100, 80, 0, 2 * Math.PI);
-      ctx.fillStyle = '#2c3e50';
+      ctx.fillStyle = '#c9b037'; // Gold color
       ctx.fill();
-      ctx.strokeStyle = '#34495e';
+      ctx.strokeStyle = '#b8860b';
       ctx.lineWidth = 4;
       ctx.stroke();
       
@@ -141,20 +208,22 @@
         ctx.stroke();
       }
       
-      // Draw hour hand
+      // Draw hour hand (pointing to 2)
+      const hourAngle = (2 * 30) * Math.PI / 180 - Math.PI/2;
       ctx.beginPath();
       ctx.moveTo(100, 100);
-      ctx.lineTo(100, 60);
-      ctx.strokeStyle = '#e74c3c';
+      ctx.lineTo(100 + Math.cos(hourAngle) * 35, 100 + Math.sin(hourAngle) * 35);
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 4;
       ctx.lineCap = 'round';
       ctx.stroke();
       
-      // Draw minute hand
+      // Draw minute hand (pointing to 10)
+      const minuteAngle = (10 * 6) * Math.PI / 180 - Math.PI/2;
       ctx.beginPath();
       ctx.moveTo(100, 100);
-      ctx.lineTo(130, 70);
-      ctx.strokeStyle = '#e74c3c';
+      ctx.lineTo(100 + Math.cos(minuteAngle) * 50, 100 + Math.sin(minuteAngle) * 50);
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
       ctx.lineCap = 'round';
       ctx.stroke();
@@ -162,18 +231,27 @@
       // Draw center dot
       ctx.beginPath();
       ctx.arc(100, 100, 6, 0, 2 * Math.PI);
-      ctx.fillStyle = '#e74c3c';
+      ctx.fillStyle = '#ffffff';
       ctx.fill();
       
       // Draw watch band parts
-      ctx.fillStyle = '#8b4513';
+      ctx.fillStyle = '#c9b037';
       ctx.fillRect(85, 20, 30, 40); // top band
       ctx.fillRect(85, 140, 30, 40); // bottom band
       
       return canvas;
     }
 
-    const productImg = createSampleWatchImage();
+    // Initialize with default watch image
+    let productImg = new Image();
+    productImg.src = "<%= product.image[7].filepath %>"; 
+    
+  
+    
+    productImg.onerror = () => {
+      status.textContent = 'Error loading watch image';
+      status.className = 'status error';
+    };
 
     const hands = new Hands({
       locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
@@ -199,7 +277,7 @@
       // Draw webcam frame
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && productImg) {
         const landmarks = results.multiHandLandmarks[0];
         
         // Get wrist position (landmark 0)
@@ -214,34 +292,38 @@
           middleFinger.x - wrist.x
         );
 
-        // Draw green dot on wrist for debugging (optional)
-        canvasCtx.beginPath();
-        canvasCtx.arc(wristX, wristY + yOffset, 4, 0, 2 * Math.PI);
-        canvasCtx.fillStyle = '#00ff00';
-        canvasCtx.fill();
-
         // Draw watch image with rotation based on hand orientation
         canvasCtx.save();
-        canvasCtx.translate(wristX, wristY + yOffset);
-        canvasCtx.rotate(handAngle + Math.PI/2); // Adjust rotation to match hand orientation
+        canvasCtx.translate(wristX + xOffset, wristY + yOffset);
+        canvasCtx.rotate(handAngle + Math.PI/2);
         
         const imgW = watchSize;
         const imgH = watchSize;
+        
+        canvasCtx.globalAlpha = 0.9;
         canvasCtx.drawImage(productImg, -imgW / 2, -imgH / 2, imgW, imgH);
         canvasCtx.restore();
 
-        // Optional: Draw hand landmarks for debugging
-        /*
-        for (let i = 0; i < landmarks.length; i++) {
-          const landmark = landmarks[i];
-          const x = landmark.x * canvasElement.width;
-          const y = landmark.y * canvasElement.height;
-          canvasCtx.beginPath();
-          canvasCtx.arc(x, y, 2, 0, 2 * Math.PI);
-          canvasCtx.fillStyle = i === 0 ? '#ff0000' : '#ffffff';
-          canvasCtx.fill();
+        // Detect if hand is "straight"
+        // We'll say straight if angle is close to 0 or ±π (within ~20 degrees)
+        const angleDegrees = handAngle * (180 / Math.PI);
+        const straightThreshold = 20;
+
+        // Normalize angle between -180 and 180
+        const normalizedAngle = ((angleDegrees + 180) % 360) - 180;
+
+        if (Math.abs(normalizedAngle) < straightThreshold || Math.abs(normalizedAngle - 180) < straightThreshold || Math.abs(normalizedAngle + 180) < straightThreshold) {
+          handMessage.textContent = "Perfect! Hand is straight ✓";
+          handMessage.className = 'message hand-straight';
+        } else {
+          handMessage.textContent = "Hand detected - Keep it straight";
+          handMessage.className = 'message hand-detected';
         }
-        */
+
+      } else {
+        // No hand detected
+        handMessage.textContent = "Show your hand straight to the camera";
+        handMessage.className = 'message show-hand';
       }
 
       canvasCtx.restore();

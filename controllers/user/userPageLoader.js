@@ -72,6 +72,16 @@ export const loadProduct = asyncHandler(async (req, res) => {
         ((find.pricing.price - find.pricing.salePrice) / find.pricing.price) *
             100
     );
+    let totalUser = 0;
+    // let totalvalue = 0;
+    let count = 0;
+    const value = await product.findById(productId);
+    const rate = value.rating;
+    for (let i = 1; i <= 5; i++) {
+            count = rate[i];
+            // totalvalue += i * count;
+            totalUser += count;
+        }
     const cartfind = await Cart.findOne({ UserId,productId });
     const cmp=await Compare.findOne({UserId,productId})
     
@@ -92,7 +102,8 @@ export const loadProduct = asyncHandler(async (req, res) => {
         user: req.session.users,
         exist: show,
         cartItems: cartfind,
-        cmp
+        cmp,
+        totalUser
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Virtual Watch Try-On Example</title>
+  <style>
+    /* ... existing styles ... */
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      min-height: 18px;
+      transition: all 0.3s ease;
+    }
+    
+    .message.warning {
+      color: #FFD700; /* Yellow for warnings */
+    }
+    
+    .message.success {
+      color: #0f0; /* Green for success */
+    }
+  </style>
+</head>
+<body>
+  <!-- ... existing HTML ... -->
+  <div class="message" id="handMessage"></div>
+
+  <script>
+    // ... existing script ...
+
+    function onResults(results) {
+      canvasCtx.save();
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+      // Mirror the canvas horizontally
+      canvasCtx.scale(-1, 1);
+      canvasCtx.translate(-canvasElement.width, 0);
+
+      // Draw webcam frame
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+      // Reset hand message
+      handMessage.textContent = "";
+      handMessage.className = "message";
+
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && productImg) {
+        const landmarks = results.multiHandLandmarks[0];
+        
+        // Get wrist position (landmark 0)
+        const wrist = landmarks[0];
+        const wristX = wrist.x * canvasElement.width;
+        const wristY = wrist.y * canvasElement.height;
+
+        // Calculate hand orientation for better watch placement
+        const middleFinger = landmarks[9]; // Middle finger MCP
+        const handAngle = Math.atan2(
+          middleFinger.y - wrist.y,
+          middleFinger.x - wrist.x
+        );
+
+        // Draw watch image with rotation based on hand orientation
+        canvasCtx.save();
+        canvasCtx.translate(wristX + xOffset, wristY + yOffset);
+        canvasCtx.rotate(handAngle + Math.PI/2);
+        
+        const imgW = watchSize;
+        const imgH = watchSize;
+        
+        canvasCtx.globalAlpha = 0.9;
+        canvasCtx.drawImage(productImg, -imgW / 2, -imgH / 2, imgW, imgH);
+        canvasCtx.restore();
+
+        // Detect if hand is "straight"
+        const angleDegrees = handAngle * (180 / Math.PI);
+        const straightThreshold = 15;
+        const normalizedAngle = ((angleDegrees + 180) % 360) - 180;
+
+        const isStraight = 
+          Math.abs(normalizedAngle) < straightThreshold || 
+          Math.abs(normalizedAngle - 180) < straightThreshold || 
+          Math.abs(normalizedAngle + 180) < straightThreshold;
+
+        if (!isStraight) {
+          handMessage.textContent = "Please straighten your hand for a better fit";
+          handMessage.className = "message warning";
+        }
+      } else if (productImg) {
+        handMessage.textContent = "Please show your hand to try the watch";
+        handMessage.className = "message warning";
+      }
+
+      canvasCtx.restore();
+    }
+
+    // ... rest of the script ...
+  </script>
+</body>
+</html>
