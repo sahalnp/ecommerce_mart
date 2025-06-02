@@ -226,10 +226,11 @@ export const cmpReset = asyncHandler(async (req, res) => {
 });
 
 export const cmpResetOne = asyncHandler(async (req, res) => {
+    
     try {
         const { productId } = req.body;
-        const userId = req.session.users._id;
-        await Compare.findOneAndDelete({ productId, userId }, { new: true });
+        const UserId = req.session.users._id;
+        await Compare.findOneAndDelete({  UserId,productId }, { new: true });
         res.redirect("/compare");
     } catch (error) {
         console.log("ERROR in addCompare:", error);
@@ -266,6 +267,7 @@ export const rating = asyncHandler(async (req, res) => {
             totalUser += count;
         }
         let avg = totalvalue + totalUser;
+        return avg
     } catch (error) {
         console.log("ERROR :", error);
         res.status(500).json({

@@ -136,5 +136,5 @@ UserRouter.post('/addCompare',addCompare)
 UserRouter.post('/cmp/resetAll',cmpReset)
 UserRouter.post('/cmp/resetOne',cmpResetOne)
 
-UserRouter.get('/tryOn',isUserloggedIn,loadtryOn)
+UserRouter.get('/tryOn/:id',isUserloggedIn,loadtryOn)
 export default UserRouter;

@@ -4,7 +4,6 @@ import { User } from "../../models/userModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
 
-
 export const home = asyncHandler(async (req, res) => {
     const latestProducts = await product
         .find()
@@ -62,8 +61,8 @@ export const laodShop = asyncHandler(async (req, res) => {
 });
 
 export const loadProduct = asyncHandler(async (req, res) => {
-    const UserId=req.session.users._id
-    const productId=req.params.id
+    const UserId = req.session.users._id;
+    const productId = req.params.id;
     const find = await product
         .findById(productId)
         .populate("image")
@@ -73,18 +72,19 @@ export const loadProduct = asyncHandler(async (req, res) => {
             100
     );
     let totalUser = 0;
-    // let totalvalue = 0;
+    let totalvalue = 0;
     let count = 0;
     const value = await product.findById(productId);
     const rate = value.rating;
     for (let i = 1; i <= 5; i++) {
-            count = rate[i];
-            // totalvalue += i * count;
-            totalUser += count;
-        }
-    const cartfind = await Cart.findOne({ UserId,productId });
-    const cmp=await Compare.findOne({UserId,productId})
-    
+        count = rate[i];
+        totalvalue += i * count;
+        totalUser += count;
+    }
+    const avg = totalvalue / totalUser;
+    const cartfind = await Cart.findOne({ UserId, productId });
+    const cmp = await Compare.findOne({ UserId, productId });
+
     const exist = await Cart.find({
         UserId,
         productId,
@@ -93,8 +93,6 @@ export const loadProduct = asyncHandler(async (req, res) => {
     if (exist.length > 0) {
         show = true;
     }
-    req.session.productId=productId
-    
     return res.render("users/page/productDetails", {
         username: req.session.userName,
         product: find,
@@ -103,7 +101,8 @@ export const loadProduct = asyncHandler(async (req, res) => {
         exist: show,
         cartItems: cartfind,
         cmp,
-        totalUser
+        totalUser,
+        avg,
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {
@@ -252,26 +251,26 @@ export const dltAddress = asyncHandler(async (req, res) => {
         return res.redirect("/checkout");
     } else {
         return res.status(404).send("Address not found");
-    } 
+    }
 });
 export const loadcmp = asyncHandler(async (req, res) => {
-    const compare=await Compare.find()
+    const compare = await Compare.find();
     const productId = compare.map((item) => item.productId);
     const cmp = await product
-    .find({ _id: { $in: productId } })
-    .populate("brand")
-    .populate("image");  
+        .find({ _id: { $in: productId } })
+        .populate("brand")
+        .populate("image");
     const cart = await Cart.find({ productId: { $in: productId } });
     res.render("users/page/comparison", {
         username: req.session.userName,
         user: req.session.users,
-        compare:cmp,
-        inCart:cart
+        compare: cmp,
+        inCart: cart,
     });
 });
-export const loadtryOn=asyncHandler(async(req,res)=>{
-    const find=await product.findById(req.session.productId).populate('image')
-    res.render('users/page/virtual',{
-        product:find
-    })
-})
+export const loadtryOn = asyncHandler(async (req, res) => {
+    const find = await product.findById(req.params.id).populate("image");
+    res.render("users/page/virtual", {
+        product: find,
+    });
+});

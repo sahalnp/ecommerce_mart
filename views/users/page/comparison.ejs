@@ -202,7 +202,10 @@
      async function removeFromComparison(productId) {
     try {
         const res = await axios.post('/cmp/resetOne', { productId, _csrf: csrfToken }, { withCredentials: true });
-        showToast("Product removed", "error"); 
+        showToast("Product is  removed from comparison", "success"); 
+        setTimeout(() => {
+      window.location.reload();
+    }, 1000);
     } catch (error) {
         console.log(error, "ERROR");
         showToast("Failed to remove product", "error");
@@ -232,33 +235,32 @@
         async function resetMany(params) {
             try {
                 await axios.post('/cmp/resetAll',{ _csrf: csrfToken})
+                window.location.href = '/shop';
             } catch (error) {
                 console.log(error,"ERROR");
                 
             }
         }
-    function showToast(message, type = 'success') {
+function showToast(message, type = 'success') {
   const toast = document.querySelector('.cart-toast');
   if (!toast) return;
 
   toast.textContent = message;
 
-  // Set background color based on type
-  if (type === 'success') {
-    toast.style.backgroundColor = '#28a745';  
-  } else if (type === 'error') {
-    toast.style.backgroundColor = '#dc3545';  
-  } else {
-    toast.style.backgroundColor = '#333'; 
-  }
+  // Set background color
+  toast.style.backgroundColor =
+    type === 'success' ? '#28a745' :
+    type === 'error' ? '#dc3545' : '#333';
 
   toast.style.display = 'block';
+  toast.style.opacity = '1';
 
   setTimeout(() => {
-    toast.style.display = 'none';
-    window.location.reload();
-  }, 1000);
+    toast.style.opacity = '0';
+    setTimeout(() => toast.style.display = 'none', 300);
+  }, 2000); 
 }
+
 //for fast reload
 
 

@@ -1,509 +1,655 @@
 <%- include('../partials/header') %>
 <head>
-  <link rel="stylesheet" href="/assets/css/prodDetail.css">
-  <!-- Add Swiper CSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.css" rel="stylesheet">
-  <style>
+    <link rel="stylesheet" href="/assets/css/prodDetail.css" />
+    <!-- Add Swiper CSS -->
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.css"
+        rel="stylesheet"
+    />
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-  @keyframes slideIn {
-    from {
-      transform: translateY(20px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-  
-  
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-  
-  .compare-toast {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #2ecc71;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    animation: slideIn 0.3s ease-out, fadeOut 0.5s 2.0s ease-in forwards;
-  }
-    .quantity-toast {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #e74c3c;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    
-    /* Action buttons styling */
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    
-    .action-buttons .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 20px;
-      font-weight: 500;
-      text-decoration: none;
-      border: 2px solid transparent;
-      transition: all 0.3s ease;
-      min-height: 48px;
-    }
-    
-    .btn-add-to-cart {
-      background-color: #ff9f00;
-      color: white;
-      border-color: #ff9f00;
-    }
-    
-    .btn-add-to-cart:hover {
-      background-color: #e68900;
-      border-color: #e68900;
-      color: white;
-    }
-    
-    .btn-buy-now {
-      background-color: #fb641b;
-      color: white;
-      border-color: #fb641b;
-    }
-    
-    .btn-buy-now:hover {
-      background-color: #e55a17;
-      border-color: #e55a17;
-      color: white;
-    }
-    
-    .btn-try-on {
-      background-color: #3498db;
-      color: white;
-      border-color: #3498db;
-    }
-    
-    .btn-try-on:hover {
-      background-color: #2980b9;
-      border-color: #2980b9;
-      color: white;
-    }
-    
-   .btn-outline-secondary {
-      background-color: transparent;
-      color: #6c757d;
-      border: 1px solid #6c757d !important;
-    }
-    
-    .btn-outline-secondary:hover {
-      background-color: #6c757d;
-      color: white;
-      border-color: #6c757d;
-      transform: translateY(-2px);
-    }
-    
-    /* Primary action buttons row */
-    .primary-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .primary-actions .btn {
-      flex: 1;
-    }
-    
-    /* Secondary action button */
-    .secondary-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    
-    .secondary-actions .btn {
-      flex: 1;
-    }
-    
-    /* Responsive design */
-    @media (max-width: 768px) {
-      .primary-actions {
-        flex-direction: column;
-      }
-      
-      .primary-actions .btn {
-        flex: none;
-      }
-      
-      .secondary-actions {
-        flex-direction: column;
-      }
-    }
-    
-    /* Virtual Try-On Modal */
-    .try-on-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.9);
-      z-index: 2000;
-      overflow: auto;
-    }
-    
-    .modal-content {
-      background: #1a1a1a;
-      margin: 5% auto;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 800px;
-      color: white;
-      position: relative;
-    }
-    
-    .close-modal {
-      position: absolute;
-      top: 15px;
-      right: 25px;
-      color: white;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 10;
-    }
-    
-    .try-on-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    
-    .try-on-view {
-      background: #333;
-      border-radius: 8px;
-      overflow: hidden;
-      height: 400px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .try-on-options {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    
-    .try-on-option {
-      flex: 1;
-      min-width: 150px;
-      padding: 15px;
-      background: #333;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-    
-    .try-on-option:hover {
-      background: #444;
-      transform: translateY(-3px);
-    }
-    
-    .try-on-option.active {
-      background: #3498db;
-    }
-    
-    .wrist-preview {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      background: url('https://images.unsplash.com/photo-1617043786390-0d3a0ea4a1b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80') center/cover;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    
-    .watch-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 150px;
-      height: auto;
-      z-index: 5;
-    }
-    
-    .try-on-instructions {
-      text-align: center;
-      padding: 15px;
-      background: rgba(52, 152, 219, 0.2);
-      border-radius: 8px;
-      margin-top: 15px;
-    }
-    
-    .try-on-instructions h4 {
-      margin-bottom: 10px;
-      color: #3498db;
-    }
-    
-    .try-on-instructions p {
-      margin-bottom: 5px;
-    }
-    
-    /* Animation for try-on button */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    .pulse-animation {
-      animation: pulse 2s infinite;
-    }
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
 
-    /* Fixed Swiper styles */
-    .mainSwiper {
-      width: 100%;
-      height: 400px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    }
-     .star-rating {
-    direction: ltr;
-    font-size: 1.5rem;
-    unicode-bidi: bidi-override;
-    display: inline-block;
-    cursor: pointer;
-  }
+        .compare-toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2ecc71;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out, fadeOut 0.5s 2s ease-in forwards;
+        }
+        .quantity-toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
 
-  .star-rating span {
-    color: #ccc;
-  }
+        /* Action buttons styling */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
 
-  .star-rating span.active {
-    color: gold;
-  }
+        .action-buttons .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            font-weight: 500;
+            text-decoration: none;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            min-height: 48px;
+        }
 
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: white;
-    }
+        .btn-add-to-cart {
+            background-color: #ff9f00;
+            color: white;
+            border-color: #ff9f00;
+        }
 
-    .thumbnail.active {
-      border: 3px solid #e74c3c !important;
-      transform: scale(1.05);
-    }
+        .btn-add-to-cart:hover {
+            background-color: #e68900;
+            border-color: #e68900;
+            color: white;
+        }
 
-    .thumbnail:hover {
-      border: 2px solid #3498db;
-      transform: scale(1.02);
-    }
-  </style>
+        .btn-buy-now {
+            background-color: #fb641b;
+            color: white;
+            border-color: #fb641b;
+        }
+
+        .btn-buy-now:hover {
+            background-color: #e55a17;
+            border-color: #e55a17;
+            color: white;
+        }
+
+        .btn-try-on {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .btn-try-on:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            color: white;
+        }
+
+        .btn-outline-secondary {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d !important;
+        }
+
+        .btn-outline-secondary:hover {
+            background-color: #6c757d;
+            color: white;
+            border-color: #6c757d;
+            transform: translateY(-2px);
+        }
+
+        /* Primary action buttons row */
+        .primary-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .primary-actions .btn {
+            flex: 1;
+        }
+
+        /* Secondary action button */
+        .secondary-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .secondary-actions .btn {
+            flex: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .primary-actions {
+                flex-direction: column;
+            }
+
+            .primary-actions .btn {
+                flex: none;
+            }
+
+            .secondary-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Virtual Try-On Modal */
+        .try-on-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            color: white;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .try-on-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .try-on-view {
+            background: #333;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 400px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .try-on-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .try-on-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .try-on-option:hover {
+            background: #444;
+            transform: translateY(-3px);
+        }
+
+        .try-on-option.active {
+            background: #3498db;
+        }
+
+        .wrist-preview {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            background: url("https://images.unsplash.com/photo-1617043786390-0d3a0ea4a1b4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80")
+                center/cover;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .watch-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: auto;
+            z-index: 5;
+        }
+
+        .try-on-instructions {
+            text-align: center;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .try-on-instructions h4 {
+            margin-bottom: 10px;
+            color: #3498db;
+        }
+
+        .try-on-instructions p {
+            margin-bottom: 5px;
+        }
+
+        /* Animation for try-on button */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Fixed Swiper styles */
+        .mainSwiper {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .star-rating span {
+            direction: ltr;
+            font-size: 1.5rem;
+            unicode-bidi: bidi-override;
+            display: inline-block;
+            cursor: pointer;
+             color: #ccc;
+  position: relative;
+  display: inline-block;
+        }
+
+        .star-rating span {
+            color: #ccc;
+        }
+
+        .star-rating span.active {
+            color: gold;
+        }
+
+.star-rating .full {
+  color: gold;
+}
+
+.star-rating .half::before {
+  content: '★';
+  position: absolute;
+  color: gold;
+  width: 50%;
+  overflow: hidden;
+}
+
+
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        .thumbnail.active {
+            border: 3px solid #e74c3c !important;
+            transform: scale(1.05);
+        }
+
+        .thumbnail:hover {
+            border: 2px solid #3498db;
+            transform: scale(1.02);
+        }
+    </style>
 </head>
 
 <main class="product-detail-page">
-  <div class="container my-5">
-    <div class="row gx-4 align-items-start">
-      <!-- Image Slider -->
-      <div class="col-md-6">
-        <div class="swiper mainSwiper">
-          <div class="swiper-wrapper">
-            <% for(let i = 0; i < product.image.length; i++) { %>
-              <div class="swiper-slide">
-                <div class="zoom-wrapper">
-                  <img id="zoomImage" src="<%= product.image[i].filepath %>" class="zoom-inner" />
+    <div class="container my-5">
+        <div class="row gx-4 align-items-start">
+            <!-- Image Slider -->
+            <div class="col-md-6">
+                <div class="swiper mainSwiper">
+                    <div class="swiper-wrapper">
+                        <% for(let i = 0; i < product.image.length; i++) { %>
+                        <div class="swiper-slide">
+                            <div class="zoom-wrapper">
+                                <img
+                                    id="zoomImage"
+                                    src="<%= product.image[i].filepath %>"
+                                    class="zoom-inner"
+                                />
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
                 </div>
-              </div>
-            <% } %>
-          </div>
-        </div>
 
-        <div class="thumbnail-container d-flex flex-wrap gap-2 mt-3">
-          <% product.image.forEach(function(image, index) { %>
-            <div class="thumbnail-wrapper" style="width: calc(25% - 8px);">
-              <img 
-                src="<%= image.filepath %>" 
-                class="thumbnail <%= index === 0 ? 'active' : '' %>" 
-                data-index="<%= index %>"
-                alt="Thumbnail <%= index + 1 %>"
-                style="height: 80px;"
-              />
+                <div class="thumbnail-container d-flex flex-wrap gap-2 mt-3">
+                    <% product.image.forEach(function(image, index) { %>
+                    <div
+                        class="thumbnail-wrapper"
+                        style="width: calc(25% - 8px)"
+                    >
+                        <img
+                            src="<%= image.filepath %>"
+                            class="thumbnail <%= index === 0 ? 'active' : '' %>"
+                            data-index="<%= index %>"
+                            alt="Thumbnail <%= index + 1 %>"
+                            style="height: 80px"
+                        />
+                    </div>
+                    <% }) %>
+                </div>
             </div>
-          <% }) %>
-        </div>
-      </div>
-      
-      <!-- Product Info -->
-      <div class="col-lg-6 product-info">
-        <h1 class="product-title mb-3"><%= product.title %></h1>
-<div class="star-rating small" id="rating-stars">
-  <span data-value="1">&#9733;</span>
-  <span data-value="2">&#9733;</span>
-  <span data-value="3">&#9733;</span>
-  <span data-value="4">&#9733;</span>
-  <span data-value="5">&#9733;</span>
-  
+
+            <!-- Product Info -->
+            <div class="col-lg-6 product-info">
+                <h1 class="product-title mb-3"><%= product.title %></h1>
+<div class="d-flex ">              <div class="star-rating small" id="rating-stars">
+  <% for (let i = 1; i <= 5; i++) { 
+       const full = Math.floor(avg);
+       const isHalf = avg % 1 >= 0.25 && avg % 1 < 0.75;
+       const halfStarPosition = full + 1;
+  %>
+    <% if (i <= full) { %>
+      <span class="full" data-value="<%= i %>">&#9733;</span>
+    <% } else if (i === halfStarPosition && isHalf) { %>
+      <span class="half" data-value="<%= i %>">&#9733;</span>
+    <% } else { %>
+      <span data-value="<%= i %>">&#9733;</span>
+    <% } %>
+  <% } %>
 </div>
-<span class="text-muted medium">&nbsp;(<%= totalUser %> ratings)</span>
 
-        <div class="price-section">
-          <span class="current-price">₹<%= product.pricing.salePrice %></span>
-          <span class="original-price"><del>₹<%= product.pricing.price %></del></span>
-          <span class="savings-badge">Save <%= discount %>%</span>
-        </div>
-        <% if (product.inStock <= 2 && product.inStock > 0) { %>
-          <div class="stock-less">Only a few items left in stock. Hurry!</div>
-        <% } else if (product.inStock > 2) { %>
-          <div class="stock-status">In Stock</div>
-        <% } else { %>
-          <div class="text-danger">Out of stock</div>
-        <% } %>
+<span class="text-muted medium mt-1">&nbsp;(<%= totalUser %> ratings)</span></div>
 
-       <div class="product-highlights">
-          <ul class="list-unstyled custom-list">
-            <% if (product.deliveryDate) { %>
-              <li>✓ Free delivery by <%= product.deliveryDate %></li>
-            <% } else { %>
-              <li>✓ Free delivery within 3–5 days</li>
-            <% } %>
 
-            <% if (product.warranty) { %>
-              <li>✓ <%= product.warranty %> warranty</li>
-            <% } else { %>
-              <li>✓ Warranty included</li>
-            <% } %>
-
-            <li>✓ 7-day returns policy</li>
-            <li>✓ Virtual Try-On Available</li>
-          </ul>
-        </div>
-
-        <form action="/product/<%= product._id %>" method="POST">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <input type="hidden" name="productId" value="<%= product._id %>">
-          <input type="hidden" id="quantityInput" name="quantity" value="<%= cartItems ? cartItems.quantity : 1 %>">
-
-          <div class="quantity-control d-flex align-items-center gap-2">
-            <label for="quantity" class="mb-0 mr-2 font-weight-medium">Quantity:</label>
-            <button class="btn-qty btn-decrease text-dark" type="button">−</button>
-            <span id="quantity" class="qty-value" style="min-width: 30px; text-align: center;"><%= cartItems ? cartItems.quantity : 1 %></span>
-            <button class="btn-qty btn-increase text-dark" type="button">+</button>
-          </div>
-
-          <div class="action-buttons">
-            <!-- Primary action buttons in a row -->
-            <div class="primary-actions">
-              <% if (exist == true) { %>
-                <a href="/cart" class="btn btn-add-to-cart">
-                  <i class="fas fa-shopping-cart me-2"></i>&nbsp Go to cart
-                </a>
-              <% } else { %>
-                <% if (product.inStock <= 0) { %>
-                 <button type="submit" class="btn btn-add-to-cart" onclick="addToCart()" disabled>
-                  <i class="fas fa-shopping-cart me-2"></i>&nbsp Add to Cart
-                </button>
+                <div class="price-section">
+                    <span class="current-price"
+                        >₹<%= product.pricing.salePrice %></span
+                    >
+                    <span class="original-price"
+                        ><del>₹<%= product.pricing.price %></del></span
+                    >
+                    <span class="savings-badge">Save <%= discount %>%</span>
+                </div>
+                <% if (product.inStock <= 2 && product.inStock > 0) { %>
+                <div class="stock-less">
+                    Only a few items left in stock. Hurry!
+                </div>
+                <% } else if (product.inStock > 2) { %>
+                <div class="stock-status">In Stock</div>
                 <% } else { %>
-                 <button type="submit" class="btn btn-add-to-cart" onclick="addToCart()">
-                  <i class="fas fa-shopping-cart me-2"></i>&nbsp Add to Cart
-                </button>
+                <div class="text-danger">Out of stock</div>
                 <% } %>
-              <% } %>
-              
-              <% if (product.inStock <= 0) { %>
-                 <button type="button" class="btn btn-buy-now" disabled>
-                <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
-              </button>
-                <% } else { %>
-                 <button type="button" class="btn btn-buy-now">
-                <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
-              </button>
-                <% } %>
-              
-              <!-- Try On Button -->
-              <a href="/tryOn" type="button" class="btn btn-try-on pulse-animation" id="try-on-btn">
-                <i class="fas fa-vr-cardboard me-2"></i>&nbsp Try On
-            </a>
-            </div>
-            
-            <!-- Secondary action button -->
-            <div class="secondary-actions">
-              <% if (cmp) { %>
-               <a href="/compare" type="button" class="btn btn-outline-secondary">
-                <i class="fas fa-exchange-alt me-2"></i> &nbspGo to compare page
-               </a>
-               <% } else { %>
-                 <button type="button" class="btn btn-outline-secondary" onclick="addForComparison()">
-                  <i class="fas fa-exchange-alt me-2"></i> Add for comparison
-                </button>
-              <% } %>
-            </div>
-            
-            <div class="cart-toast">Item added to cart! 🎉</div>
-          </div>
-        </form>
 
-        <div class="product-specs">
-          <h5 class="mb-3">Product Specifications</h5>
-          <div class="specs-grid">
-            <div class="spec-item"><span class="spec-label">Brand:</span>&nbsp <%= product.brand.name %></div>
-            <div class="spec-item"><span class="spec-label">Band Material:</span>&nbsp <%= product.bandMaterial %></div>
-            <div class="spec-item"><span class="spec-label">Case Diameter:</span>&nbsp<%= product.caseDiameter %></div>
-            <div class="spec-item"><span class="spec-label">Band Color:</span>&nbsp <%= product.bandColour %></div>
-          </div>
+                <div class="product-highlights">
+                    <ul class="list-unstyled custom-list">
+                        <% if (product.deliveryDate) { %>
+                        <li>✓ Free delivery by <%= product.deliveryDate %></li>
+                        <% } else { %>
+                        <li>✓ Free delivery within 3–5 days</li>
+                        <% } %> <% if (product.warranty) { %>
+                        <li>✓ <%= product.warranty %> warranty</li>
+                        <% } else { %>
+                        <li>✓ Warranty included</li>
+                        <% } %>
+
+                        <li>✓ 7-day returns policy</li>
+                        <li>✓ Virtual Try-On Available</li>
+                    </ul>
+                </div>
+
+                <form action="/product/<%= product._id %>" method="POST">
+                    <input
+                        type="hidden"
+                        name="_csrf"
+                        value="<%= csrfToken %>"
+                    />
+                    <input
+                        type="hidden"
+                        name="productId"
+                        value="<%= product._id %>"
+                    />
+                    <input
+                        type="hidden"
+                        id="quantityInput"
+                        name="quantity"
+                        value="<%= cartItems ? cartItems.quantity : 1 %>"
+                    />
+
+                    <div
+                        class="quantity-control d-flex align-items-center gap-2"
+                    >
+                        <label
+                            for="quantity"
+                            class="mb-0 mr-2 font-weight-medium"
+                            >Quantity:</label
+                        >
+                        <button
+                            class="btn-qty btn-decrease text-dark"
+                            type="button"
+                        >
+                            −
+                        </button>
+                        <span
+                            id="quantity"
+                            class="qty-value"
+                            style="min-width: 30px; text-align: center"
+                            ><%= cartItems ? cartItems.quantity : 1 %></span
+                        >
+                        <button
+                            class="btn-qty btn-increase text-dark"
+                            type="button"
+                        >
+                            +
+                        </button>
+                    </div>
+
+                    <div class="action-buttons">
+                        <!-- Primary action buttons in a row -->
+                        <div class="primary-actions">
+                            <% if (exist == true) { %>
+                            <a href="/cart" class="btn btn-add-to-cart">
+                                <i class="fas fa-shopping-cart me-2"></i>&nbsp
+                                Go to cart
+                            </a>
+                            <% } else { %> <% if (product.inStock <= 0) { %>
+                            <button
+                                type="submit"
+                                class="btn btn-add-to-cart"
+                                onclick="addToCart()"
+                                disabled
+                            >
+                                <i class="fas fa-shopping-cart me-2"></i>&nbsp
+                                Add to Cart
+                            </button>
+                            <% } else { %>
+                            <button
+                                type="submit"
+                                class="btn btn-add-to-cart"
+                                onclick="addToCart()"
+                            >
+                                <i class="fas fa-shopping-cart me-2"></i>&nbsp
+                                Add to Cart
+                            </button>
+                            <% } %> <% } %> <% if (product.inStock <= 0) { %>
+                            <button
+                                type="button"
+                                class="btn btn-buy-now"
+                                disabled
+                            >
+                                <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
+                            </button>
+                            <% } else { %>
+                            <button type="button" class="btn btn-buy-now">
+                                <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
+                            </button>
+                            <% } %>
+
+                            <!-- Try On Button -->
+                            <a
+                                href="/tryOn/<%=product._id %>"
+                                type="button"
+                                class="btn btn-try-on pulse-animation"
+                                id="try-on-btn"
+                            >
+                                <i class="fas fa-vr-cardboard me-2"></i>&nbsp
+                                Try On
+                            </a>
+                        </div>
+
+                        <!-- Secondary action button -->
+                        <div class="secondary-actions">
+                            <% if (cmp) { %>
+                            <a
+                                href="/compare"
+                                type="button"
+                                class="btn btn-outline-secondary"
+                            >
+                                <i class="fas fa-exchange-alt me-2"></i> &nbspGo
+                                to compare page
+                            </a>
+                            <% } else { %>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="addForComparison()"
+                            >
+                                <i class="fas fa-exchange-alt me-2"></i> Add for
+                                comparison
+                            </button>
+                            <% } %>
+                        </div>
+
+                        <div class="cart-toast">Item added to cart! 🎉</div>
+                    </div>
+                </form>
+
+                <div class="product-specs">
+                    <h5 class="mb-3">Product Specifications</h5>
+                    <div class="specs-grid">
+                        <div class="spec-item">
+                            <span class="spec-label">Brand:</span>&nbsp <%=
+                            product.brand.name %>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Band Material:</span>&nbsp
+                            <%= product.bandMaterial %>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Case Diameter:</span
+                            >&nbsp<%= product.caseDiameter %>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Band Color:</span>&nbsp <%=
+                            product.bandColour %>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">About this item</h4>
+                        <div class="card-text">
+                            <%= product.description %>
+                            <ul class="mt-3">
+                                <li>
+                                    Premium <%= product.bandMaterial %> band
+                                    material
+                                </li>
+                                <li>
+                                    <%= product.waterResistance %> water
+                                    resistance
+                                </li>
+                                <li>
+                                    <%= product.warranty %> manufacturer
+                                    warranty
+                                </li>
+                                <li>
+                                    Virtual Try-On feature to see how it looks
+                                    on your wrist
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="row mt-5">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <h4 class="card-title">About this item</h4>
-            <div class="card-text">
-              <%= product.description %>
-              <ul class="mt-3">
-                <li>Premium <%= product.bandMaterial %> band material</li>
-                <li><%= product.waterResistance %> water resistance</li>
-                <li><%= product.warranty %> manufacturer warranty</li>
-                <li>Virtual Try-On feature to see how it looks on your wrist</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="quantity-toast" class="quantity-toast"></div>
-  <div class="compare-toast" id="compare-toast"></div>
+    <div id="quantity-toast" class="quantity-toast"></div>
+    <div id="compare-toast" style="
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 10000;
+  max-width: 250px;
+  text-align: center;
+  pointer-events: none;
+"></div>
 
 </main>
 
@@ -511,261 +657,236 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.js"></script>
 
 <script>
-  const csrfToken = "<%= csrfToken %>";
-  const productId = "<%= product._id %>";
-  const length = <%= product.image.length %>;
-  const productImage = "<%= product.image[0].filepath %>";
+      const csrfToken = "<%= csrfToken %>";
+      const productId = "<%= product._id %>";
+      const length = <%= product.image.length %>;
+      const productImage = "<%= product.image[0].filepath %>";
 
-  // Initialize Swiper - THIS WAS MISSING!
-  let swiper;
-  
-  document.addEventListener("DOMContentLoaded", function () {
-    // Initialize Swiper
-    swiper = new Swiper('.mainSwiper', {
-      spaceBetween: 10,
-      loop: false,
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-    });
+      // Initialize Swiper - THIS WAS MISSING!
+      let swiper;
 
-    // Thumbnail click functionality - FIXED
-    const thumbnails = document.querySelectorAll('.thumbnail');
-    thumbnails.forEach((thumb, index) => {
-      thumb.addEventListener('click', function() {
-        // Remove active class from all thumbnails
-        thumbnails.forEach(t => t.classList.remove('active'));
-        // Add active class to clicked thumbnail
-        this.classList.add('active');
-        // Go to corresponding slide
-        swiper.slideTo(index);
-      });
-    });
+      document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Swiper
+        swiper = new Swiper('.mainSwiper', {
+          spaceBetween: 10,
+          loop: false,
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+        });
 
-    // Update active thumbnail when slide changes
-    swiper.on('slideChange', function() {
-      const activeIndex = swiper.activeIndex;
-      thumbnails.forEach((thumb, index) => {
-        thumb.classList.toggle('active', index === activeIndex);
-      });
-    });
+        // Thumbnail click functionality - FIXED
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        thumbnails.forEach((thumb, index) => {
+          thumb.addEventListener('click', function() {
+            // Remove active class from all thumbnails
+            thumbnails.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked thumbnail
+            this.classList.add('active');
+            // Go to corresponding slide
+            swiper.slideTo(index);
+          });
+        });
 
-    // Virtual Try-On Functionality
-    const tryOnModal = document.getElementById('try-on-modal');
-    const tryOnBtn = document.getElementById('try-on-btn');
-    const closeModal = document.getElementById('close-modal');
-    const watchOverlay = document.getElementById('watch-overlay');
-    
-    // Open modal when Try On button is clicked
-    if (tryOnBtn) {
-      tryOnBtn.addEventListener('click', function() {
-        if (tryOnModal) {
-          tryOnModal.style.display = 'block';
-          document.body.style.overflow = 'hidden';
+        // Update active thumbnail when slide changes
+        swiper.on('slideChange', function() {
+          const activeIndex = swiper.activeIndex;
+          thumbnails.forEach((thumb, index) => {
+            thumb.classList.toggle('active', index === activeIndex);
+          });
+        });
+
+        // Virtual Try-On Functionality
+        const tryOnModal = document.getElementById('try-on-modal');
+        const tryOnBtn = document.getElementById('try-on-btn');
+        const closeModal = document.getElementById('close-modal');
+        const watchOverlay = document.getElementById('watch-overlay');
+
+        // Open modal when Try On button is clicked
+        if (tryOnBtn) {
+          tryOnBtn.addEventListener('click', function() {
+            if (tryOnModal) {
+              tryOnModal.style.display = 'block';
+              document.body.style.overflow = 'hidden';
+            }
+          });
+        }
+
+        // Close modal when X is clicked
+        if (closeModal) {
+          closeModal.addEventListener('click', function() {
+            tryOnModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+          });
+        }
+
+        // Close modal when clicking outside content
+        window.addEventListener('click', function(event) {
+          if (event.target === tryOnModal) {
+            tryOnModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+          }
+        });
+
+        // Quantity controls - FIXED COMPLETELY
+        const decreaseBtn = document.querySelector(".btn-decrease");
+        const increaseBtn = document.querySelector(".btn-increase");
+        const quantitySpan = document.getElementById("quantity");
+        const quantityInput = document.getElementById("quantityInput");
+        const toast = document.getElementById("quantity-toast");
+
+        let quantity = parseInt(quantitySpan.textContent) || 1;
+        const min = 1;
+        const max = 10;
+        const stock = <%= product.inStock %>;
+
+        function showToast(message) {
+          toast.textContent = message;
+          toast.style.display = 'block';
+          setTimeout(() => {
+            toast.style.display = 'none';
+          }, 3000);
+        }
+
+        function updateQuantity(newQuantity) {
+          quantity = newQuantity;
+          quantitySpan.textContent = quantity;
+          quantityInput.value = quantity;
+        }
+
+        // FIXED: Proper event handling with preventDefault
+        decreaseBtn.addEventListener("click", (e) => {
+          e.preventDefault(); // Prevent form submission
+          if (quantity > min) {
+            updateQuantity(quantity - 1);
+          }
+        });
+
+        increaseBtn.addEventListener("click", (e) => {
+          e.preventDefault(); // Prevent form submission
+          if (quantity >= stock) {
+            showToast(`Only ${stock} item(s) available in stock`);
+            return;
+          }
+          if (quantity >= max) {
+            showToast("Maximum quantity allowed is 10");
+            return;
+          }
+          updateQuantity(quantity + 1);
+        });
+
+        // Make the watch image draggable for positioning
+        if (watchOverlay) {
+          let isDragging = false;
+          let currentX;
+          let currentY;
+          let initialX;
+          let initialY;
+          let xOffset = 0;
+          let yOffset = 0;
+
+          watchOverlay.addEventListener("mousedown", dragStart);
+          watchOverlay.addEventListener("mouseup", dragEnd);
+          watchOverlay.addEventListener("mousemove", drag);
+
+          function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+
+            if (e.target === watchOverlay) {
+              isDragging = true;
+            }
+          }
+
+          function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+
+            isDragging = false;
+          }
+
+          function drag(e) {
+            if (isDragging) {
+              e.preventDefault();
+              currentX = e.clientX - initialX;
+              currentY = e.clientY - initialY;
+
+              xOffset = currentX;
+              yOffset = currentY;
+
+              setTranslate(currentX, currentY, watchOverlay);
+            }
+          }
+
+          function setTranslate(xPos, yPos, el) {
+            el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+          }
         }
       });
-    }
-    
-    // Close modal when X is clicked
-    if (closeModal) {
-      closeModal.addEventListener('click', function() {
-        tryOnModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
+
+      // Zoom effect
+      const zoomWrappers = document.querySelectorAll(".zoom-wrapper");
+
+      zoomWrappers.forEach(wrapper => {
+        const img = wrapper.querySelector(".zoom-inner");
+
+        wrapper.addEventListener("mousemove", function (e) {
+          const rect = wrapper.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const xPercent = (x / rect.width) * 100;
+          const yPercent = (y / rect.height) * 100;
+
+          img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+          img.style.transform = "scale(2)"; // Add scale!
+        });
+
+        wrapper.addEventListener("mouseleave", function () {
+          img.style.transform = "scale(1)"; // Reset on leave
+        });
       });
-    }
-    
-    // Close modal when clicking outside content
-    window.addEventListener('click', function(event) {
-      if (event.target === tryOnModal) {
-        tryOnModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-      }
-    });
 
-    // Quantity controls - FIXED COMPLETELY
-    const decreaseBtn = document.querySelector(".btn-decrease");
-    const increaseBtn = document.querySelector(".btn-increase");
-    const quantitySpan = document.getElementById("quantity");
-    const quantityInput = document.getElementById("quantityInput");
-    const toast = document.getElementById("quantity-toast");
-
-    let quantity = parseInt(quantitySpan.textContent) || 1;
-    const min = 1;
-    const max = 10;
-    const stock = <%= product.inStock %>;
-
-    function showToast(message) {
-      toast.textContent = message;
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 3000);
-    }
-
-    function updateQuantity(newQuantity) {
-      quantity = newQuantity;
-      quantitySpan.textContent = quantity;
-      quantityInput.value = quantity;
-    }
-
-    // FIXED: Proper event handling with preventDefault
-    decreaseBtn.addEventListener("click", (e) => {
-      e.preventDefault(); // Prevent form submission
-      if (quantity > min) {
-        updateQuantity(quantity - 1);
-      }
-    });
-
-    increaseBtn.addEventListener("click", (e) => {
-      e.preventDefault(); // Prevent form submission
-      if (quantity >= stock) {
-        showToast(`Only ${stock} item(s) available in stock`);
-        return;
-      }
-      if (quantity >= max) {
-        showToast("Maximum quantity allowed is 10");
-        return;
-      }
-      updateQuantity(quantity + 1);
-    });
-    
-    // Make the watch image draggable for positioning
-    if (watchOverlay) {
-      let isDragging = false;
-      let currentX;
-      let currentY;
-      let initialX;
-      let initialY;
-      let xOffset = 0;
-      let yOffset = 0;
-      
-      watchOverlay.addEventListener("mousedown", dragStart);
-      watchOverlay.addEventListener("mouseup", dragEnd);
-      watchOverlay.addEventListener("mousemove", drag);
-      
-      function dragStart(e) {
-        initialX = e.clientX - xOffset;
-        initialY = e.clientY - yOffset;
-        
-        if (e.target === watchOverlay) {
-          isDragging = true;
+      function addToCart() {
+        const toast = document.querySelector('.cart-toast');
+        if (toast) {
+          toast.style.display = 'block';
+          setTimeout(() => {
+            toast.style.display = 'none';
+          }, 3000);
         }
       }
-      
-      function dragEnd(e) {
-        initialX = currentX;
-        initialY = currentY;
-        
-        isDragging = false;
-      }
-      
-      function drag(e) {
-        if (isDragging) {
-          e.preventDefault();
-          currentX = e.clientX - initialX;
-          currentY = e.clientY - initialY;
-          
-          xOffset = currentX;
-          yOffset = currentY;
-          
-          setTranslate(currentX, currentY, watchOverlay);
+
+      async function addForComparison() {
+        try {
+          const res = await axios.post(
+            '/addCompare',
+            { productId: "<%= product._id %>", _csrf: csrfToken },
+            { withCredentials: true }
+          );
+
+          const toast = document.getElementById('compare-toast');
+          toast.textContent = 'Product added for comparison ✅';
+          toast.style.display = 'block';
+
+          // Reset animation
+          toast.style.animation = 'none';
+          setTimeout(() => {
+            toast.style.animation = 'slideIn 0.3s ease-out, fadeOut 0.5s 2.0s ease-in forwards';
+          }, 10);
+
+          setTimeout(() => {
+            toast.style.display = 'none';
+          }, 3000);
+
+        } catch (error) {
+          console.log(error, 'ERROR');
         }
       }
-      
-      function setTranslate(xPos, yPos, el) {
-        el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-      }
-    }
-  });
-
-  // Zoom effect
-  const zoomWrappers = document.querySelectorAll(".zoom-wrapper");
-
-  zoomWrappers.forEach(wrapper => {
-    const img = wrapper.querySelector(".zoom-inner");
-
-    wrapper.addEventListener("mousemove", function (e) {
-      const rect = wrapper.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const xPercent = (x / rect.width) * 100;
-      const yPercent = (y / rect.height) * 100;
-
-      img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-      img.style.transform = "scale(2)"; // Add scale!
-    });
-
-    wrapper.addEventListener("mouseleave", function () {
-      img.style.transform = "scale(1)"; // Reset on leave
-    });
-  });
-
-  function addToCart() {
-    const toast = document.querySelector('.cart-toast');
-    if (toast) {
-      toast.style.display = 'block';
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 3000);
-    }
-  }
-
-  async function addForComparison() {
-    try {
-      const res = await axios.post(
-        '/addCompare',
-        { productId: "<%= product._id %>", _csrf: csrfToken },
-        { withCredentials: true }
-      );
-
-      const toast = document.getElementById('compare-toast');
-      toast.textContent = 'Product added for comparison ✅';
-      toast.style.display = 'block';
-
-      // Reset animation
-      toast.style.animation = 'none';
-      setTimeout(() => {
-        toast.style.animation = 'slideIn 0.3s ease-out, fadeOut 0.5s 2.0s ease-in forwards';
-      }, 10);
-
-      setTimeout(() => {
-        toast.style.display = 'none';
-      }, 3000);
-
-    } catch (error) {
-      console.log(error, 'ERROR');
-    }
-  }
-const stars = document.querySelectorAll('#rating-stars span');
-stars.forEach(star => {
-  star.addEventListener('click', () => {
-    const value = parseInt(star.getAttribute('data-value'));
-
-    stars.forEach(s => {
-      s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= value);
-    });
-
-    rating(productId, value);
-  });
-});
-
-async function rating(productId, rating) {
-  try {
-    await axios.post('/rating', {
-      productId,
-      rating,
-      _csrf: csrfToken 
-    });
-  } catch (error) {
-    console.log(error, 'ERROR');
-  }
-}
-
 </script>
 
 <%- include('../partials/footer') %>
