@@ -12,10 +12,10 @@
                     <div class="hero__caption">
                         <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms">Select Your New Perfect Style</h1>
                         <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms">
-                            We specialize in offering a curated selection of exquisite timepieces, blending style and functionality for every watch enthusiast. Explore our collection and find your perfect watch today.
+                           Discover timepieces that don’t just tell time — they tell your story. Elegance, precision, and personality in every tick.
                         </p>
                         <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s" data-duration="2000ms">
-                            <a href="/shop" class="btn hero-btn">Shop Now</a>
+                            <a href="/shop" class="btn hero-btn " style="padding: 20px;">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -41,43 +41,47 @@
             </div>
 
             <div class="row">
-                
-               <% prod.slice(0, 3).forEach(p => { %>
-  <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
-    <div class="single-new-pro mb-30 text-center">
-      <div class="product-img position-relative">
-        <a href="/product/<%= p._id %>">
-          <img src="<%= p.image[0].filepath %>" alt="Product Image" class="fixed-img">
-        </a>
+                <% prod.slice(0, 3).forEach(p => { %>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                    <div class="single-new-pro text-center">
+                        <div class="product-img position-relative">
+                            <a href="/product/<%= p._id %>">
+                                <img src="<%= p.image[0].filepath %>" alt="<%= p.title %>" class="fixed-img">
+                            </a>
 
-        <!-- Add to Cart Button -->
-        <div class="addtoCart">
-          <% if (cart.includes(String(p._id))) { %>
-            <button onclick="goToCart()" class="add-cart-btn" style="background-color: #f81f1f;">
-              <i class="fas fa-shopping-cart"></i> Go to Cart
-            </button>
-          <% } else { %>
-            <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn" style="background-color: #f81f1f;">
-              <i class="fas fa-shopping-cart"></i> Add to Cart
-            </button>
-          <% } %>
-        </div>
+                            <!-- Add to Cart Button -->
+                            <div class="addtoCart">
+                                <% if (cart.includes(String(p._id))) { %>
+                                    <button onclick="goToCart()" class="add-cart-btn">
+                                        <i class="fas fa-shopping-cart"></i> Go to Cart
+                                    </button>
+                                <% } else { %>
+                                   <% if (p.inStock <= 0) { %>                                      
+                                            <button onclick="showOutOfStockToast()" class="add-cart-btn" disabled>                                         
+                                                <i class="fas fa-shopping-cart"></i> Add to Cart                                     
+                                            </button>                                     
+                                        <% } else { %>                                        
+                                            <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn">                                         
+                                                <i class="fas fa-shopping-cart"></i> Add to Cart                                     
+                                            </button>                                     
+                                        <% } %>
+                                <% } %>
+                            </div>
 
-        <!-- Wishlist Icon -->
-        <div class="favorit-items">
-    <i class="heart-icon <%= wish.some(w => w._id.toString() === p._id.toString()) ? 'fas liked' : 'far' %> fa-heart"
-        onclick="toggleWishlist('<%= p._id %>', '<%= wish.some(w => w._id.toString() === p._id.toString()) ? 'true' : 'false' %>')"></i>
-    </div>
+                            <!-- Wishlist Icon -->
+                            <div class="favorit-items">
+                                <i class="heart-icon <%= wish.some(w => w._id.toString() === p._id.toString()) ? 'fas liked' : 'far' %> fa-heart"
+                                    onclick="toggleWishlist('<%= p._id %>', '<%= wish.some(w => w._id.toString() === p._id.toString()) ? 'true' : 'false' %>')"></i>
+                            </div>
+                        </div>
 
-
-      <div class="product-caption">
-        <h3><a href="/product/<%= p._id %>"><%= p.title %></a></h3>
-        <span>&#8377;<%= p.pricing.salePrice %></span>
-      </div>
-    </div>
-  </div>
-<% }); %>
-
+                        <div class="product-caption">
+                            <h3><a href="/product/<%= p._id %>"><%= p.title %></a></h3>
+                            <span>&#8377;<%= p.pricing.salePrice %></span>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
             </div>
         </div>
     </section>
@@ -147,21 +151,21 @@
                         <div class="single-method mb-40">
                             <i class="ti-package"></i>
                             <h6>Free Shipping Method</h6>
-                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                            <p>Fast and reliable delivery to your doorstep with no additional charges on orders above ₹999.</p>
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6">
                         <div class="single-method mb-40">
                             <i class="ti-unlock"></i>
                             <h6>Secure Payment System</h6>
-                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                            <p>Your transactions are protected with industry-standard encryption and secure payment gateways.</p>
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6">
                         <div class="single-method mb-40">
                             <i class="ti-reload"></i>
                             <h6>Easy Return Policy</h6>
-                            <p>aorem ixpsacdolor sit ameasecur adipisicing elitsf edasd.</p>
+                            <p>Hassle-free returns within 30 days if you're not completely satisfied with your purchase.</p>
                         </div>
                     </div>
                 </div>
@@ -171,56 +175,87 @@
 
     <div class="cart-toast">Item added to cart! 🎉</div>
     <div class="wishlist-toast">Item removed from wishlist! ❌</div>
+    <div class="stock-toast">Item is out of stock! 📦</div>
 </main>
-
 
 <script>
     const csrfToken = "<%= csrfToken %>";
 
     async function addToCart(productId) {
-    try {
-        const res = await axios.post(`/product/add-to-cart`, {
-            productId,
-            quantity: 1,
-             _csrf: csrfToken,
-        }, {
-            withCredentials: true,
-            headers: { 'CSRF-Token': csrfToken },
-        });
-
-        const toast = document.querySelector('.cart-toast');
-        if (toast) {
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-                // Optional: Reload page only after showing toast
-                window.location.reload();
-            }, 2000); // 2 seconds
-        } else {
-            console.warn("Cart toast not found");
-        }
-    } catch (err) {
-        console.error("Add to cart error:", err);
-        alert("Add to cart failed");
-    }
-}    async function toggleWishlist(productId, liked) {
         try {
-            if (liked) {
-                await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+            const res = await axios.post(`/product/add-to-cart`, {
+                productId,
+                quantity: 1,
+                _csrf: csrfToken,
+            }, {
+                withCredentials: true,
+                headers: { 'CSRF-Token': csrfToken },
+            });
+
+            const toast = document.querySelector('.cart-toast');
+            if (toast) {
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    window.location.reload();
+                }, 2000);
             } else {
-                await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+                console.warn("Cart toast not found");
+            }
+        } catch (err) {
+            console.error("Add to cart error:", err);
+            alert("Add to cart failed");
+        }
+    }
+    
+    async function toggleWishlist(productId, liked) {
+        try {
+            if (liked === 'true') {
+                await axios.post(`/wishlist/remove/${productId}`, { 
+                    _csrf: csrfToken 
+                }, { 
+                    withCredentials: true,
+                    headers: { 'CSRF-Token': csrfToken }
+                });
+                
+                const toast = document.querySelector('.wishlist-toast');
+                if (toast) {
+                    toast.textContent = 'Item removed from wishlist! ❌';
+                    toast.style.display = 'block';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 2000);
+                }
+            } else {
+                await axios.post(`/wishlist/add/${productId}`, { 
+                    _csrf: csrfToken 
+                }, { 
+                    withCredentials: true,
+                    headers: { 'CSRF-Token': csrfToken }
+                });
+                
+                const toast = document.querySelector('.wishlist-toast');
+                if (toast) {
+                    toast.textContent = 'Item added to wishlist! ❤️';
+                    toast.style.background = '#28a745';
+                    toast.style.display = 'block';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                        toast.style.background = '#dc3545';
+                    }, 2000);
+                }
             }
 
             const icon = document.querySelector(`.heart-icon[onclick*="${productId}"]`);
             if (icon) {
-                if (liked) {
+                if (liked === 'true') {
                     icon.classList.remove("fas", "liked");
                     icon.classList.add("far");
-                    icon.setAttribute("onclick", `toggleWishlist('${productId}', false)`);
+                    icon.setAttribute("onclick", `toggleWishlist('${productId}', 'false')`);
                 } else {
                     icon.classList.remove("far");
                     icon.classList.add("fas", "liked");
-                    icon.setAttribute("onclick", `toggleWishlist('${productId}', true)`);
+                    icon.setAttribute("onclick", `toggleWishlist('${productId}', 'true')`);
                 }
             }
         } catch (err) {
@@ -232,6 +267,15 @@
     function goToCart() {
         window.location.href = "/cart";
     }
+    function showOutOfStockToast() {
+  const toast = document.querySelector('.stock-toast');
+  if (toast) {
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
+  }
+}
 </script>
 
 <%- include('../partials/footer') %>

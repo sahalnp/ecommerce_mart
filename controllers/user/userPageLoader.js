@@ -3,7 +3,8 @@ import { product } from "../../models/productModel.js";
 import { User } from "../../models/userModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
-
+import { Order } from "../../models/orderModel.js";
+import { review } from "../../models/reviewModel.js";
 export const home = asyncHandler(async (req, res) => {
     const latestProducts = await product
         .find()
@@ -43,7 +44,6 @@ export const loadProfile = asyncHandler(async (req, res) => {
 export const laodShop = asyncHandler(async (req, res) => {
     const find = await product.find().populate("image");
     const userfind = await User.findById(req.session.users._id);
-    // change wishlist id to string to check and add a new new field(wish) to product model and assing true or false
     const productsWishlist = find.filter((product) => {
         return userfind.wishList.some(
             (id) => id.toString() === product._id.toString()
@@ -84,6 +84,16 @@ export const loadProduct = asyncHandler(async (req, res) => {
     const avg = totalvalue / totalUser;
     const cartfind = await Cart.findOne({ UserId, productId });
     const cmp = await Compare.findOne({ UserId, productId });
+    if (cartfind) {
+        if (cartfind.quantity > value.inStock) {
+            await Cart.findOneAndUpdate(
+                { UserId: req.session.users._id, productId: value._id },
+                { quantity: value.inStock },
+                { new: true }
+            );
+        }
+    }
+    
 
     const exist = await Cart.find({
         UserId,
@@ -106,17 +116,34 @@ export const loadProduct = asyncHandler(async (req, res) => {
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {
-    const cartItems = await Cart.find({ UserId: req.session.users._id });
-
+const cartItems = await Cart.find({ 
+    UserId: req.session.users._id,
+    quantity: { $gt: 0 }
+});
     const productIds = cartItems.map((item) => item.productId);
+
+    
     const productsInCart = await product
         .find({ _id: { $in: productIds } })
         .populate("image");
+    for(let i = 0;i<productIds.length;i++){
+        const prod=await product.findById(productIds[i])
+        if(prod.inStock <=0){
+            await Cart.findOneAndDelete({productId:productIds[i]})
+        }
+        else{
+        await Cart.findOneAndUpdate(
+            { productId: productIds[i] }, 
+            { quantity: prod.inStock }, 
+            { new: true }
+        );
+
+        }
+    }
 
     const total = [];
     const prod = [];
     let deletedProducts = [];
-
     for (const item of cartItems) {
         const singleProduct = productsInCart.find(
             (p) => p._id.toString() === item.productId.toString()
@@ -179,25 +206,60 @@ export const loadCheckout = asyncHandler(async (req, res) => {
     const find = await User.findOne({ _id: req.session.users._id });
     const address = find.addresses.filter((addr) => addr.status === true);
     const cartfind = await Cart.find({ UserId: req.session.users._id });
-    const productIds = cartfind.map((item) => item.productId); // Getting ids
+    const productIds = cartfind.map((item) => item.productId);
     const products = await product
-        .find({ _id: { $in: productIds } })
+        .find({
+            _id: { $in: productIds },
+            inStock: { $gt: 0 },
+        })
         .populate("image")
-        .populate("brand"); //Getting products
+        .populate("brand");
     let prodtotal = 0;
+    cartfind.forEach((prd) => {
+        const matchingProduct = products.find(
+            (p) => p._id.toString() === prd.productId.toString()
+        );
+
+        if (matchingProduct) {
+            if (prd.quantity > matchingProduct.inStock)
+                prd.quantity = matchingProduct.inStock;
+        }
+    });
 
     products.forEach((product, index) => {
         const quantity = cartfind[index]?.quantity || 0;
         const price = product.pricing?.salePrice || 0;
         prodtotal += price * quantity;
     });
-    let tax = (5 / 100) * prodtotal;
-    let ship = 0.0;
-    if (prodtotal < 1800) {
+
+    let tax = 0;
+    let ship = 0;
+
+    if (prodtotal < 2000) {
         ship = 40.0;
-        tax = (10 / 100) * prodtotal;
+        tax = (20 / 100) * prodtotal;
+    } else {
+        tax = (12 / 100) * prodtotal;
     }
+
     const total = prodtotal + tax + ship;
+    for(let i = 0;i<productIds.length;i++){
+        const prod=await product.findById(productIds[i])
+        if(prod.inStock <=0){
+            await Cart.findOneAndDelete({productId:productIds[i]})
+        }
+        else{
+        await Cart.findOneAndUpdate(
+            { productId: productIds[i] }, 
+            { quantity: prod.inStock }, 
+            { new: true }
+        );
+
+        }
+    }
+    console.log(total);
+    
+    const key=process.env.KEY_ID
     return res.render("users/page/checkout", {
         username: req.session.userName,
         user: req.session.users,
@@ -208,6 +270,7 @@ export const loadCheckout = asyncHandler(async (req, res) => {
         tax,
         total: total.toFixed(2),
         cart: cartfind,
+        key
     });
 });
 export const contact = asyncHandler(async (req, res) => {
@@ -242,7 +305,7 @@ export const loadAddress = asyncHandler(async (req, res) => {
     });
 });
 export const dltAddress = asyncHandler(async (req, res) => {
-    console.log(req.params.id);
+
     const find = await User.findById(req.session.users._id);
     const address = find.addresses.id(req.params.id);
     if (address) {
@@ -269,8 +332,113 @@ export const loadcmp = asyncHandler(async (req, res) => {
     });
 });
 export const loadtryOn = asyncHandler(async (req, res) => {
-    const find = await product.findById(req.params.id).populate("image");
+    const find = await product.findById(req.params.id).populate("vrImage");
     res.render("users/page/virtual", {
         product: find,
+    });
+});
+export const loadOrderPlace = asyncHandler(async (req, res) => {
+    const order = await Order.findOne({
+        UserId: req.session.users._id,
+        OrderId: req.session.OrderId,
+    }).populate("UserId");
+    const user = await User.findById(req.session.users._id);
+    const fullAddress = user.addresses.find(
+        (addr) => addr._id.toString() === order.billingAddress.toString()
+    );
+
+    res.render("users/page/placeOrder", {
+        username: req.session.userName,
+        user: req.session.users,
+        order,
+        fullAddress,
+    });
+});
+export const myOrder = asyncHandler(async (req, res) => {
+    const orders = await Order.find({ UserId: req.session.users._id }).populate(
+        {
+            path: "items.product",
+            populate: [
+                { path: "brand", model: "brand" },
+                { path: "image", model: "image" },
+            ],
+        }
+    );
+
+    res.render("users/page/MyOrder", {
+        username: req.session.userName,
+        user: req.session.users,
+        orders,
+    });
+});
+
+export const orderDetails = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id)
+        .populate("UserId")
+        .populate("items.product")
+        .populate({
+            path: "items.product",
+            populate: [
+                { path: "brand", model: "brand" },
+                { path: "image", model: "image" },
+            ],
+        });
+    const billingAddress = order.UserId.addresses.find(
+        (addr) => addr._id.toString() === order.billingAddress.toString()
+    );
+
+    res.render("users/page/viewOrder", {
+        username: req.session.userName,
+        user: req.session.users,
+        order,
+        Address: billingAddress,
+    });
+});
+
+export const loadReview = asyncHandler(async (req, res) => {
+    const prod = await product
+        .findById(req.params.id)
+        .populate("image")
+        .populate("brand");
+    const rev = await review.find({ productId: prod._id }).populate("UserId");
+    let avg = 0;
+    if (rev.length > 0) {
+        const total = rev.reduce((sum, r) => sum + r.rating, 0);
+        avg = Math.round((total / rev.length) * 10) / 10;
+    }
+    let data = {
+        5: 0,
+        4: 0,
+        3: 0,
+        2: 0,
+        1: 0,
+    };
+    rev.forEach((r) => {
+        const rating = Math.floor(r.rating);
+        if (data[rating] !== undefined) {
+            data[rating]++;
+        }
+    });
+
+    res.render("users/page/review", {
+        username: req.session.userName,
+        user: req.session.users,
+        prod,
+        reviews: rev,
+        avg,
+        data,
+    });
+});
+export const loadWriteRev = asyncHandler(async (req, res) => {
+    const prod = await product.findById(req.params.id).populate("image");
+    const order = await Order.findOne({
+        UserId: req.session.users._id,
+        "items.product": prod._id,
+    });
+    res.render("users/page/writeReview", {
+        username: req.session.userName,
+        user: req.session.users,
+        prod,
+        order,
     });
 });

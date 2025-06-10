@@ -244,7 +244,7 @@
 
     // Initialize with default watch image
     let productImg = new Image();
-    productImg.src = "<%= product.image[7].filepath %>"; 
+    productImg.src = "<%= product.vrImage.filepath %>"; 
     
   
     
@@ -270,29 +270,26 @@
       canvasCtx.save();
       canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
-      // Mirror the canvas horizontally
+
       canvasCtx.scale(-1, 1);
       canvasCtx.translate(-canvasElement.width, 0);
 
-      // Draw webcam frame
+
       canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
       if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0 && productImg) {
         const landmarks = results.multiHandLandmarks[0];
         
-        // Get wrist position (landmark 0)
         const wrist = landmarks[0];
         const wristX = wrist.x * canvasElement.width;
         const wristY = wrist.y * canvasElement.height;
 
-        // Calculate hand orientation for better watch placement
-        const middleFinger = landmarks[9]; // Middle finger MCP
+        const middleFinger = landmarks[9]; 
         const handAngle = Math.atan2(
           middleFinger.y - wrist.y,
           middleFinger.x - wrist.x
         );
 
-        // Draw watch image with rotation based on hand orientation
         canvasCtx.save();
         canvasCtx.translate(wristX + xOffset, wristY + yOffset);
         canvasCtx.rotate(handAngle + Math.PI/2);

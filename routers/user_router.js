@@ -45,13 +45,18 @@ import {
     wishlist,
     loadcmp,
     loadtryOn,
+    loadOrderPlace,
+    myOrder,
+    orderDetails,
+    loadReview,
+    loadWriteRev,
 } from "../controllers/user/userPageLoader.js";
 import {
     addAddress,
-    addCart,
     addCompare,
     addtoCart,
     addTowhish,
+    buy,
     cartDlt,
     checkout,
     cmpReset,
@@ -60,7 +65,9 @@ import {
     quantchnge,
     rating,
     removeFromWish,
+    reviewRighted,
 } from "../controllers/user/userDashboard.js";
+import { intialisePay, placeOrder, verifyPay } from "../controllers/user/orderController.js";
 
 export const UserRouter = express.Router();
 
@@ -104,7 +111,7 @@ UserRouter.post("/product/:id", addtoCart);
 UserRouter.post('/rating',rating)
 
 UserRouter.get("/cart", isUserloggedIn, loadcart);
-UserRouter.post('/add-to-cart',addCart)
+UserRouter.post('/add-to-cart',addtoCart)
 UserRouter.post("/cart/quantity", quantchnge);
 UserRouter.post('/cart/delete',cartDlt)
 
@@ -131,10 +138,24 @@ UserRouter.post("/add-address", addAddress);
 UserRouter.get("/address/delete/:id",isUserloggedIn, dltAddress);
 
 UserRouter.get('/compare',isUserloggedIn,loadcmp)
-
+UserRouter.post('/buy',buy)
 UserRouter.post('/addCompare',addCompare)
 UserRouter.post('/cmp/resetAll',cmpReset)
 UserRouter.post('/cmp/resetOne',cmpResetOne)
 
 UserRouter.get('/tryOn/:id',isUserloggedIn,loadtryOn)
+
+UserRouter.post('/razorpay/create-order',intialisePay)
+UserRouter.post('/razorpay/verify-payment',verifyPay)
+UserRouter.get('/place/order',loadOrderPlace)
+UserRouter.post('/order/place',placeOrder)
+
+UserRouter.get('/MyOrder',isUserloggedIn,myOrder)
+UserRouter.get('/MyOrder/:id',isUserloggedIn,orderDetails)
+UserRouter.get('/order/review/:id',isUserloggedIn,loadReview)
+
+UserRouter.get('/writedReview/:id',loadWriteRev)
+UserRouter.post('/writedReview/:id',reviewRighted)
+
+
 export default UserRouter;

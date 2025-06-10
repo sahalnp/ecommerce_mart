@@ -7,6 +7,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import csurf from "csurf";
 import nocache from "nocache";
+import cors from 'cors';
 
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routers/user_router.js";
@@ -33,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 app.use(errorHandler);
+app.use(cors())
 
 app.use(
   session({

@@ -31,6 +31,7 @@ import {
     productAdd,
     productEdit,
     productListing,
+    vrImageDlt,
 } from "../controllers/admin/productController.js";
 import { isAdminloggedIn, isAdminLoggedOut } from "../middleware/adminAuthMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
@@ -80,8 +81,15 @@ adminRouter.post("/admin/profile/:id", adminEdit);
 adminRouter.get("/admin/add_product", isAdminloggedIn, loadAdd_product);
 
 adminRouter.get("/admin/category",  isAdminloggedIn,categoryLoad);
+adminRouter.post(
+  "/admin/upload",
+  upload.fields([
+    { name: "photos", maxCount: 15 },   // up to 15 “photos” files
+    { name: "vrImage", maxCount: 1 }    // exactly 1 “vrImage” file
+  ]),
+  productAdd
+);
 
-adminRouter.post("/admin/upload", upload.array("photos", 15), productAdd);
 adminRouter.get("/admin/userDetails", userDetails);
 
 adminRouter.get("/admin/addCategory", isAdminloggedIn, addCategoryLoad);
@@ -98,9 +106,17 @@ adminRouter.post('/admin/edit/:id',profileEdit)
 adminRouter.get("/admin/products",  isAdminloggedIn,getAllProducts);
 
 adminRouter.get("/admin/product/edit/:id", isAdminloggedIn, editProduct);
-adminRouter.post("/admin/product/edit/:id", upload.array("photos"), productEdit);
+adminRouter.post(
+  "/admin/product/edit/:id",
+  upload.fields([
+    { name: "images", maxCount: 10 },   
+    { name: "vrImage", maxCount: 1 }     
+  ]),
+  productEdit
+);
 
-adminRouter.post('/admin/product/:productId/delete-image',imageDlt)
+
+adminRouter.post('/admin/product/delete-image',imageDlt)
 adminRouter.post('/admin/product/listing/:id',productListing)
 
 adminRouter.get("/admin/brand", isAdminloggedIn, brandList);
@@ -113,5 +129,7 @@ adminRouter.post("/admin/brand/add", addBrand);
 
 adminRouter.post("/admin/brand/update-status/:id", updateStatus);
 adminRouter.post('/admin/user/update-status/:id',userStatus)
+
+adminRouter.post('/admin/product/delete-vrImage',vrImageDlt)
 
 export default adminRouter;

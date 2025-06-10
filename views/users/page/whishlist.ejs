@@ -1,138 +1,6 @@
 <%- include('../partials/header') %>
 <head>
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f9f9f9;
-    }
-
-    .wishlist-container {
-      max-width: 900px;
-      margin: 3rem auto 2rem auto;
-      background: #fff;
-      border-radius: 12px;
-      padding: 50px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-
-    .wishlist-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.5rem 0;
-      border-bottom: 1px solid #eee;
-      transition: background 0.2s ease;
-    }
-
-    .wishlist-item:hover {
-      background: #fafafa;
-    }
-
-    .wishlist-item img {
-      width: 90px;
-      height: auto;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .item-details {
-      flex: 1;
-      margin-left: 1.5rem;
-    }
-
-    .item-details h4 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #222;
-    }
-
-    .item-details p {
-      margin: 0.4rem 0;
-      color: #666;
-      font-size: 0.95rem;
-    }
-
-    .wishlist-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .wishlist-actions button {
-      padding: 0.4rem 1rem;
-      border: none;
-      border-radius: 6px;
-      background: #2d2d2d;
-      color: white;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.2s ease;
-    }
-
-    .wishlist-actions button:hover {
-      background: #444;
-    }
-
-    .wishlist-actions .remove-btn {
-      background: #e53935;
-    }
-
-    .wishlist-actions .remove-btn:hover {
-      background: #c62828;
-    }
-
-    .hero-cap .name {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-}
-.slider-area {
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-}
-
-.single-slider {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-cap h2 {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #0d1b2a; /* dark navy-like color */
-}
-
-    .wishlist-empty {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: gray;
-      font-size: 1rem;
-    }
-
-    /* Toast Styles */
-    .cart-toast,
-    .wishlist-toast {
-      display: none;
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #323232;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 6px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 9999;
-    }
-
-    .wishlist-toast {
-      bottom: 70px;
-      background: #c62828;
-    }
-  </style>
+ <link rel="stylesheet" href="/assets/css/wishlist.css">
 </head>
 
 <main>
@@ -167,7 +35,12 @@
 
              <a href="/cart"><button type="button">Go to cart</button></a>
             <% } else { %>
+              <% if (item.inStock <=0) { %>
+               <button type="button" onclick="showOutOfStockToast()">Add To Cart</button>
+               <% } else { %>
                 <button type="button" onclick="addToCart('<%= item._id %>')">Add To Cart</button>
+              <% } %>
+                
               <% } %>
             <button class="remove-btn" onclick="removeFromWishlist('<%= item._id %>')">Remove</button>
           </div>
@@ -183,6 +56,7 @@
   <!-- Toast Messages -->
   <div class="cart-toast">Item added to cart! 🎉</div>
   <div class="wishlist-toast">Item removed from wishlist! ❌</div>
+  <div class="stock-toast">Item is out of stock! 📦</div>
 </main>z
 
 <!-- Script -->
@@ -217,6 +91,15 @@
   } catch (error) {
     console.error("Add to cart failed:", error);
     alert("Failed to add item to cart.");
+  }
+}
+function showOutOfStockToast() {
+  const toast = document.querySelector('.stock-toast');
+  if (toast) {
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3000);
   }
 }
   async function removeFromWishlist(productId) {

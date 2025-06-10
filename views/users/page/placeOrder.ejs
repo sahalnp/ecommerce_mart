@@ -1,0 +1,238 @@
+<%- include('../partials/header') %>
+
+<style>
+    .checkout-area {
+        padding: 3rem 1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .order-summary {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        text-align: center;
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .success-icon {
+        width: 60px;
+        height: 60px;
+        background: #10b981;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.5rem;
+        animation: scaleIn 0.5s ease-out;
+    }
+
+    @keyframes scaleIn {
+        from { transform: scale(0); }
+        to { transform: scale(1); }
+    }
+
+    .order-summary h2 {
+        font-size: 2rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .order-subtitle {
+        color: #6b7280;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .order-details {
+        background: #f9fafb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+        text-align: left;
+    }
+
+    .order-details h3 {
+        color: #374151;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 500;
+        color: #4b5563;
+        min-width: 120px;
+        flex-shrink: 0;
+    }
+
+    .detail-value {
+        color: #1f2937;
+        text-align: right;
+        flex: 1;
+        margin-left: 1rem;
+    }
+
+    .total-amount {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #059669;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        padding: 1rem 2rem;
+font-size: 1.05rem;
+
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 640px) {
+        .checkout-area {
+            padding: 1.5rem 1rem;
+        }
+        
+        .order-summary {
+            padding: 2rem 1.5rem;
+        }
+
+        .detail-item {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .detail-label {
+            min-width: auto;
+        }
+
+        .detail-value {
+            text-align: left;
+            margin-left: 0;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="checkout-area">
+    <div class="order-summary">
+        <div class="success-icon">✓</div>
+        <h2>Order Confirmed!</h2>
+        <p class="order-subtitle">Thank you for your purchase. Your order has been successfully placed.</p>
+        
+        <div class="order-details">
+            <h3>Order Summary</h3>
+            
+            <div class="detail-item">
+                <span class="detail-label">Order ID:</span>
+                <span class="detail-value"><%= order.OrderId %></span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Total Amount:</span>
+                <span class="detail-value total-amount">₹<%= Number(order.total).toLocaleString("en-IN") %></span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Delivery Address:</span>
+                <span style="align-items:start;" class="detail-value">
+
+                        <strong><%= fullAddress.name %></strong><br>
+                        Phone: <%= fullAddress.number %><br>
+                        <%= fullAddress.street %>, <%= fullAddress.localPlace %><br>
+                        Landmark: <%= fullAddress.landmark %><br>
+                        <%= fullAddress.city %>, <%= fullAddress.district %>, <%= fullAddress.state %> - <%= fullAddress.pincode %><br>
+                        <%= fullAddress.country %><br>
+                        Address Type: <%= fullAddress.addressType %><br>
+
+                </span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Expected Delivery:</span>
+                <span class="detail-value">
+                    <%= order.estimatedDelivery.toLocaleDateString('en-IN', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) %>
+                </span>
+            </div>
+            
+            <div class="detail-item">
+                <span class="detail-label">Payment Method:</span>
+                <span class="detail-value"><%= order.paymentMethod %></span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/MyOrder" class="btn btn-primary">Track Your Order</a>
+            <a href="/shop" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -24,34 +24,46 @@ export const loadAdd_product = async (req, res) => {
 };
 
 export const productAdd = asyncHandler(async (req, res) => {
-    if (!req.files || req.files.length === 0) {
-        return res.status(404).json({ error: "No files uploaded" });
-    }
+ if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).json({ error: "No files were uploaded." });
+  }
+  let filenames = [];
+  for (const fieldName in req.files) {
 
-    let filenames = [];
-    req.files.forEach((file) => {
-        filenames.push(file.originalname);
-        console.log("Uploaded file:", file.originalname);
+    req.files[fieldName].forEach((file) => {
+      filenames.push(file.originalname);
+      console.log("Uploaded file:", file.originalname);
     });
+  }
+  if (filenames.length === 0) {
+    return res
+      .status(400)
+      .json({ error: "No valid image filenames found." });
+  }
 
-    if (filenames.length === 0) {
-        return res
-            .status(400)
-            .json({ error: "No valid image filenames found" });
+  try {
+
+    const basePath = `${req.protocol}://${req.get("host")}/uploads`;
+    const imageIds = [];    
+    let vrImageId = null;    
+
+    const productImages = req.files["photos"] || [];
+    for (const file of productImages) {
+      const savedImage = await imageModel.create({
+        filename: file.filename,
+        filepath: `${basePath}/${file.filename}`,
+      });
+      imageIds.push(savedImage._id);
     }
-
-    try {
-        const basePath = `${req.protocol}://${req.get("host")}/uploads`;
-        const imageIds = [];
-
-        for (let file of req.files) {
-            const savedImage = await imageModel.create({
-                filename: file.filename,
-                filepath: `${basePath}/${file.filename}`,
-            });
-            imageIds.push(savedImage._id);
-        }
-
+    const vrFiles = req.files["vrImage"] || [];
+    if (vrFiles.length > 0) {
+      const vrFile = vrFiles[0];
+      const savedVRImage = await imageModel.create({
+        filename: vrFile.filename,
+        filepath: `${basePath}/${vrFile.filename}`,
+      });
+      vrImageId = savedVRImage._id;
+    }
         const {
             title,
             productPrice,
@@ -112,6 +124,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             isListed,
             inStock,
             image: imageIds,
+            vrImage:vrImageId,
             isActive: true,
         });
 
@@ -143,6 +156,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             isListed,
             inStock,
             image: imageIds,
+            vrImage:vrImageId,
             isActive: true,
         });
 
@@ -170,13 +184,11 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 export const editProduct = asyncHandler(async (req, res) => {
     const id = req.params.id;
-    const findProduct = await product.findOne({ _id: id }).populate("brand").populate("category").populate("image");
+    const findProduct = await product.findOne({ _id: id }).populate("brand").populate("category").populate("image").populate('vrImage');
 
     const fndBrand = await brandModel.find();
     const fndCat = await categoryModel.find();
-
     res.render("admin/page/productEdit", {
-         csrfToken: req.csrfToken(),
         product: findProduct,
         admin: req.session.admin,
         activePage: "productEdit",
@@ -194,23 +206,38 @@ export const productEdit = asyncHandler(async (req, res) => {
             return res.status(404).json({ error: "Product not found" });
         }
         const basePath = `${req.protocol}://${req.get("host")}/uploads`;
-        const imageIds = [];
-        for (let file of req.files) {
-            const savedImage = await imageModel.create({
-                filename: file.filename,
-                filepath: `${basePath}/${file.filename}`,
+         const imageIds = [];
+        if (req.files && req.files.images) {
+            for (let file of req.files.images) {
+                const savedImage = await imageModel.create({
+                    filename: file.filename,
+                    filepath: `${basePath}/${file.filename}`,
             });
             imageIds.push(savedImage._id);
+            }
         }
         
-        // const existingImageIds = req.body.existingImages || [];
         const existingImageIds = Array.isArray(req.body.existingImages)
         ? req.body.existingImages
         : req.body.existingImages
         ? [req.body.existingImages]
         : [];
-    
-        const allImageIds = [...existingImageIds, ...imageIds]; 
+        //VR
+        let vrImageId = null;
+        if (req.files && req.files.vrImage && req.files.vrImage[0]) {
+            const vrFile = req.files.vrImage[0];
+            const savedVRImage = await imageModel.create({
+                filename: vrFile.filename,
+                filepath: `${basePath}/${vrFile.filename}`,
+            });
+            vrImageId = savedVRImage._id;
+        } else if (req.body.existingVrImage) {
+            vrImageId = req.body.existingVrImage;
+        }
+        
+
+        const allImageIds = [...existingImageIds, ...imageIds];
+
         const {
             title,
             productPrice,
@@ -229,18 +256,13 @@ export const productEdit = asyncHandler(async (req, res) => {
             modelYear,
             caseDiameter,
             inStock,
-            isListed,
         } = req.body;
-        // let isList=true
-        // if (isListed=='undefined'){
-        //     isList=false
-        // }
+
         const isList = req.body.isListed === "on" ? true : false;
         const categoryDocs = await categoryModel.find({
             name: { $in: req.body.categorybox },
         });
         const categoryIds = categoryDocs.map((category) => category._id);
-        // Handle brand
         const brandDoc = await brandModel.findById(req.body.brandradio);
         if (!brandDoc) {
             return res.status(400).json({ error: "Invalid brand selected" });
@@ -268,7 +290,8 @@ export const productEdit = asyncHandler(async (req, res) => {
             genderCategory,
             isListed:isList,
             inStock,
-            image: allImageIds, 
+            image: allImageIds,
+            vrImage:vrImageId, 
             isActive: true,
         });
         res.redirect("/admin/products");
@@ -277,28 +300,34 @@ export const productEdit = asyncHandler(async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+export const productListing=asyncHandler(async(req,res)=>{
+    const { id } = req.params;
+    const { isListed } = req.body;
+    await product.findByIdAndUpdate(id, { isListed: isListed === 'true' });
+    res.redirect('/admin/products'); 
+});
+export const imageDlt = asyncHandler(async (req, res) => {
+    const { productId, imageId } = req.body;
+    try {
+        await product.findByIdAndUpdate(
+            productId,
+            { $pull: { image: imageId } },
+            { new: true }
+        )
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Error deleting image:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+});
+export const vrImageDlt=asyncHandler(async(req,res)=>{
+    const {productId,imageId}=req.body
+    await product.findByIdAndUpdate(
+    productId,
+    { $unset: { vrImage: 1 } }, 
+    { new: true }
+    );
 
-    export const productListing=asyncHandler(async(req,res)=>{
-        const { id } = req.params;
-        const { isListed } = req.body;
-        await product.findByIdAndUpdate(id, { isListed: isListed === 'true' });
-        res.redirect('/admin/products'); 
-    });
+        
 
-    export const imageDlt = asyncHandler(async (req, res) => {
-        const { productId, imageId } = req.params;
-        try {
-            await product.findByIdAndUpdate(
-                productId,
-                { $pull: { image: imageId } },
-                { new: true }
-            );
-            // await imageModel.findByIdAndDelete(imageId);
-
-            res.json({ success: true });
-        } catch (error) {
-            console.error("Error deleting image:", error);
-            res.status(500).json({ success: false, message: "Server error" });
-        }
-    });
-
+})

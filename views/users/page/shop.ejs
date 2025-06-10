@@ -12,20 +12,19 @@
             text-align: center;
         }
         .cart-toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #28a745; /* green */
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-    font-weight: bold;
-    z-index: 9999;
-    display: none;
-    transition: opacity 0.3s ease;
-}
-
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 9999;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
         .single-slider {
             height: 100%;
             width: 100%;
@@ -37,6 +36,109 @@
             font-size: 3rem;
             font-weight: bold;
             color: #0d1b2a;
+        }
+        
+        /* Improved Wishlist Icon Styles */
+        .favorit-items {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        
+        .heart-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border: none;
+            outline: none;
+        }
+        
+        .heart-toggle:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .heart-toggle.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        /* Heart icon using CSS */
+        .heart-icon {
+            width: 18px;
+            height: 18px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .heart-icon::before,
+        .heart-icon::after {
+            content: '';
+            width: 10px;
+            height: 16px;
+            position: absolute;
+            left: 9px;
+            transform: rotate(-45deg);
+            background: #ccc;
+            border-radius: 10px 10px 0 0;
+            transform-origin: 0 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .heart-icon::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+        
+        .heart-toggle[data-liked="true"] .heart-icon::before,
+        .heart-toggle[data-liked="true"] .heart-icon::after {
+            background: #ff4757;
+        }
+        
+        .heart-toggle:hover .heart-icon::before,
+        .heart-toggle:hover .heart-icon::after {
+            background: #ff4757;
+        }
+        
+        /* Loading spinner */
+        .heart-loading {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #ff4757;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Toast improvements */
+        .wishlist-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background-color: #ff4757;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 9999;
+            display: none;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -110,12 +212,15 @@
                                             <a onclick="addToCart('<%= product[index]._id %>')"><span>Add to cart</span></a>
                                         <% } %>
                                     </div>
-                                    <div class="favorit-items" style="top: 0px;">
-                                        <% if (wish.some(w => w._id.toString() === product[index]._id.toString())) { %>
-                                            <img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="<%= product[index]._id %>" style="cursor: pointer" alt="like-icon" />
-                                        <% } else { %>
-                                            <span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="<%= product[index]._id %>" style="cursor: pointer"></span>
-                                        <% } %>
+                                    <div class="favorit-items">
+                                        <button 
+                                            class="heart-toggle" 
+                                            data-liked="<%= wish.some(w => w._id.toString() === product[index]._id.toString()) ? 'true' : 'false' %>" 
+                                            data-product-id="<%= product[index]._id %>"
+                                            title="<%= wish.some(w => w._id.toString() === product[index]._id.toString()) ? 'Remove from wishlist' : 'Add to wishlist' %>"
+                                            aria-label="<%= wish.some(w => w._id.toString() === product[index]._id.toString()) ? 'Remove from wishlist' : 'Add to wishlist' %>">
+                                            <div class="heart-icon"></div>
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="popular-caption">
@@ -163,6 +268,7 @@
     </div>
 
     <div class="cart-toast">Item added to cart</div>
+    <div class="wishlist-toast">Added to wishlist</div>
 
 </main>
 
@@ -176,7 +282,6 @@
                 headers: {
                     'CSRF-Token': csrfToken,
                 }
-                 
             });
             
             console.log("Added to cart", res.data);
@@ -191,52 +296,98 @@
                 }, 3000);
             }
 
-            // Optionally update button/link text or disable it
         } catch (error) {
             console.error("Add to cart failed:", error);
             alert("Failed to add item to cart.");
         }
     }
 
+    // Improved wishlist toggle handler
     document.addEventListener("click", function (e) {
-        const icon = e.target.closest(".heart-toggle");
-        if (!icon) return;
+        const button = e.target.closest(".heart-toggle");
+        if (!button) return;
 
-        const isLiked = icon.getAttribute("data-liked") === "true";
-        const productId = icon.getAttribute("data-product-id");
+        const isLiked = button.getAttribute("data-liked") === "true";
+        const productId = button.getAttribute("data-product-id");
 
         if (!productId) return alert("Product ID not found.");
 
+        // Prevent multiple clicks during loading
+        if (button.classList.contains('loading')) return;
+
+        // Show loading state
+        showLoadingState(button);
+
         if (isLiked) {
-            icon.setAttribute("data-liked", "false");
-            removeFromWishlist(productId);
+            removeFromWishlist(productId, button);
         } else {
-            icon.setAttribute("data-liked", "true");
-            addWishlist(productId);
+            addWishlist(productId, button);
         }
     });
 
-    async function addWishlist(productId) {
+    function showLoadingState(button) {
+        button.classList.add('loading');
+        const heartIcon = button.querySelector('.heart-icon');
+        heartIcon.innerHTML = '<div class="heart-loading"></div>';
+    }
+
+    function hideLoadingState(button) {
+        button.classList.remove('loading');
+        const heartIcon = button.querySelector('.heart-icon');
+        heartIcon.innerHTML = '';
+    }
+
+    async function addWishlist(productId, button) {
         try {
-            const res = await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+            const res = await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken }, { withCredentials: true });
             console.log("Added to wishlist", res.data);
-            const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-            icon.outerHTML = `<img class="heart-toggle" width="30" height="30" src="https://img.icons8.com/ios-filled/50/ff0000/like--v1.png" data-liked="true" data-product-id="${productId}" style="cursor: pointer" alt="like-icon" />`;
+            
+            // Update button state
+            button.setAttribute("data-liked", "true");
+            button.setAttribute("title", "Remove from wishlist");
+            button.setAttribute("aria-label", "Remove from wishlist");
+            hideLoadingState(button);
+            
+            // Show success toast
+            showWishlistToast("Added to wishlist ❤️");
+            
         } catch (err) {
-            alert("Adding to wishlist failed");
+            hideLoadingState(button);
+            showWishlistToast("Failed to add to wishlist", true);
             console.error("Add wishlist error: ", err);
         }
     }
 
-    async function removeFromWishlist(productId) {
+    async function removeFromWishlist(productId, button) {
         try {
-            const res = await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+            const res = await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken }, { withCredentials: true });
             console.log("Removed from wishlist", res.data);
-            const icon = document.querySelector(`.heart-toggle[data-product-id="${productId}"]`);
-            icon.outerHTML = `<span class="heart-toggle flaticon-heart" data-liked="false" data-product-id="${productId}" style="cursor: pointer"></span>`;
+            
+            // Update button state
+            button.setAttribute("data-liked", "false");
+            button.setAttribute("title", "Add to wishlist");
+            button.setAttribute("aria-label", "Add to wishlist");
+            hideLoadingState(button);
+            
+            // Show success toast
+            showWishlistToast("Removed from wishlist");
+            
         } catch (err) {
-            alert("Removing from wishlist failed");
+            hideLoadingState(button);
+            showWishlistToast("Failed to remove from wishlist", true);
             console.error("Remove wishlist error: ", err);
+        }
+    }
+
+    function showWishlistToast(message, isError = false) {
+        const toast = document.querySelector('.wishlist-toast');
+        if (toast) {
+            toast.textContent = message;
+            toast.style.backgroundColor = isError ? '#e74c3c' : '#ff4757';
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
         }
     }
 </script>

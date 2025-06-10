@@ -3,7 +3,9 @@ import { User } from "../../models/userModel.js";
 import { product } from "../../models/productModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
-import { compare } from "bcrypt";
+import { Order } from "../../models/orderModel.js";
+import orderid from "order-id";
+import { review } from "../../models/reviewModel.js";
 
 export const editProfile = asyncHandler(async (req, res) => {
     const { firstname, Lastname, email, number } = req.body;
@@ -18,14 +20,21 @@ export const editProfile = asyncHandler(async (req, res) => {
 
 export const addtoCart = asyncHandler(async (req, res) => {
     const UserId = req.session.users._id;
-    const productId = req.body.productId;
-    const find = await Cart.findOne({ UserId, productId });
+    const { productId, quantity } = req.body;
+    const find = await product.findOne({
+    userId: req.session.users._id,
+    productId: productId,
+    inStock: { $gt: 0 }
+});
+
     const prodfind = await product.findById(productId);
+    
     if (!find) {
         await Cart.create({
             UserId,
             productId,
             productName: prodfind.title,
+            price: quantity * prodfind.pricing.salePrice,
             quantity: req.body.quantity,
         });
     }
@@ -34,7 +43,6 @@ export const addtoCart = asyncHandler(async (req, res) => {
 export const addTowhish = asyncHandler(async (req, res) => {
     const productId = req.params.id;
     const userId = req.session.users._id;
-    console.log(req.params.id);
 
     try {
         const val = await User.findByIdAndUpdate(
@@ -72,6 +80,9 @@ export const removeFromWish = asyncHandler(async (req, res) => {
 export const quantchnge = asyncHandler(async (req, res) => {
     try {
         const { productId, quantity } = req.body;
+        const prod = await product.findById(productId);
+        const price = quantity * prod.pricing.salePrice;
+
         const UserId = req.session.users._id;
         if (quantity == 0) {
             await Cart.findOneAndDelete({
@@ -81,11 +92,14 @@ export const quantchnge = asyncHandler(async (req, res) => {
         } else {
             await Cart.findOneAndUpdate(
                 { UserId, productId },
-                { quantity: quantity },
+                {
+                    quantity: quantity,
+                    price: price,
+                },
                 { new: true }
             );
         }
-        res.json({ message: "Quantity updated" });
+        res.json({ message: "Quantity updated", success: true });
     } catch (error) {
         console.log(error, "Quantity doesnot changed");
     }
@@ -158,11 +172,6 @@ export const addAddress = asyncHandler(async (req, res) => {
     }
     res.redirect("/checkout");
 });
-export const addCart = asyncHandler(async (req, res) => {
-    console.log("dfghjkl");
-
-    res.redirect("/cart");
-});
 export const addCmp = asyncHandler(async (req, res) => {
     try {
         const { productId } = req.body;
@@ -175,9 +184,11 @@ export const addcart = asyncHandler(async (req, res) => {
     try {
         const { productId, quantity } = req.body;
         const find = await product.findOne({
-            userId: req.session.users._id,
+            UserId: req.session.users._id,
             productId,
-        });
+            inStock: { $gt: 0 }
+            });
+
         if (find) {
             res.json("already exist");
         } else {
@@ -189,6 +200,34 @@ export const addcart = asyncHandler(async (req, res) => {
         }
     } catch (error) {
         console.log(error, "error");
+    }
+});
+export const buy = asyncHandler(async (req, res) => {
+    try {
+        const { productId, quantity } = req.body;
+        const prod = await product.findById(productId);
+        const find = await product.findOne({
+            userId: req.session.users._id,
+            productId, 
+            inStock: { $gt: 0 }
+});
+
+        if (!find) {
+            await Cart.create({
+                UserId: req.session.users._id,
+                productId,
+                productName: prod.title,
+                price: quantity * prod.pricing.salePrice,
+                quantity,
+            });
+        }
+        res.json({ success: true, redirectUrl: "/checkout" });
+    } catch (error) {
+        console.log("ERROR :", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
     }
 });
 export const addCompare = asyncHandler(async (req, res) => {
@@ -226,11 +265,10 @@ export const cmpReset = asyncHandler(async (req, res) => {
 });
 
 export const cmpResetOne = asyncHandler(async (req, res) => {
-    
     try {
         const { productId } = req.body;
         const UserId = req.session.users._id;
-        await Compare.findOneAndDelete({  UserId,productId }, { new: true });
+        await Compare.findOneAndDelete({ UserId, productId }, { new: true });
         res.redirect("/compare");
     } catch (error) {
         console.log("ERROR in addCompare:", error);
@@ -267,7 +305,7 @@ export const rating = asyncHandler(async (req, res) => {
             totalUser += count;
         }
         let avg = totalvalue + totalUser;
-        return avg
+        return avg;
     } catch (error) {
         console.log("ERROR :", error);
         res.status(500).json({
@@ -275,4 +313,41 @@ export const rating = asyncHandler(async (req, res) => {
             message: "Internal Server Error",
         });
     }
+});
+
+export const reviewRighted = asyncHandler(async (req, res) => { 
+    const { title, desc, rating } = req.body;
+    const userId = req.session.users._id;
+    const productId = req.params.id;
+
+    const hasOrdered = await Order.findOne({
+        UserId: userId,
+        "items.product": productId,
+    });
+
+    if (!hasOrdered) {
+        return res
+            .status(403)
+            .send("You can't review a product you haven't purchased.");
+    }
+
+    const existingReview = await review.findOne({ UserId: userId, productId });
+
+    if (existingReview) {
+        if (title?.trim()) existingReview.title = title.trim();
+        if (desc?.trim()) existingReview.description = desc.trim();
+        if (rating) existingReview.rating = rating;
+        existingReview.date = new Date();
+        await existingReview.save();
+    } else {
+        await review.create({
+            UserId: userId,
+            productId,
+            title: title?.trim() || "No Title",
+            description: desc?.trim() || "No Description",
+            rating: rating || 0,
+            date: new Date(),
+        });
+    }
+    res.redirect(`/MyOrder/${hasOrdered._id}`);
 });

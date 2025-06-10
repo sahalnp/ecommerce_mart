@@ -82,6 +82,11 @@ const productSchema = new mongoose.Schema(
                 required: true,
             },
         ],
+        vrImage:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"image",
+            required:true
+        },
 
         category: [
             {

@@ -2,6 +2,106 @@
 <head>
     <title>Checkout</title>
     <link rel="stylesheet" href="/assets/css/checkout.css" />
+    <style>
+        .coupon-section {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+        }
+        
+        .coupon-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .coupon-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .apply-coupon-btn {
+            padding: 12px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .apply-coupon-btn:hover {
+            background: #0056b3;
+        }
+        
+        .applied-coupon {
+            margin-top: 10px;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            color: #155724;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .coupon-savings {
+            font-weight: bold;
+            color: #28a745;
+        }
+        
+        .remove-coupon {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .wallet-balance {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .wallet-option {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .wallet-split {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .wallet-amount-input {
+            width: 120px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .payment-breakdown {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f8ff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    
+    </style>
 </head>
 
 <main>
@@ -21,7 +121,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="checkout-container pt-5">
+    <div class="checkout-container ">
         <!-- Right Column - Order Summary (Now First) -->
         <div class="checkout-sidebar">
             <div class="order-summary">
@@ -43,9 +143,21 @@
                         <span>Estimated tax:</span>
                         <span id="estimated-tax">₹<%= tax.toFixed(2) %></span>
                     </div>
+                    <div class="summary-row discount-row" id="discount-row" style="display: none;">
+                        <span>Discount:</span>
+                        <span id="discount-amount">-₹0.00</span>
+                    </div>
+                    <div class="summary-row" id="wallet-payment-row" style="display: none;">
+                        <span>Wallet Payment:</span>
+                        <span id="wallet-payment-amount">-₹0.00</span>
+                    </div>
                     <div class="summary-row summary-total">
                         <span>Order total:</span>
                         <span id="order-total"><%= total %></span>
+                    </div>
+                    <div class="summary-row" id="remaining-amount-row" style="display: none;">
+                        <span>Remaining Amount:</span>
+                        <span id="remaining-amount">₹0.00</span>
                     </div>
                     <button class="btn-place-order" onclick="placeOrder()">
                         Place your order
@@ -56,6 +168,43 @@
 
         <!-- Left Column - Main Content -->
         <div class="checkout-main">
+            <!-- Coupon Section -->
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">
+                        🎟️ &nbsp;&nbsp; Apply Coupon Code
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div class="coupon-section">
+                        <div id="coupon-input-section">
+                            <p>Have a coupon code? Enter it below to get discount on your order.</p>
+                            
+                            <div class="coupon-input-group">
+                                <input 
+                                    type="text" 
+                                    id="coupon-code" 
+                                    class="coupon-input" 
+                                    
+                                    maxlength="20">
+                                <button class="apply-coupon-btn" onclick="applyCoupon()">
+                                    Apply Coupon
+                                </button>
+                            </div>
+                        </div>
+                        <div id="applied-coupon-section" style="display: none;">
+                            <div class="applied-coupon">
+                                <div>
+                                    <span id="applied-coupon-text"></span>
+                                    <div class="coupon-savings" id="coupon-savings"></div>
+                                </div>
+                                <button class="remove-coupon" onclick="removeCoupon()">✕ Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Shipping Address -->
             <div class="section">
                 <div class="section-header">
@@ -117,6 +266,12 @@
                     </div>
                 </div>
                 <div class="section-content">
+                    <!-- Wallet Balance Display -->
+                    <div class="wallet-balance">
+                        <strong>💰 Wallet Balance: ₹<span id="wallet-balance"><%= typeof wallet !== 'undefined' ? wallet.balance || 0 : 0 %></span></strong>
+                    </div>
+
+                    <!-- Cash on Delivery -->
                     <div class="payment-option">
                         <input
                             type="radio"
@@ -124,6 +279,7 @@
                             name="payment"
                             value="cod"
                             checked
+                            onchange="handlePaymentChange()"
                         />
                         <label for="cod" class="payment-content">
                             <div class="payment-label">Cash on Delivery</div>
@@ -132,17 +288,105 @@
                             </div>
                         </label>
                     </div>
+
+                    <!-- Razorpay -->
                     <div class="payment-option">
                         <input
                             type="radio"
                             id="razorpay"
                             name="payment"
                             value="razorpay"
+                            onchange="handlePaymentChange()"
                         />
                         <label for="razorpay" class="payment-content">
                             <div class="payment-label">Razorpay</div>
                             <div class="payment-details">
                                 Pay securely via UPI, card, net banking.
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Wallet + COD -->
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="wallet_cod"
+                            name="payment"
+                            value="wallet_cod"
+                            onchange="handlePaymentChange()"
+                        />
+                        <label for="wallet_cod" class="payment-content">
+                            <div class="payment-label">Wallet + Cash on Delivery</div>
+                            <div class="payment-details">
+                                Use wallet balance and pay remaining amount on delivery
+                            </div>
+                        </label>
+                        <div class="wallet-option" id="wallet-cod-options" style="display: none;">
+                            <div class="wallet-split">
+                                <span>Use from wallet: ₹</span>
+                                <input 
+                                    type="number" 
+                                    id="wallet-cod-amount" 
+                                    class="wallet-amount-input"
+                                    min="0" 
+                                    step="0.01"
+                                    onchange="updateWalletSplit('cod')"
+                                    placeholder="0.00">
+                            </div>
+                            <div class="payment-breakdown" id="wallet-cod-breakdown">
+                                <div>Wallet Payment: ₹0.00</div>
+                                <div>COD Amount: ₹0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wallet + Razorpay -->
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="wallet_razorpay"
+                            name="payment"
+                            value="wallet_razorpay"
+                            onchange="handlePaymentChange()"
+                        />
+                        <label for="wallet_razorpay" class="payment-content">
+                            <div class="payment-label">Wallet + Razorpay</div>
+                            <div class="payment-details">
+                                Use wallet balance and pay remaining amount via Razorpay
+                            </div>
+                        </label>
+                        <div class="wallet-option" id="wallet-razorpay-options" style="display: none;">
+                            <div class="wallet-split">
+                                <span>Use from wallet: ₹</span>
+                                <input 
+                                    type="number" 
+                                    id="wallet-razorpay-amount" 
+                                    class="wallet-amount-input"
+                                    min="0" 
+                                    step="0.01"
+                                    onchange="updateWalletSplit('razorpay')"
+                                    placeholder="0.00">
+                            </div>
+                            <div class="payment-breakdown" id="wallet-razorpay-breakdown">
+                                <div>Wallet Payment: ₹0.00</div>
+                                <div>Razorpay Amount: ₹0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Full Wallet Payment -->
+                    <div class="payment-option">
+                        <input
+                            type="radio"
+                            id="wallet"
+                            name="payment"
+                            value="wallet"
+                            onchange="handlePaymentChange()"
+                        />
+                        <label for="wallet" class="payment-content">
+                            <div class="payment-label">Pay with Wallet</div>
+                            <div class="payment-details">
+                                Pay full amount using wallet balance
                             </div>
                         </label>
                     </div>
@@ -188,7 +432,6 @@
                                 <p>Color: <%= prod.bandColour %></p>
                                 <p>Warranty: <%= prod.warranty %> years</p>
                             </div>
-
                             <div
                                 class="quantity-controls"
                                 data-product-id="<%= prod._id %>"
@@ -196,9 +439,11 @@
                                 data-instock="<%= prod.inStock %>"
                             >
                                 <button onclick="changeQty(this, -1)">−</button>
-                                <span class="qty-value"
-                                    ><%= cart[index].quantity %></span
-                                >
+                               <% const foundItem = cart.find(item => item.productId.toString() === prod._id.toString()); %>
+                                    <% if (foundItem) { %>
+                                        <span class="qty-value"><%= foundItem.quantity %></span>
+                                    <% } %>
+
                                 <button onclick="changeQty(this, 1)">+</button>
                             </div>
 
@@ -228,6 +473,10 @@
 
 <script>
     const csrfToken = "<%= csrfToken %>";
+    let appliedCoupon = null;
+    let discountAmount = 0;
+    let walletBalance = parseFloat(document.getElementById('wallet-balance').textContent) || 0;
+    
     async function changeQty(button, delta) {
         const qtySelector = button.parentElement;
         const qtySpan = qtySelector.querySelector(".qty-value");
@@ -269,83 +518,271 @@
             showToast("Failed to update quantity. Try again.");
         }
     }
+    
     async function dlt(id) {
         try {
-            const res=await axios.post('/address/delete/id',{ _csrf: csrfToken,})
+            const res = await axios.post('/address/delete/' + id, { _csrf: csrfToken });
+            location.reload(); // Refresh to update address list
         } catch (error) {
-            console.log(error,"ERROR");
-            
+            console.log(error, "ERROR");
+            showToast("Failed to delete address");
         }
     }
-    function showToast(message) {
-        const toastContainer = document.getElementById("toast-container");
-        if (!toastContainer) return;
 
-        const toast = document.createElement("div");
-        toast.className = "toast-message";
-        toast.textContent = message;
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background-color: #28a745;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 5px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
-            font-weight: bold;
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        `;
-
-        toastContainer.appendChild(toast);
-
-        setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => toast.remove(), 500);
-        }, 3000);
+    async function applyCoupon() {
+    const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
+    if (!couponCode) {
+        showToast("Please enter a coupon code");
+        return;
     }
 
-    function updateSubtotal() {
+    // Predefined coupons with 40% discount
+    const validCoupons = {
+        'FLAT500': { code: 'FLAT500', discountType: 'percentage', discountValue: 40, description: '40% off' },
+        'FIRST400': { code: 'FIRST400', discountType: 'percentage', discountValue: 30, description: '30% off' },
+        'BING100': { code: 'BING100', discountType: 'percentage', discountValue: 50, description: '50% off' }
+    };
+
+    if (validCoupons[couponCode]) {
+        appliedCoupon = validCoupons[couponCode];
+        
+        // Calculate discount amount (40% of subtotal only, not including shipping and tax)
         const qtyControls = document.querySelectorAll(".quantity-controls");
         let subtotal = 0;
-
         qtyControls.forEach((qtySelector) => {
             const price = parseFloat(qtySelector.getAttribute("data-price"));
-            const quantity = parseInt(
-                qtySelector.querySelector(".qty-value").textContent
-            );
+            const quantity = parseInt(qtySelector.querySelector(".qty-value").textContent);
             subtotal += price * quantity;
         });
-
-        // Update Subtotal and summary values
-        const subtotalElem = document.getElementById("subtotal");
-        if (subtotalElem) subtotalElem.textContent = `₹${subtotal.toFixed(2)}`;
-
-        const totalBeforeTax = subtotal; // assume no shipping & tax for simplicity here
-        const totalBeforeTaxElem = document.getElementById("total-before-tax");
-        if (totalBeforeTaxElem)
-            totalBeforeTaxElem.textContent = `₹${totalBeforeTax.toFixed(2)}`;
-
-        const tax = subtotal * 0.18; // example 18% tax
-        const taxElem = document.getElementById("estimated-tax");
-        if (taxElem) taxElem.textContent = `₹${tax.toFixed(2)}`;
-
-        const orderTotal = subtotal + tax;
-        const orderTotalElem = document.getElementById("order-total");
-        if (orderTotalElem)
-            orderTotalElem.textContent = `₹${orderTotal.toFixed(2)}`;
+        
+        discountAmount = subtotal * (appliedCoupon.discountValue / 100);
+        
+        document.getElementById('coupon-input-section').style.display = 'none';
+        document.getElementById('applied-coupon-section').style.display = 'block';
+        document.getElementById('applied-coupon-text').textContent = 
+            `${appliedCoupon.code} - ${appliedCoupon.description} applied`;
+        document.getElementById('coupon-savings').textContent = 
+            `You saved ₹${discountAmount.toFixed(2)}!`;
+        
+        updateSubtotal();
+        showToast(`Coupon applied! You saved ₹${discountAmount.toFixed(2)}`);
+    } else {
+        showToast("Invalid coupon code. Try: FLAAT500, FIRST400, or MAIN404");
     }
+}
+    function removeCoupon() {
+        appliedCoupon = null;
+        discountAmount = 0;
+        
+        document.getElementById('coupon-input-section').style.display = 'block';
+        document.getElementById('applied-coupon-section').style.display = 'none';
+        document.getElementById('coupon-code').value = '';
+        
+        updateSubtotal();
+        showToast("Coupon removed");
+    }
+
+    function handlePaymentChange() {
+        const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+        
+        // Hide all wallet options
+        document.getElementById('wallet-cod-options').style.display = 'none';
+        document.getElementById('wallet-razorpay-options').style.display = 'none';
+        
+        // Show relevant wallet options
+        if (selectedPayment === 'wallet_cod') {
+            document.getElementById('wallet-cod-options').style.display = 'block';
+            updateWalletSplit('cod');
+        } else if (selectedPayment === 'wallet_razorpay') {
+            document.getElementById('wallet-razorpay-options').style.display = 'block';
+            updateWalletSplit('razorpay');
+        }
+        
+        updateSubtotal();
+    }
+
+    function updateWalletSplit(type) {
+        const totalAmount = getCurrentOrderTotal();
+        let walletAmount = 0;
+        
+        if (type === 'cod') {
+            walletAmount = parseFloat(document.getElementById('wallet-cod-amount').value) || 0;
+        } else if (type === 'razorpay') {
+            walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
+        }
+        
+        // Validate wallet amount
+        if (walletAmount > walletBalance) {
+            walletAmount = walletBalance;
+            if (type === 'cod') {
+                document.getElementById('wallet-cod-amount').value = walletAmount;
+            } else {
+                document.getElementById('wallet-razorpay-amount').value = walletAmount;
+            }
+            showToast("Wallet amount cannot exceed available balance");
+        }
+        
+        if (walletAmount > totalAmount) {
+            walletAmount = totalAmount;
+            if (type === 'cod') {
+                document.getElementById('wallet-cod-amount').value = walletAmount;
+            } else {
+                document.getElementById('wallet-razorpay-amount').value = walletAmount;
+            }
+            showToast("Wallet amount cannot exceed order total");
+        }
+        
+        const remainingAmount = totalAmount - walletAmount;
+        
+        // Update breakdown display
+        const breakdownId = `wallet-${type}-breakdown`;
+        const paymentMethod = type === 'cod' ? 'COD' : 'Razorpay';
+        document.getElementById(breakdownId).innerHTML = `
+            <div>Wallet Payment: ₹${walletAmount.toFixed(2)}</div>
+            <div>${paymentMethod} Amount: ₹${remainingAmount.toFixed(2)}</div>
+        `;
+        
+        updateSubtotal();
+    }
+
+function getCurrentOrderTotal() {
+    const qtyControls = document.querySelectorAll(".quantity-controls");
+    let subtotal = 0;
+
+    qtyControls.forEach((qtySelector) => {
+        const price = parseFloat(qtySelector.getAttribute("data-price"));
+        const quantity = parseInt(
+            qtySelector.querySelector(".qty-value").textContent
+        );
+        subtotal += price * quantity;
+    });
+
+    // Calculate dynamic shipping fee and tax based on backend logic
+    let shippingFee = 0;
+    let tax = 0;
+    
+    if (subtotal < 3000) {
+        shippingFee = 40.0;
+        tax = (10 / 100) * subtotal; // 10% of product total only
+    } else {
+        shippingFee = 0; // No shipping fee for orders ≥ ₹3000
+        tax = (5 / 100) * subtotal; // 5% of product total only
+    }
+
+    const totalBeforeDiscount = subtotal + shippingFee + tax;
+    return totalBeforeDiscount - discountAmount;
+}
+
+function updateSubtotal() {
+    const qtyControls = document.querySelectorAll(".quantity-controls");
+    let subtotal = 0;
+
+    qtyControls.forEach((qtySelector) => {
+        const price = parseFloat(qtySelector.getAttribute("data-price"));
+        const quantity = parseInt(
+            qtySelector.querySelector(".qty-value").textContent
+        );
+        subtotal += price * quantity;
+    });
+
+    console.log("Current subtotal:", subtotal); // Debug log
+
+    // Update Subtotal
+    const subtotalElem = document.getElementById("subtotal");
+    if (subtotalElem) subtotalElem.textContent = `₹${subtotal.toFixed(2)}`;
+
+    // Calculate dynamic shipping fee and tax based on backend logic
+    let shippingFee = 0;
+    let tax = 0;
+    
+    if (subtotal < 2000) {
+        shippingFee = 40.0;
+        tax = (20 / 100) * subtotal; 
+      
+    } else {
+        shippingFee = 0; 
+        tax = (12 / 100) * subtotal; 
+    }
+    const shippingElem = document.getElementById("shipping-charge");
+    if (shippingElem) {
+        shippingElem.textContent = `₹${shippingFee.toFixed(2)}`;
+    }
+
+    // Calculate total before tax (subtotal + shipping)
+    const totalBeforeTax = subtotal + shippingFee;
+    const totalBeforeTaxElem = document.getElementById("total-before-tax");
+    if (totalBeforeTaxElem)
+        totalBeforeTaxElem.textContent = `₹${totalBeforeTax.toFixed(2)}`;
+
+    // Update tax display (now calculated on product total only, not subtotal + shipping)
+    const taxElem = document.getElementById("estimated-tax");
+    if (taxElem) taxElem.textContent = `₹${tax.toFixed(2)}`;
+
+    // Show/hide discount row
+    const discountRow = document.getElementById("discount-row");
+    const discountAmountElem = document.getElementById("discount-amount");
+    if (discountAmount > 0) {
+        discountRow.style.display = "flex";
+        discountAmountElem.textContent = `-₹${discountAmount.toFixed(2)}`;
+    } else {
+        discountRow.style.display = "none";
+    }
+
+    // Calculate order total before wallet deduction
+    const orderTotalBeforeWallet = totalBeforeTax + tax - discountAmount;
+
+    // Handle wallet payments
+    const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+    let walletAmount = 0;
+    let finalAmount = orderTotalBeforeWallet;
+    
+    if (selectedPayment === 'wallet') {
+        walletAmount = Math.min(walletBalance, orderTotalBeforeWallet);
+        finalAmount = Math.max(0, orderTotalBeforeWallet - walletAmount);
+    } else if (selectedPayment === 'wallet_cod') {
+        walletAmount = parseFloat(document.getElementById('wallet-cod-amount').value) || 0;
+        finalAmount = orderTotalBeforeWallet - walletAmount;
+    } else if (selectedPayment === 'wallet_razorpay') {
+        walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
+        finalAmount = orderTotalBeforeWallet - walletAmount;
+    }
+    
+    // Show/hide wallet payment row
+    const walletPaymentRow = document.getElementById("wallet-payment-row");
+    const walletPaymentAmountElem = document.getElementById("wallet-payment-amount");
+    if (walletAmount > 0) {
+        walletPaymentRow.style.display = "flex";
+        walletPaymentAmountElem.textContent = `-₹${walletAmount.toFixed(2)}`;
+    } else {
+        walletPaymentRow.style.display = "none";
+    }
+
+    const orderTotalElem = document.getElementById("order-total");
+    if (orderTotalElem) {
+        if (selectedPayment === 'wallet' && walletAmount >= orderTotalBeforeWallet) {
+            orderTotalElem.textContent = `₹0.00`;
+        } else {
+            orderTotalElem.textContent = `₹${finalAmount.toFixed(2)}`;
+        }
+    }
+
+    // Show remaining amount for split payments
+    const remainingAmountRow = document.getElementById("remaining-amount-row");
+    const remainingAmountElem = document.getElementById("remaining-amount");
+    if ((selectedPayment === 'wallet_cod' || selectedPayment === 'wallet_razorpay') && walletAmount > 0) {
+        remainingAmountRow.style.display = "flex";
+        remainingAmountElem.textContent = `₹${finalAmount.toFixed(2)}`;
+    } else {
+        remainingAmountRow.style.display = "none";
+    }
+}
     async function removeItem(element, productId) {
         const productItem = element.closest('.product-item');
         
-        // Visual feedback
         productItem.style.opacity = "0.5";
         productItem.style.pointerEvents = "none";
         
         try {
-
             await axios.post("/cart/delete", {
                 productId,
                 _csrf: csrfToken,
@@ -383,17 +820,136 @@
     // Initial call to set subtotal on page load
     updateSubtotal();
 
-    // Place order button placeholder
-    function placeOrder() {
-        alert("Order placed! (Demo)");
-    }
+    async function placeOrder() {
+        const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+        const selectedAddress = document.querySelector('input[name="address"]:checked')?.value;
+        const total=document.getElementById("order-total").value
+        if (!selectedAddress) {
+            showToast("Please select a shipping address.");
+            return;
+        }
+        alert(total)
 
-    // Delivery date display (3 days from today)
-    document.getElementById(
-        "delivery-date"
-    ).textContent = `Delivery by: ${new Date(
-        Date.now() + 3 * 24 * 60 * 60 * 1000
-    ).toDateString()}`;
+        const orderData = {
+            paymentMethod: selectedPayment,
+            addressId: selectedAddress,
+            total,
+            _csrf: csrfToken,
+            couponCode: appliedCoupon?.code || null,
+            discountAmount: discountAmount || 0,
+            
+        };
+
+        // Add wallet amount for split payments
+        if (selectedPayment === 'wallet_cod') {
+            orderData.walletAmount = parseFloat(document.getElementById('wallet-cod-amount').value) || 0;
+        } else if (selectedPayment === 'wallet_razorpay') {
+            orderData.walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
+        } else if (selectedPayment === 'wallet') {
+            orderData.walletAmount = Math.min(walletBalance, getCurrentOrderTotal());
+        }
+
+        // Validate wallet amount
+        if (orderData.walletAmount && orderData.walletAmount > walletBalance) {
+            showToast("Insufficient wallet balance");
+            return;
+        }
+
+        try {
+            if (selectedPayment === "cod") {
+                const res = await axios.post("/order/place", orderData);
+                window.location.href = "/place/order";
+            } 
+            else if (selectedPayment === "wallet") {
+                const res = await axios.post("/order/place", orderData);
+                window.location.href = "/order-success";
+            }
+            else if (selectedPayment === "wallet_cod") {
+                const res = await axios.post("/order/place", orderData);
+                window.location.href = "/order-success";
+            }
+            else if (selectedPayment === "razorpay" || selectedPayment === "wallet_razorpay") {
+                const res = await axios.post("/razorpay/create-order", orderData);
+                const order = res.data.order;
+
+                const options = {
+                    key: "<%= key %>",
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "Your Shop Name",
+                    description: "Order Payment",
+                    order_id: order.id,
+                    handler: async function (response) {
+                        try {
+                            const verifyData = {
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                addressId: selectedAddress,
+                                paymentMethod: selectedPayment,
+                                couponCode: appliedCoupon?.code || null,
+                                discountAmount: discountAmount || 0,
+                                _csrf: csrfToken,
+                            };
+
+                            if (selectedPayment === 'wallet_razorpay') {
+                                verifyData.walletAmount = orderData.walletAmount;
+                            }
+
+                            const verify = await axios.post("/razorpay/verify-payment", verifyData);
+
+                            if (verify.data.success) {
+                                window.location.href = "/order-success";
+                            } else {
+                                showToast("Payment verification failed.");
+                            }
+                        } catch (error) {
+                            showToast("Payment failed.");
+                            console.error(error);
+                        }
+                    },
+                    theme: {
+                        color: "#0e5d8f",
+                    },
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.open();
+            }
+        } catch (err) {
+            console.error("Order placement failed", err);
+            showToast(err.response?.data?.message || "Failed to place order. Try again.");
+        }
+    }
+    function showToast(message) {
+        const toastContainer = document.getElementById("toast-container");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.className = "toast-message";
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        `;
+
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
 </script>
 
 <%- include('../partials/footer') %>

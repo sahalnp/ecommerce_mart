@@ -26,6 +26,26 @@
                 opacity: 0;
             }
         }
+        button.show {
+  background-color: #efd339; /* Bootstrap primary blue */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.show:hover {
+  background-color: #cfcd2b; /* Darker blue on hover */
+}
+
+button.show:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
 
         .compare-toast {
             display: none;
@@ -475,21 +495,20 @@
                         <label
                             for="quantity"
                             class="mb-0 mr-2 font-weight-medium"
-                            >Quantity:</label
-                        >
+                            >Quantity:</label>
                         <button
                             class="btn-qty btn-decrease text-dark"
                             type="button"
                         >
                             −
                         </button>
-                        <span
+                       <span
                             id="quantity"
                             class="qty-value"
                             style="min-width: 30px; text-align: center"
-                            ><%= cartItems ? cartItems.quantity : 1 %></span
+                            ><%= cartItems ? cartItems.quantity : 0 %></span
                         >
-                        <button
+                       <button
                             class="btn-qty btn-increase text-dark"
                             type="button"
                         >
@@ -505,7 +524,8 @@
                                 <i class="fas fa-shopping-cart me-2"></i>&nbsp
                                 Go to cart
                             </a>
-                            <% } else { %> <% if (product.inStock <= 0) { %>
+                            <% } else { %><% if (product.inStock <= 0 || (cartItems && cartItems.quantity <= 0)) { %>
+
                             <button
                                 type="submit"
                                 class="btn btn-add-to-cart"
@@ -533,12 +553,10 @@
                                 <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
                             </button>
                             <% } else { %>
-                            <button type="button" class="btn btn-buy-now">
+                            <button type="button" class="btn btn-buy-now" onclick="buy('<%= product._id %>')">
                                 <i class="fas fa-bolt me-2"></i>&nbsp Buy Now
                             </button>
                             <% } %>
-
-                            <!-- Try On Button -->
                             <a
                                 href="/tryOn/<%=product._id %>"
                                 type="button"
@@ -548,6 +566,12 @@
                                 <i class="fas fa-vr-cardboard me-2"></i>&nbsp
                                 Try On
                             </a>
+                            <button type="button" class="show" onclick="window.location.href='/order/review/<%= product._id %>'">
+  <i class="fas fa-star me-2"></i> Show Review
+</button>
+
+
+
                         </div>
 
                         <!-- Secondary action button -->
@@ -558,7 +582,7 @@
                                 type="button"
                                 class="btn btn-outline-secondary"
                             >
-                                <i class="fas fa-exchange-alt me-2"></i> &nbspGo
+                                <i class="fas fa-exchange-alt me-2"></i> &nbsp Go
                                 to compare page
                             </a>
                             <% } else { %>
@@ -567,7 +591,7 @@
                                 class="btn btn-outline-secondary"
                                 onclick="addForComparison()"
                             >
-                                <i class="fas fa-exchange-alt me-2"></i> Add for
+                                <i class="fas fa-exchange-alt me-2"></i> &nbsp Add for
                                 comparison
                             </button>
                             <% } %>
@@ -888,5 +912,22 @@
         }
       }
 </script>
+<script>
+    
+async function buy(productId) {
+  const quantityInput = document.getElementById('quantityInput');
+  const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+  try {
+    await axios.post('/buy', { productId, quantity, _csrf: csrfToken });
+    window.location.href = '/checkout';
+  } catch (error) {
+    console.error("Buy error:", error);
+    alert("Failed to place order");
+  }
+}
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <%- include('../partials/footer') %>
