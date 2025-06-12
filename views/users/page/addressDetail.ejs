@@ -1,0 +1,160 @@
+<%- include('../partials/header') %>
+
+<head>
+    <link rel="stylesheet" href="/assets/css/address.css" />
+    <style>
+        .main {
+            background: #399b36;
+            font-family: "Josefin Sans", sans-serif;
+            text-transform: uppercase;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            padding: 30px 28px;
+            border-radius: 0px;
+            display: inline-block;
+            line-height: 0;
+            cursor: pointer;
+            margin-bottom: 0;
+            margin: 10px;
+            cursor: pointer;
+            transition: color 0.4s linear;
+            position: relative;
+            z-index: 1;
+            border: 0;
+            overflow: hidden;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<div class="slider-area box">
+    <div class="single-slider slider-height2 d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 d-flex flex-column align-items-center">
+                    <div class="hero-cap text-center">
+                        <h2 class="name">Profile</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="/profile/<%= user._id %>">
+                        <i class="fas fa-user me-2"></i> Profile Settings
+                    </a>
+                    <a
+                        class="nav-link"
+                        href="/profile/changePassword/<%= user._id %>"
+                    >
+                        <i class="fas fa-lock me-2"></i> Change Password
+                    </a>
+                    <a
+                        class="nav-link active"
+                        href="/profile/address/<%= user._id %>"
+                    >
+                        <i class="fas fa-map-marker-alt me-2"></i> Addresses
+                    </a>
+                    <a class="nav-link" href="/profile/wallet/<%= user._id %>">
+                        <i class="fas fa-wallet me-2"></i> Wallet
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Address Section -->
+        <div class="col-md-9">
+            <div id="addresses" class="content-section">
+                <div class="profile-container">
+                    <div class="p-4">
+                        <div
+                            class="d-flex justify-content-between align-items-center mb-4"
+                        >
+                            <h3>My Addresses</h3>
+                            <a href="/add-address" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i> Add New Address
+                            </a>
+                        </div>
+
+                        <% if (addressArray && addressArray.length > 0) { %> <%
+                        addressArray.forEach(function(add) { %>
+                        <div
+                            class="address-card d-flex justify-content-between align-items-start"
+                        >
+                            <div>
+                                <h5>
+                                    <%= add.name %> (<%= add.addressType %>)
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Phone:</strong> <%= add.number %>
+                                </p>
+                                <p class="mb-1">
+                                    <%= add.street %>, <%= add.localPlace %>
+                                </p>
+                                <p class="mb-1">
+                                    <%= add.city %>, <%= add.district %>, <%=
+                                    add.state %> - <%= add.pincode %>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Country:</strong> <%= add.country %>
+                                </p>
+                                <% if (add.landmark) { %>
+                                <p class="mb-1">
+                                    <strong>Landmark:</strong> <%= add.landmark
+                                    %>
+                                </p>
+                                <% } %>
+                            </div>
+                            <div>
+                                <a
+                                    href="/edit/address/<%= add._id %>"
+                                    style="
+                                            padding: 24px;
+                                            border-radius: 10px;
+                                        "
+                                    class="main btn btn-sm  me-1"
+                                    >Edit</a>
+                                <form
+                                    action="/address/delete/<%= add._id %>"
+                                    method="POST"
+                                    style="display: inline"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_csrf"
+                                        value="<%= csrfToken %>"
+                                    />
+                                    <button
+                                        type="submit"
+                                        style="
+                                            padding: 24px;
+                                            border-radius: 10px;
+                                        "
+                                        class="main btn "
+                                       
+                                    >
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <% }) %> <% } else { %>
+                        <p>No addresses found. Please add one.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

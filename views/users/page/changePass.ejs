@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+
+<head>
+   <link rel="stylesheet" href="/assets/css/profile.css">
+</head>
+
+<div class="slider-area box">
+    <div class="single-slider slider-height2 d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-12 d-flex flex-column align-items-center">
+                    <div class="hero-cap text-center">
+                        <h2 class="name">Profile</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="/profile/<%= user._id %>">
+                        <i class="fas fa-user me-2"></i> Profile Settings
+                    </a>
+                    <a class="nav-link active" href="/profile/changePassword/<%= user._id %>">
+                        <i class="fas fa-lock me-2"></i> Change Password
+                    </a>
+                    <a class="nav-link" href="/profile/address/<%= user._id %>">
+                        <i class="fas fa-map-marker-alt me-2"></i> Addresses
+                    </a>
+                    <a class="nav-link" href="/profile/wallet/<%= user._id %>">
+                        <i class="fas fa-wallet me-2"></i> Wallet
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div id="password" class="content-section">
+                <div class="profile-container">
+                    <div class="p-4">
+                        <h3 class="mb-4">Change Password</h3>
+                        <form id="change-password-form" method="POST" action="/change/password">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                            <div class="mb-3">
+                                <label class="form-label">New Password</label>
+                                <input type="password" class="form-control" name="password" id="newPassword"
+                                    placeholder="Enter new password" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword"
+                                    placeholder="Confirm new password" required />
+                            </div>
+
+                            <div class="alert alert-info">
+                                <small>
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Password must be at least 8 characters long and contain uppercase, lowercase,
+                                    numbers, and special characters.
+                                </small>
+                                <p id="error-msg"></p>
+                                <p id="success-msg"></p>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const csrfToken = "<%= csrfToken %>";
+
+    document.getElementById("change-password-form").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const errorMsg = document.getElementById("error-msg");
+        const successMsg = document.getElementById("success-msg");
+
+        errorMsg.textContent = "";
+        successMsg.textContent = "";
+
+        if (newPassword !== confirmPassword) {
+            errorMsg.textContent = "New passwords do not match.";
+            return;
+        }
+
+        try {
+            const response = await axios.post("/change/password", {
+                _csrf: csrfToken,
+                newPassword
+            });
+
+            if (response.data.success) {
+                successMsg.textContent = response.data.success;
+                setTimeout(() => window.location.reload(), 1000);
+            }
+        } catch (error) {
+            if (error.response?.data?.error) {
+                errorMsg.textContent = error.response.data.error;
+            } else {
+                errorMsg.textContent = "Something went wrong. Please try again.";
+            }
+        }
+    });
+</script>
+
+<%- include('../partials/footer') %>

@@ -51,21 +51,21 @@
 
                             <!-- Add to Cart Button -->
                             <div class="addtoCart">
-                                <% if (cart.includes(String(p._id))) { %>
-                                    <button onclick="goToCart()" class="add-cart-btn">
-                                        <i class="fas fa-shopping-cart"></i> Go to Cart
-                                    </button>
-                                <% } else { %>
-                                   <% if (p.inStock <= 0) { %>                                      
-                                            <button onclick="showOutOfStockToast()" class="add-cart-btn" disabled>                                         
-                                                <i class="fas fa-shopping-cart"></i> Add to Cart                                     
-                                            </button>                                     
-                                        <% } else { %>                                        
-                                            <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn">                                         
-                                                <i class="fas fa-shopping-cart"></i> Add to Cart                                     
-                                            </button>                                     
-                                        <% } %>
-                                <% } %>
+ <% if (cart.includes(String(p._id))) { %>
+    <button onclick="goToCart()" class="add-cart-btn">
+        <i class="fas fa-shopping-cart"></i> Go to Cart
+    </button>
+<% } else if (p.inStock <= 0) { %>
+    <button class="add-cart-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+        <i class="fas fa-shopping-cart"></i> Out of Stock
+    </button>
+<% } else { %>
+    <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn">
+        <i class="fas fa-shopping-cart"></i> Add to Cart
+    </button>
+<% } %>
+
+
                             </div>
 
                             <!-- Wishlist Icon -->
@@ -179,102 +179,90 @@
 </main>
 
 <script>
-    const csrfToken = "<%= csrfToken %>";
+const csrfToken = "<%= csrfToken %>";
 
-    async function addToCart(productId) {
-        try {
-            const res = await axios.post(`/product/add-to-cart`, {
+function showToast(selector, message, color = "#dc3545") {
+    const toast = document.querySelector(selector);
+    if (toast) {
+        toast.textContent = message;
+        toast.style.background = color;
+        toast.style.display = "block";
+        setTimeout(() => {
+            toast.style.display = "none";
+        }, 2000);
+    }
+}
+
+async function addToCart(productId) {
+    try {
+        const res = await axios.post(
+            "/product/add-to-cart",
+            {
                 productId,
                 quantity: 1,
                 _csrf: csrfToken,
-            }, {
+            },
+            {
                 withCredentials: true,
-                headers: { 'CSRF-Token': csrfToken },
+                headers: {
+                    "CSRF-Token": csrfToken,
+                },
+            }
+        );
+
+        // Success: Show toast and reload
+        showToast(".cart-toast", "Item added to cart! 🎉", "#28a745");
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+    } catch (err) {
+        console.error("Add to cart error:", err);
+        alert("Failed to add item to cart.");
+    }
+}
+
+async function toggleWishlist(productId, liked) {
+    try {
+        if (liked === "true") {
+            await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken }, {
+                withCredentials: true,
+                headers: { "CSRF-Token": csrfToken }
             });
 
-            const toast = document.querySelector('.cart-toast');
-            if (toast) {
-                toast.style.display = 'block';
-                setTimeout(() => {
-                    toast.style.display = 'none';
-                    window.location.reload();
-                }, 2000);
-            } else {
-                console.warn("Cart toast not found");
-            }
-        } catch (err) {
-            console.error("Add to cart error:", err);
-            alert("Add to cart failed");
-        }
-    }
-    
-    async function toggleWishlist(productId, liked) {
-        try {
-            if (liked === 'true') {
-                await axios.post(`/wishlist/remove/${productId}`, { 
-                    _csrf: csrfToken 
-                }, { 
-                    withCredentials: true,
-                    headers: { 'CSRF-Token': csrfToken }
-                });
-                
-                const toast = document.querySelector('.wishlist-toast');
-                if (toast) {
-                    toast.textContent = 'Item removed from wishlist! ❌';
-                    toast.style.display = 'block';
-                    setTimeout(() => {
-                        toast.style.display = 'none';
-                    }, 2000);
-                }
-            } else {
-                await axios.post(`/wishlist/add/${productId}`, { 
-                    _csrf: csrfToken 
-                }, { 
-                    withCredentials: true,
-                    headers: { 'CSRF-Token': csrfToken }
-                });
-                
-                const toast = document.querySelector('.wishlist-toast');
-                if (toast) {
-                    toast.textContent = 'Item added to wishlist! ❤️';
-                    toast.style.background = '#28a745';
-                    toast.style.display = 'block';
-                    setTimeout(() => {
-                        toast.style.display = 'none';
-                        toast.style.background = '#dc3545';
-                    }, 2000);
-                }
-            }
+            showToast(".wishlist-toast", "Item removed from wishlist! ❌");
+        } else {
+            await axios.post(`/wishlist/add/${productId}`, { _csrf: csrfToken }, {
+                withCredentials: true,
+                headers: { "CSRF-Token": csrfToken }
+            });
 
-            const icon = document.querySelector(`.heart-icon[onclick*="${productId}"]`);
-            if (icon) {
-                if (liked === 'true') {
-                    icon.classList.remove("fas", "liked");
-                    icon.classList.add("far");
-                    icon.setAttribute("onclick", `toggleWishlist('${productId}', 'false')`);
-                } else {
-                    icon.classList.remove("far");
-                    icon.classList.add("fas", "liked");
-                    icon.setAttribute("onclick", `toggleWishlist('${productId}', 'true')`);
-                }
-            }
-        } catch (err) {
-            console.error("Wishlist toggle error:", err);
-            alert("Failed to update wishlist.");
+            showToast(".wishlist-toast", "Item added to wishlist! ❤️", "#28a745");
         }
-    }
 
-    function goToCart() {
-        window.location.href = "/cart";
+        const icon = document.querySelector(`.heart-icon[onclick*="${productId}"]`);
+        if (icon) {
+            if (liked === "true") {
+                icon.classList.remove("fas", "liked");
+                icon.classList.add("far");
+                icon.setAttribute("onclick", `toggleWishlist('${productId}', 'false')`);
+            } else {
+                icon.classList.remove("far");
+                icon.classList.add("fas", "liked");
+                icon.setAttribute("onclick", `toggleWishlist('${productId}', 'true')`);
+            }
+        }
+    } catch (err) {
+        console.error("Wishlist toggle error:", err);
+        alert("Failed to update wishlist.");
     }
-    function showOutOfStockToast() {
-  const toast = document.querySelector('.stock-toast');
-  if (toast) {
-    toast.style.display = 'block';
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 3000);
-  }
+}
+
+function goToCart() {
+    window.location.href = "/cart";
+}
+
+function showOutOfStockToast() {
+    showToast(".stock-toast", "Item is out of stock! 📦");
 }
 </script>
 

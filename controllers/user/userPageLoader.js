@@ -35,11 +35,46 @@ export const home = asyncHandler(async (req, res) => {
 });
 
 export const loadProfile = asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id)
     return res.render("users/page/profile", {
-        user: req.session.users,
+        user,
         username: req.session.userName,
     });
 });
+export const loadchangePass = asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id)
+    return res.render("users/page/changePass", {
+        user,
+        username: req.session.userName,
+    });
+});
+export const loadProfileAddress = asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id)
+
+    return res.render("users/page/addressDetail", {
+        user,
+        username: req.session.userName,
+        addressArray:user.addresses
+    });
+}); 
+export const editAddress= asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id)
+    const address = user.addresses.find(addr => addr._id.toString() === req.params.id);
+    return res.render("users/page/editAddress", {
+        user,
+        username: req.session.userName,
+        address
+    });
+});
+
+export const loadWallet = asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id) 
+    return res.render("users/page/wallet", {
+        user,
+        username: req.session.userName,
+    });
+}); 
+
 
 export const laodShop = asyncHandler(async (req, res) => {
     const find = await product.find().populate("image");
@@ -71,17 +106,7 @@ export const loadProduct = asyncHandler(async (req, res) => {
         ((find.pricing.price - find.pricing.salePrice) / find.pricing.price) *
             100
     );
-    let totalUser = 0;
-    let totalvalue = 0;
-    let count = 0;
     const value = await product.findById(productId);
-    const rate = value.rating;
-    for (let i = 1; i <= 5; i++) {
-        count = rate[i];
-        totalvalue += i * count;
-        totalUser += count;
-    }
-    const avg = totalvalue / totalUser;
     const cartfind = await Cart.findOne({ UserId, productId });
     const cmp = await Compare.findOne({ UserId, productId });
     if (cartfind) {
@@ -93,7 +118,13 @@ export const loadProduct = asyncHandler(async (req, res) => {
             );
         }
     }
-    
+    const reviews = await review.find({ productId: find._id });
+    let star = 0;
+    reviews.forEach((d) => {
+        star += d.rating;
+    });
+    const averageRating =
+        reviews.length > 0 ? (star / reviews.length).toFixed(1) : 0;
 
     const exist = await Cart.find({
         UserId,
@@ -111,33 +142,30 @@ export const loadProduct = asyncHandler(async (req, res) => {
         exist: show,
         cartItems: cartfind,
         cmp,
-        totalUser,
-        avg,
+        totalUser:reviews.length,
+        avg:averageRating
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {
-const cartItems = await Cart.find({ 
-    UserId: req.session.users._id,
-    quantity: { $gt: 0 }
-});
+    const cartItems = await Cart.find({
+        UserId: req.session.users._id,
+        quantity: { $gt: 0 },
+    });
     const productIds = cartItems.map((item) => item.productId);
 
-    
     const productsInCart = await product
         .find({ _id: { $in: productIds } })
         .populate("image");
-    for(let i = 0;i<productIds.length;i++){
-        const prod=await product.findById(productIds[i])
-        if(prod.inStock <=0){
-            await Cart.findOneAndDelete({productId:productIds[i]})
-        }
-        else{
-        await Cart.findOneAndUpdate(
-            { productId: productIds[i] }, 
-            { quantity: prod.inStock }, 
-            { new: true }
-        );
-
+    for (let i = 0; i < productIds.length; i++) {
+        const prod = await product.findById(productIds[i]);
+        if (prod.inStock <= 0) {
+            await Cart.findOneAndDelete({ productId: productIds[i] });
+        } else if (prod.inStock > 0 && prod.inStock <= 10) {
+            await Cart.findOneAndUpdate(
+                { UserId: req.session.users._id, productId: productIds[i] },
+                { quantity: prod.inStock },
+                { new: true }
+            );
         }
     }
 
@@ -243,23 +271,19 @@ export const loadCheckout = asyncHandler(async (req, res) => {
     }
 
     const total = prodtotal + tax + ship;
-    for(let i = 0;i<productIds.length;i++){
-        const prod=await product.findById(productIds[i])
-        if(prod.inStock <=0){
-            await Cart.findOneAndDelete({productId:productIds[i]})
-        }
-        else{
-        await Cart.findOneAndUpdate(
-            { productId: productIds[i] }, 
-            { quantity: prod.inStock }, 
-            { new: true }
-        );
-
+    for (let i = 0; i < productIds.length; i++) {
+        const prod = await product.findById(productIds[i]);
+        if (prod.inStock <= 0) {
+            await Cart.findOneAndDelete({ productId: productIds[i] });
+        } else if (prod.inStock > 0 && prod.inStock <= 10) {
+            await Cart.findOneAndUpdate(
+                { UserId: req.session.users._id, productId: productIds[i] },
+                { quantity: prod.inStock },
+                { new: true }
+            );
         }
     }
-    console.log(total);
-    
-    const key=process.env.KEY_ID
+    const key = process.env.KEY_ID;
     return res.render("users/page/checkout", {
         username: req.session.userName,
         user: req.session.users,
@@ -270,7 +294,7 @@ export const loadCheckout = asyncHandler(async (req, res) => {
         tax,
         total: total.toFixed(2),
         cart: cartfind,
-        key
+        key,
     });
 });
 export const contact = asyncHandler(async (req, res) => {
@@ -304,8 +328,8 @@ export const loadAddress = asyncHandler(async (req, res) => {
         error: null,
     });
 });
-export const dltAddress = asyncHandler(async (req, res) => {
 
+export const dltAddress = asyncHandler(async (req, res) => {
     const find = await User.findById(req.session.users._id);
     const address = find.addresses.id(req.params.id);
     if (address) {

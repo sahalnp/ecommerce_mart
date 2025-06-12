@@ -4,39 +4,51 @@ import { product } from "../../models/productModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
 import { Order } from "../../models/orderModel.js";
-import orderid from "order-id";
 import { review } from "../../models/reviewModel.js";
+import bcrypt from "bcrypt";
 
 export const editProfile = asyncHandler(async (req, res) => {
-    const { firstname, Lastname, email, number } = req.body;
+    const { firstname, Lastname, email, number, gender, dob } = req.body;
     await User.findByIdAndUpdate(req.params.id, {
         firstname,
         Lastname,
         email,
         number,
+        gender,
+        dob,
     });
-    return res.redirect("/");
+    return res.redirect(`/profile/${req.params.id}`);
+});
+export const changePass = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.session.users._id);
+    const { password } = req.body;
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (passwordMatch) {
+        return res.status(400).json({ error: "This is old password try new" });
+    }
 });
 
 export const addtoCart = asyncHandler(async (req, res) => {
     const UserId = req.session.users._id;
     const { productId, quantity } = req.body;
-    const find = await product.findOne({
-    userId: req.session.users._id,
-    productId: productId,
-    inStock: { $gt: 0 }
-});
-
-    const prodfind = await product.findById(productId);
-    
-    if (!find) {
-        await Cart.create({
-            UserId,
-            productId,
-            productName: prodfind.title,
-            price: quantity * prodfind.pricing.salePrice,
-            quantity: req.body.quantity,
-        });
+    const find = await Cart.findOne({
+        UserId: req.session.users._id,
+        productId: productId,
+    });
+    const prodfind = await product.findOne({
+        _id: productId,
+        inStock: { $gt: 0 },
+    });
+    if (prodfind) {
+        if (!find) {
+            await Cart.create({
+                UserId,
+                productId,
+                productName: prodfind.title,
+                price: quantity * prodfind.pricing.salePrice,
+                quantity,
+            });
+        }
     }
     res.redirect("/cart");
 });
@@ -170,8 +182,49 @@ export const addAddress = asyncHandler(async (req, res) => {
         });
         await find.save();
     }
-    res.redirect("/checkout");
+    res.redirect(req.get("referer"));
 });
+export const updateAddress = async (req, res) => {
+    const user = await User.findById(req.session.users._id);
+    const { id } = req.params;
+    const {
+        name,
+        number,
+        addressType,
+        street,
+        localPlace,
+        landmark,
+        city,
+        district,
+        state,
+        pincode,
+        country,
+    } = req.body;
+
+    try {
+        await user.addresses.findByIdAndUpdate(id, {
+            name,
+            number,
+            addressType,
+            street,
+            localPlace,
+            landmark,
+            city,
+            district,
+            state,
+            pincode,
+            country,
+        });
+
+        res.redirect(`/profile/address/${req.user._id}`);
+    } catch (error) {
+        console.error("Failed to update address:", error);
+        res.status(500).send(
+            "Something went wrong while updating the address."
+        );
+    }
+};
+
 export const addCmp = asyncHandler(async (req, res) => {
     try {
         const { productId } = req.body;
@@ -186,8 +239,8 @@ export const addcart = asyncHandler(async (req, res) => {
         const find = await product.findOne({
             UserId: req.session.users._id,
             productId,
-            inStock: { $gt: 0 }
-            });
+            inStock: { $gt: 0 },
+        });
 
         if (find) {
             res.json("already exist");
@@ -208,9 +261,9 @@ export const buy = asyncHandler(async (req, res) => {
         const prod = await product.findById(productId);
         const find = await product.findOne({
             userId: req.session.users._id,
-            productId, 
-            inStock: { $gt: 0 }
-});
+            productId,
+            inStock: { $gt: 0 },
+        });
 
         if (!find) {
             await Cart.create({
@@ -315,7 +368,7 @@ export const rating = asyncHandler(async (req, res) => {
     }
 });
 
-export const reviewRighted = asyncHandler(async (req, res) => { 
+export const reviewRighted = asyncHandler(async (req, res) => {
     const { title, desc, rating } = req.body;
     const userId = req.session.users._id;
     const productId = req.params.id;

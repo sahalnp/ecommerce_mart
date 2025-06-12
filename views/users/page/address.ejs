@@ -13,6 +13,20 @@
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
     transition: background-color 0.3s ease, transform 0.2s ease;
   }
+  .back{
+
+    background-color: #000000;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+  }
 
   .save-btn:hover {
     background-color: #0056b3;
@@ -117,6 +131,8 @@
             </div>
     <% } %>
 <button type="submit" class="save-btn" onclick="">Save Address</button>
+<button type="button" class="back" onclick="history.back()">Back</button>
+
 
     </form>
 </div>

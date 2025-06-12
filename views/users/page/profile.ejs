@@ -1,419 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../partials/header') %>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: white;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid #ddd;
-            overflow: hidden;
-        }
-
-        .profile-header {
-            background: #f8f9fa;
-            color: #333;
-            padding: 2rem;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #007bff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 2.5rem;
-            color: white;
-            border: 3px solid #fff;
-        }
-
-        .profile-name {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #333;
-        }
-
-        .profile-role {
-            font-size: 1rem;
-            color: #666;
-        }
-
-        .profile-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            padding: 2rem;
-        }
-
-        .profile-section {
-            background: white;
-            border-radius: 6px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e9ecef;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 0.5rem;
-        }
-
-        .section-title i {
-            color: #007bff;
-        }
-
-        .profile-field {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .profile-field:last-child {
-            border-bottom: none;
-        }
-
-        .field-label {
-            font-weight: 500;
-            color: #555;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .field-value {
-            color: #333;
-            font-weight: normal;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .wishlist-count {
-            background: #007bff;
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-weight: 500;
-            font-size: 0.875rem;
-        }
-
-        .actions-section {
-            grid-column: 1 / -1;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1rem;
-        }
-
-        .action-btn {
-            padding: 0.75rem 1.5rem;
-            border: 1px solid #007bff;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background: #007bff;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #007bff;
-            border: 1px solid #007bff;
-        }
-
-        .action-btn:hover {
-            background: #0056b3;
-            color: white;
-            border-color: #0056b3;
-        }
-
-        .btn-secondary:hover {
-            background: #007bff;
-            color: white;
-        }
-
-        .date-formatted {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .empty-addresses {
-            text-align: center;
-            color: #999;
-            font-style: italic;
-            padding: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .profile-content {
-                grid-template-columns: 1fr;
-                padding: 2rem 1rem;
-            }
-            
-            .profile-header {
-                padding: 2rem 1rem;
-            }
-            
-            .profile-name {
-                font-size: 2rem;
-            }
-            
-            .actions-section {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/assets/css/profile.css">
 </head>
-<body>
-    <div class="profile-container">
-        <!-- Profile Header -->
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <h1 class="profile-name">Muhammed Sahal</h1>
-            <p class="profile-role">Customer</p>
-        </div>
-
-        <!-- Profile Content -->
-        <div class="profile-content">
-            <!-- Personal Information -->
-            <div class="profile-section">
-                <h2 class="section-title">
-                    <i class="fas fa-user-circle"></i>
-                    Personal Information
-                </h2>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-user"></i>
-                        First Name
-                    </div>
-                    <div class="field-value">Muhammed</div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-user"></i>
-                        Last Name
-                    </div>
-                    <div class="field-value">Sahal</div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-envelope"></i>
-                        Email
-                    </div>
-                    <div class="field-value">sahalnp60@gmail.com</div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-phone"></i>
-                        Phone Number
-                    </div>
-                    <div class="field-value">+918921018932</div>
-                </div>
-            </div>
-
-            <!-- Account Details -->
-            <div class="profile-section">
-                <h2 class="section-title">
-                    <i class="fas fa-cog"></i>
-                    Account Details
-                </h2>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-id-card"></i>
-                        User ID
-                    </div>
-                    <div class="field-value">681f35aa5ce97761c32b8f2a</div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-shield-alt"></i>
-                        Role
-                    </div>
-                    <div class="field-value">Customer (0)</div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-calendar-alt"></i>
-                        Member Since
-                    </div>
-                    <div class="field-value">
-                        <div>May 10, 2025</div>
-                        <div class="date-formatted">11:16 AM</div>
+    <div class="slider-area box">
+        <div class="single-slider slider-height2 d-flex align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-12 d-flex flex-column align-items-center">
+                        <div class="hero-cap text-center">
+                            <h2 class="name">profile</h2>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-heart"></i>
-                        Wishlist Items
-                    </div>
-                    <div class="field-value">
-                        <span class="wishlist-count">3 items</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Account Status -->
-            <div class="profile-section">
-                <h2 class="section-title">
-                    <i class="fas fa-info-circle"></i>
-                    Account Status
-                </h2>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-power-off"></i>
-                        Status
-                    </div>
-                    <div class="field-value">
-                        <span class="status-badge status-active">Active</span>
-                    </div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-trash-alt"></i>
-                        Account Deleted
-                    </div>
-                    <div class="field-value">
-                        <span class="status-badge status-active">No</span>
-                    </div>
-                </div>
-                
-                <div class="profile-field">
-                    <div class="field-label">
-                        <i class="fas fa-database"></i>
-                        Version
-                    </div>
-                    <div class="field-value">2</div>
-                </div>
-            </div>
-
-            <!-- Addresses -->
-            <div class="profile-section">
-                <h2 class="section-title">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Addresses
-                </h2>
-                
-                <div class="empty-addresses">
-                    No addresses added yet
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="actions-section">
-                <button class="action-btn btn-primary">
-                    <i class="fas fa-edit"></i>
-                    Edit Profile
-                </button>
-                
-                <button class="action-btn btn-secondary">
-                    <i class="fas fa-lock"></i>
-                    Change Password
-                </button>
-                
-                <button class="action-btn btn-secondary">
-                    <i class="fas fa-plus"></i>
-                    Add Address
-                </button>
-                
-                <button class="action-btn btn-secondary">
-                    <i class="fas fa-heart"></i>
-                    View Wishlist
-                </button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Add some interactivity
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const action = this.textContent.trim();
-                console.log(`${action} clicked`);
-                // Add your navigation logic here
-            });
-        });
+    <div class="container-fluid mt-5">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="/profile/<%= user._id %>" onclick="showSection('profile')">
+                            <i class="fas fa-user me-2"></i> Profile Settings
+                        </a>
+                        <a class="nav-link" href="/profile/changePassword/<%= user._id %>" onclick="showSection('password')">
+                            <i class="fas fa-lock me-2"></i> Change Password
+                        </a>
+                        <a class="nav-link" href="/profile/address/<%= user._id %>" onclick="showSection('addresses')">
+                            <i class="fas fa-map-marker-alt me-2"></i> Addresses
+                        </a>
+                        <a class="nav-link" href="/profile/wallet/<%= user._id %>" onclick="showSection('wallet')">
+                            <i class="fas fa-wallet me-2"></i> Wallet
+                        </a>      
+                    </nav>
+                </div>
+            </div>
 
-        // Format the member since date
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- Profile Settings Section -->
+                <div id="profile" class="content-section active">
+                    <div class="profile-container">
+                        <div class="p-4">
+                            <h3 class="mb-4">Profile Settings</h3>
+                            <form action="/profile/update/<%= user._id %>" method="POST">
+                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" name="firstname" class="form-control" value="<%= user.firstname %>">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" name="Lastname" class="form-control" value="<%= user.Lastname %>">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" name="email" class="form-control" value="<%= user.email %>">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input type="tel" name="number" class="form-control" value="<%= user.number  %>">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Date of Birth</label>
+                                      <input type="date" name="dob" class="form-control" value="<%= user.dob ? new Date(user.dob).toISOString().slice(0, 10) : '' %>">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Gender</label>
+                                        <select class="form-control" name="gender">
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                
+                
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+       
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
         }
+
+        function showAddressForm() {
+            document.getElementById('addressForm').style.display = 'block';
+        }
+
+        function hideAddressForm() {
+            document.getElementById('addressForm').style.display = 'none';
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
     </script>
-</body>
-</html>
+<%- include('../partials/footer') %>

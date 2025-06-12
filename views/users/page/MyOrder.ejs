@@ -1,107 +1,130 @@
 <%- include('../partials/header') %>
 <head>
-<link rel="stylesheet" href="/assets/css/myOrder.css">
+    <link rel="stylesheet" href="/assets/css/myOrder.css" />
 </head>
 
-
-    <div class="slider-area">
-        <div class="single-slider slider-height2 d-flex align-items-center">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="hero-cap text-center">
-                            <h2 class="name">My Order</h2>
-                        </div>
+<div class="slider-area">
+    <div class="single-slider slider-height2 d-flex align-items-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="hero-cap text-center">
+                        <h2 class="name">My Order</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="container">
-        <!-- Main Content -->
-        <section class="order-section">
-            <h1 class="page-title">Your Orders</h1>
-            
-            <div class="filters">
-                <div class="filter-row">
-                    <div class="filter-group">
-                        <label>Orders placed in</label>
-                        <select>
-                            <option>Last 30 days</option>
-                            <option>Past 3 months</option>
-                            <option>2023</option>
-                            <option>2022</option>
-                            <option>Archived orders</option>
-                        </select>
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label>Order status</label>
-                        <select>
-                            <option>All orders</option>
-                            <option>Not yet shipped</option>
-                            <option>Shipped</option>
-                            <option>Delivered</option>
-                            <option>Cancelled</option>
-                        </select>
-                    </div>
+<div class="container">
+    <!-- Main Content -->
+    <section class="order-section">
+        <h1 class="page-title">Your Orders</h1>
+
+        <div class="filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Orders placed in</label>
+                    <select>
+                        <option>Last 30 days</option>
+                        <option>Past 3 months</option>
+                        <option>2023</option>
+                        <option>2022</option>
+                        <option>Archived orders</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Order status</label>
+                    <select>
+                        <option>All orders</option>
+                        <option>Not yet shipped</option>
+                        <option>Shipped</option>
+                        <option>Delivered</option>
+                        <option>Cancelled</option>
+                    </select>
                 </div>
             </div>
-            
-            <div class="orders-container">
-                <% orders.forEach((order) => { %>
-                <div class="order-card">
-                    <div class="order-header">
-                        <div class="order-info">
-                            <h3>ORDER: <%= order.OrderId %></h3>
-                           <p>Placed on: <%= new Date(order.OrderDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></p>
+        </div>
 
-                        </div>
-                        <div class="order-actions">
-                            <a href="/MyOrder/<%= order._id %>" class="btn btn-primary">
-                                <i class="fas fa-box"></i> Track package
-                            </a>
-                            <a href="#" class="btn">
-                                <i class="fas fa-undo"></i> Return items
-                            </a>
-                            <a href="#" class="btn">
-                                <i class="fas fa-file-invoice"></i> Invoice
-                            </a>
-                        </div>
+        <div class="orders-container">
+            <% orders.forEach((order) => { %>
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-info">
+                        <h3>ORDER: <%= order.OrderId %></h3>
+                        <p>
+                            Placed on: <%= new
+                            Date(order.OrderDate).toLocaleDateString('en-US', {
+                            year: 'numeric', month: 'short', day: 'numeric' })
+                            %>
+                        </p>
                     </div>
-                    
-                    <div class="order-details">
-                        <% order.items.forEach((item) => { %> 
-                        <div class="order-image">
-                            <a href="/product/<%= item.product._id %>">
-                                <img src="<%= item.product.image[0].filepath %>" alt="Product">
-                            </a>
-                        </div>
-                        <div class="order-content">
-                            <div class="product-name">
-                                <a href="/product/<%= item.product._id %>"><%= item.title %></a>
-                            </div>
-                            <div>
-                                <span class="order-status status-<%= order.status ? order.status.toLowerCase() : 'processing' %>">
-                                    <%= item.status || 'Processing' %>
-                                </span>
-                            </div>
-                            <p>Quantity: <%= item.quantity %></p>
-                            <p>Price: <%= item.price %></p>
-                              <div class="meta-item">
-                           
-                        </div>
-                        </div>
-                        
-                        <% }); %>
-                         <h4>Order total</h4>
-                            <p>₹<%= order.total %></p>
+                    <div class="order-actions">
+                        <a
+                            href="/MyOrder/<%= order._id %>"
+                            class="btn btn-primary"
+                        >
+                            <i class="fas fa-box"></i> Track package
+                        </a>
+
+                        <% if (order.status === "Delivered") { %>
+                        <a href="#" class="btn">
+                            <i class="fas fa-undo"></i> Return items
+                        </a>
+                         <a href="/order/invoice" class="btn">
+                            <i class="fas fa-file-invoice"></i> Invoice
+                        </a>
+                        <% } %>
+
+                       
                     </div>
                 </div>
-                <% }); %>
+
+                <div class="order-details">
+                    <% order.items.forEach((item) => { %>
+                    <div class="order-image">
+                        <a href="/product/<%= item.product._id %>">
+                            <img
+                                src="<%= item.product.image[0].filepath %>"
+                                alt="Product"
+                            />
+                        </a>
+                    </div>
+                    <div class="order-content">
+                        <div class="product-name">
+                            <a href="/product/<%= item.product._id %>"
+                                ><%= item.title %></a
+                            >
+                        </div>
+                        <div>
+                            <span
+                                class="order-status status-<%= order.status ? order.status.toLowerCase() : 'processing' %>"
+                            >
+                                <%= order.status || 'Processing' %>
+                            </span>
+                        </div>
+                        <p>Quantity: <%= item.quantity %></p>
+                        <p>Price: <%= item.price %></p>
+                        <div class="meta-item"></div>
+                    </div>
+
+                    <% }); %>
+                    <h4>Order total:</h4>
+                    <p
+                        style="
+                            font-weight: 900;
+                            color: rgb(147, 142, 142);
+                            font-family: fantasy;
+                        "
+                    >
+                        ₹<%= order.total %>
+                    </p>
+                </div>
             </div>
-        </section>
-    </div>
-</body>
+            <% }); %>
+        </div>
+    </section>
+</div>
 <%- include('../partials/footer') %>

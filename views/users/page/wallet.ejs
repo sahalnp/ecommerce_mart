@@ -1,0 +1,152 @@
+<%- include('../partials/header') %>
+
+<head>
+    <link rel="stylesheet" href="/assets/css/profile.css">
+    <style>
+        .sidebar {
+    background-color: #6265c9;
+    border-radius: 12px;
+    padding: 25px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #cce3d8;
+    height: 400px;
+   }
+    </style>
+</head>
+
+<div class="slider-area box">
+  <div class="single-slider slider-height2 d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-xl-12 d-flex flex-column align-items-center">
+          <div class="hero-cap text-center">
+            <h2 class="name">Profile</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="sidebar">
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="/profile/<%= user._id %>">
+                        <i class="fas fa-user me-2"></i> Profile Settings
+                    </a>
+                    <a class="nav-link " href="/profile/changePassword/<%= user._id %>">
+                        <i class="fas fa-lock me-2"></i> Change Password
+                    </a>
+                    <a class="nav-link" href="/profile/address/<%= user._id %>">
+                        <i class="fas fa-map-marker-alt me-2"></i> Addresses
+                    </a>
+                    <a class="nav-link active" href="/profile/wallet/<%= user._id %>">
+                        <i class="fas fa-wallet me-2"></i> Wallet
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+    <!-- Wallet Content -->
+    <div class="col-md-9">
+      <div class="profile-container p-4 bg-light rounded shadow-sm">
+        <h3 class="mb-4">My Wallet</h3>
+
+        <!-- Wallet Balance Card -->
+        <div class="wallet-card p-4 bg-primary text-white rounded mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h4><i class="fas fa-wallet me-2"></i> Wallet Balance</h4>
+              <h2 class="mb-0">$<%= user.wallet.toFixed(2) %></h2>
+
+              <small class="opacity-75">Available Balance</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row text-center mb-4">
+          <div class="col-6 col-md-3 mb-3">
+            <div class="stat-card p-3 bg-white rounded shadow-sm">
+              <i class="fas fa-plus-circle fa-2x text-success mb-2"></i>
+              <h6>Add Money</h6>
+              <small class="text-muted">From bank account</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="stat-card p-3 bg-white rounded shadow-sm">
+              <i class="fas fa-minus-circle fa-2x text-danger mb-2"></i>
+              <h6>Withdraw</h6>
+              <small class="text-muted">To bank account</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="stat-card p-3 bg-white rounded shadow-sm">
+              <i class="fas fa-exchange-alt fa-2x text-primary mb-2"></i>
+              <h6>Transfer</h6>
+              <small class="text-muted">To other users</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3 mb-3">
+            <div class="stat-card p-3 bg-white rounded shadow-sm">
+              <i class="fas fa-history fa-2x text-info mb-2"></i>
+              <h6>History</h6>
+              <small class="text-muted">View transactions</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <h5 class="mb-3">Recent Transactions</h5>
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered">
+            <thead class="table-light">
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jun 10, 2025</td>
+                <td>Purchase - Order #12345</td>
+                <td><span class="badge bg-danger">Debit</span></td>
+                <td>-$89.99</td>
+                <td><span class="badge bg-success">Completed</span></td>
+              </tr>
+              <tr>
+                <td>Jun 8, 2025</td>
+                <td>Wallet Top-up</td>
+                <td><span class="badge bg-success">Credit</span></td>
+                <td>+$200.00</td>
+                <td><span class="badge bg-success">Completed</span></td>
+              </tr>
+              <tr>
+                <td>Jun 5, 2025</td>
+                <td>Refund - Order #12320</td>
+                <td><span class="badge bg-success">Credit</span></td>
+                <td>+$45.50</td>
+                <td><span class="badge bg-success">Completed</span></td>
+              </tr>
+              <tr>
+                <td>Jun 3, 2025</td>
+                <td>Purchase - Order #12301</td>
+                <td><span class="badge bg-danger">Debit</span></td>
+                <td>-$156.25</td>
+                <td><span class="badge bg-warning">Pending</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

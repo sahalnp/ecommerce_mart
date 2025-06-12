@@ -1,11 +1,11 @@
 import crypto from "crypto";
 import { razorpayInstance } from "../config/razarpay.js";
-export const razorpayService = (total, orderId) => {
+export const razorpayService = (total) => {
     return new Promise((resolve, reject) => {
         const options = {
             amount: total * 100,
             currency: "INR",
-            receipt: "" + orderId,
+            receipt: "" + + Date.now(),
         };
         razorpayInstance.orders.create(options, (err, order) => {
             if (err) return reject(err);

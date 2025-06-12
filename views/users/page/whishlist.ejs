@@ -1,6 +1,6 @@
 <%- include('../partials/header') %>
 <head>
- <link rel="stylesheet" href="/assets/css/wishlist.css">
+  <link rel="stylesheet" href="/assets/css/wishlist.css">
 </head>
 
 <main>
@@ -22,6 +22,7 @@
   <!-- Wishlist Content -->
   <div class="wishlist-container">
     <h2 style="text-align: center; margin-bottom: 1.5rem;">Your Wishlist</h2>
+
     <% if (wishlist && wishlist.length > 0) { %>
       <% wishlist.forEach(item => { %>
         <div class="wishlist-item" id="item-<%= item._id %>">
@@ -31,18 +32,26 @@
             <p>Price: ₹<%= item.pricing.price %></p>
           </div>
           <div class="wishlist-actions">
-       <% if (cart.some(c => c.productId.toString() === item._id.toString())) { %>
 
-             <a href="/cart"><button type="button">Go to cart</button></a>
+            <% const isInCart = cart.some(c => c.productId.toString() === item._id.toString()); %>
+
+            <% if (isInCart) { %>
+              <a href="/cart">
+                <button type="button">Go to Cart</button>
+              </a>
+            <% } else if (item.inStock <= 0) { %>
+              <button type="button" onclick="showOutOfStockToast()" disabled style="opacity: 0.5; cursor: not-allowed;">
+                Add to Cart
+              </button>
             <% } else { %>
-              <% if (item.inStock <=0) { %>
-               <button type="button" onclick="showOutOfStockToast()">Add To Cart</button>
-               <% } else { %>
-                <button type="button" onclick="addToCart('<%= item._id %>')">Add To Cart</button>
-              <% } %>
-                
-              <% } %>
-            <button class="remove-btn" onclick="removeFromWishlist('<%= item._id %>')">Remove</button>
+              <button type="button" onclick="addToCart('<%= item._id %>')">
+                Add to Cart
+              </button>
+            <% } %>
+
+            <button class="remove-btn" onclick="removeFromWishlist('<%= item._id %>')">
+              Remove
+            </button>
           </div>
         </div>
       <% }); %>
@@ -56,55 +65,52 @@
   <!-- Toast Messages -->
   <div class="cart-toast">Item added to cart! 🎉</div>
   <div class="wishlist-toast">Item removed from wishlist! ❌</div>
-  <div class="stock-toast">Item is out of stock! 📦</div>
-</main>z
-
-<!-- Script -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</main>
 <script>
   const csrfToken = "<%= csrfToken %>";
-      async function addToCart(productId) {
-        try {
-          console.log(productId,"id");
-          
-        const res = await axios.post(
-        `/product/add-to-cart`, 
-        { productId, quantity: 1, _csrf: csrfToken, },
+
+  async function addToCart(productId) {
+    try {
+      const res = await axios.post(
+        `/product/add-to-cart`,
+        { productId, quantity: 1, _csrf: csrfToken },
         { withCredentials: true }
       );
 
-
       console.log("Added to cart", res.data);
 
+      const toast = document.querySelector('.cart-toast');
+      if (toast) {
+        toast.style.display = 'block';
+        setTimeout(() => {
+          toast.style.display = 'none';
+          window.location.reload();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error("Add to cart failed:", error);
+      alert("Failed to add item to cart.");
+    }
+  }
 
-    // Show toast
-    const toast = document.querySelector('.cart-toast');
+  function showOutOfStockToast() {
+    const toast = document.querySelector('.stock-toast');
     if (toast) {
       toast.style.display = 'block';
       setTimeout(() => {
-        toast.style.display = 'none'
-        window.location.reload();;
+        toast.style.display = 'none';
       }, 3000);
     }
-    
+  }
 
-  } catch (error) {
-    console.error("Add to cart failed:", error);
-    alert("Failed to add item to cart.");
-  }
-}
-function showOutOfStockToast() {
-  const toast = document.querySelector('.stock-toast');
-  if (toast) {
-    toast.style.display = 'block';
-    setTimeout(() => {
-      toast.style.display = 'none';
-    }, 3000);
-  }
-}
   async function removeFromWishlist(productId) {
     try {
-      const res = await axios.post(`/wishlist/remove/${productId}`, { _csrf: csrfToken,}, { withCredentials: true });
+      const res = await axios.post(
+        `/wishlist/remove/${productId}`,
+        { _csrf: csrfToken },
+        { withCredentials: true }
+      );
+
       console.log("Removed from wishlist", res.data);
 
       const item = document.getElementById(`item-${productId}`);

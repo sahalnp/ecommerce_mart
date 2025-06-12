@@ -1,0 +1,200 @@
+ body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #d4b073;
+            position: relative;
+        }
+        
+        .free-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #d4b073;
+            color: white;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+        
+        .invoice-header {
+            background: #d4b073;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .company-info {
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b6914;
+        }
+        
+        .company-details {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .invoice-details {
+            display: flex;
+            background: #fff2cc;
+            border-top: 1px solid #d4b073;
+            border-bottom: 1px solid #d4b073;
+        }
+        
+        .invoice-left, .invoice-right {
+            flex: 1;
+            padding: 15px;
+        }
+        
+        .invoice-right {
+            border-left: 1px solid #d4b073;
+            text-align: right;
+        }
+        
+        .invoice-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .addresses {
+            display: flex;
+            padding: 20px;
+        }
+        
+        .bill-to, .ship-to {
+            flex: 1;
+            padding-right: 20px;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .address-details {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 20px;
+            width: calc(100% - 40px);
+        }
+        
+        .items-header {
+            background: #8b6914;
+            color: white;
+        }
+        
+        .items-header th {
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .items-header th:last-child {
+            text-align: right;
+        }
+        
+        .items-row td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+        }
+        
+        .items-row td:last-child {
+            text-align: right;
+        }
+        
+        .totals-section {
+            display: flex;
+            margin: 20px;
+            gap: 20px;
+        }
+        
+        .terms-section {
+            flex: 1;
+        }
+        
+        .terms-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        
+        .terms-box {
+            border: 1px solid #ccc;
+            height: 100px;
+            padding: 10px;
+            font-size: 12px;
+        }
+        
+        .payment-mode {
+            margin-top: 20px;
+            font-size: 12px;
+        }
+        
+        .totals-table {
+            width: 250px;
+        }
+        
+        .totals-table td {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .totals-table td:last-child {
+            text-align: right;
+        }
+        
+        .balance-due {
+            background: #fff2cc;
+            font-weight: bold;
+        }
+        
+        .grand-total {
+            background: #d4b073;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .signature-section {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+        }
+        
+        .footer {
+            text-align: right;
+            padding: 10px 20px;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .vyapar-logo {
+            color: #e74c3c;
+            font-weight: bold;
+        }

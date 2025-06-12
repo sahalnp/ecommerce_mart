@@ -50,6 +50,10 @@ import {
     orderDetails,
     loadReview,
     loadWriteRev,
+    loadchangePass,
+    loadProfileAddress,
+    editAddress,
+    loadWallet,
 } from "../controllers/user/userPageLoader.js";
 import {
     addAddress,
@@ -66,8 +70,16 @@ import {
     rating,
     removeFromWish,
     reviewRighted,
+    updateAddress,
 } from "../controllers/user/userDashboard.js";
-import { intialisePay, placeOrder, verifyPay } from "../controllers/user/orderController.js";
+import {
+    cancelOrder,
+    intialisePay,
+    invoice,
+    orderReturn,
+    placeOrder,
+    verifyPay,
+} from "../controllers/user/orderController.js";
 
 export const UserRouter = express.Router();
 
@@ -102,18 +114,28 @@ UserRouter.post("/forgotPassword", new_pass);
 UserRouter.get("/auth/google", isUserLoggedOut, auth_google);
 UserRouter.get("/auth/google/callback", auth_google_callback);
 
-UserRouter.get("/profile/edit/:id", isUserloggedIn, loadProfile);
-UserRouter.post("/profile/edit/:id", editProfile);
+UserRouter.get("/profile/:id", isUserloggedIn, loadProfile);
+UserRouter.post("/profile/update/:id", editProfile);
+
+UserRouter.get("/profile/changePassword/:id", isUserloggedIn, loadchangePass);
+UserRouter.post("/profile/changePassword/:id");
+
+UserRouter.get("/profile/address/:id", isUserloggedIn, loadProfileAddress);
+
+UserRouter.get("/edit/address/:id", isUserloggedIn,editAddress);
+UserRouter.post("/edit/address/:id", updateAddress);
+
+UserRouter.get("/profile/wallet/:id", isUserloggedIn, loadWallet);
 
 UserRouter.get("/shop", isUserloggedIn, laodShop);
 UserRouter.get("/product/:id", isUserloggedIn, loadProduct);
 UserRouter.post("/product/:id", addtoCart);
-UserRouter.post('/rating',rating)
+UserRouter.post("/rating", rating);
 
 UserRouter.get("/cart", isUserloggedIn, loadcart);
-UserRouter.post('/add-to-cart',addtoCart)
+UserRouter.post("/add-to-cart", addtoCart);
 UserRouter.post("/cart/quantity", quantchnge);
-UserRouter.post('/cart/delete',cartDlt)
+UserRouter.post("/cart/delete", cartDlt);
 
 UserRouter.get("/about", isUserloggedIn, about);
 
@@ -135,27 +157,31 @@ UserRouter.get("/contact", isUserloggedIn, contact);
 UserRouter.get("/add-address", isUserloggedIn, loadAddress);
 UserRouter.post("/add-address", addAddress);
 
-UserRouter.get("/address/delete/:id",isUserloggedIn, dltAddress);
+UserRouter.post("/address/delete/:id", dltAddress);
 
-UserRouter.get('/compare',isUserloggedIn,loadcmp)
-UserRouter.post('/buy',buy)
-UserRouter.post('/addCompare',addCompare)
-UserRouter.post('/cmp/resetAll',cmpReset)
-UserRouter.post('/cmp/resetOne',cmpResetOne)
+UserRouter.get("/compare", isUserloggedIn, loadcmp);
+UserRouter.post("/buy", buy);
+UserRouter.post("/addCompare", addCompare);
+UserRouter.post("/cmp/resetAll", cmpReset);
+UserRouter.post("/cmp/resetOne", cmpResetOne);
 
-UserRouter.get('/tryOn/:id',isUserloggedIn,loadtryOn)
+UserRouter.get("/tryOn/:id", isUserloggedIn, loadtryOn);
 
-UserRouter.post('/razorpay/create-order',intialisePay)
-UserRouter.post('/razorpay/verify-payment',verifyPay)
-UserRouter.get('/place/order',loadOrderPlace)
-UserRouter.post('/order/place',placeOrder)
+UserRouter.post("/razorpay/create-order", intialisePay);
+UserRouter.post("/razorpay/verify-payment", verifyPay);
+UserRouter.get("/place/order", loadOrderPlace);
+UserRouter.post("/order/place", placeOrder);
 
-UserRouter.get('/MyOrder',isUserloggedIn,myOrder)
-UserRouter.get('/MyOrder/:id',isUserloggedIn,orderDetails)
-UserRouter.get('/order/review/:id',isUserloggedIn,loadReview)
+UserRouter.get("/MyOrder", isUserloggedIn, myOrder);
+UserRouter.get("/MyOrder/:id", isUserloggedIn, orderDetails);
+UserRouter.get("/order/review/:id", isUserloggedIn, loadReview);
 
-UserRouter.get('/writedReview/:id',loadWriteRev)
-UserRouter.post('/writedReview/:id',reviewRighted)
+UserRouter.get("/writedReview/:id", isUserloggedIn, loadWriteRev);
+UserRouter.post("/writedReview/:id", reviewRighted);
 
+UserRouter.post("/order/return", orderReturn);
+UserRouter.post("/order/cancel", cancelOrder);
+
+UserRouter.get("/order/invoice", isUserloggedIn, invoice);
 
 export default UserRouter;

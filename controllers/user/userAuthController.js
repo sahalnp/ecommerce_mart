@@ -31,8 +31,9 @@ export const loginUser = async (req, res) => {
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
     if (!passwordMatch) {
-         req.flash('error', 'Incorrect password');
-        return res.redirect('/login');
+         return res.render("users/Auth/login", {
+            error: "Incorrect Password",
+        }); 
     }
 
     return res.redirect("/");
@@ -47,8 +48,12 @@ export const signupUser = async (req, res, next) => {
         firstname: req.body.firstname,
         Lastname: req.body.lastname,
         email: req.body.email,
+        wallet:0,
         number: fullPhoneNumber,
         password: hashedPassword,
+        role:0,
+        status:true,
+        isDlt:false,
     };
 
 
@@ -173,11 +178,8 @@ export const reset_verify_otp = (req, res) => {
 };
 export const new_pass = async (req, res) => {
     const { password } = req.body;
-    
     const hashPassword = await bcrypt.hash(password, 10);
-    await User.findOneAndUpdate({email:req.session.EMAIL},{  password: hashPassword }, { new: true });
-    console.log(m,"dsfiodsjfoidsjhfl");
-    
+    await User.findOneAndUpdate({email:req.session.EMAIL},{  password: hashPassword }, { new: true }); 
     res.redirect("/login");
 };
 export const resend_otp_email = async (req, res) => {

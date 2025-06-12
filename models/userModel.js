@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema({
     },
   },
   email: { type: String, required: true, unique: true },
+  dob:{
+    type:String
+  },
+  gender:{
+    type:String
+  },
   role: { type: Number, default: 0 },
   number: { type: String, required: true },
   addresses: [
@@ -45,6 +51,9 @@ const userSchema = new mongoose.Schema({
       ref: "product",
     },
   ],
+  wallet:{
+    type:Number
+  },
   status: {
     type: Boolean,
     default: true,
