@@ -64,15 +64,14 @@ export const Editcatgory = asyncHandler(async (req, res) => {
     }
 
     const { name, isListed } = req.body;
-    const changed = await categoryModel.findByIdAndUpdate(req.params.id, {
+     await categoryModel.findByIdAndUpdate(req.params.id, {
         name,
         isListed: islist,
     });
-    console.log(changed);
 
     return res.redirect("/admin/category");
 });
 export const categorydlt = asyncHandler(async (req, res) => {
-    const changCat = await categoryModel.findByIdAndUpdate(req.params.id,{isDlt:true})
+     await categoryModel.findByIdAndUpdate(req.params.id,{isDlt:true})
     res.redirect('/admin/category')
 });

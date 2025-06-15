@@ -2,86 +2,129 @@ import { User } from "../../models/userModel.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import { admin } from "../../models/adminModel.js";
+import { Order } from "../../models/orderModel.js";
+import { review } from "../../models/reviewModel.js";
 
 export const profileEdit = asyncHandler(async (req, res) => {
-    if(req.session.admin){
-    const { fistname, Lastname, email, number } = req.body;
-    const change=await admin.findByIdAndUpdate(req.params.id,{fistname,Lastname,email,number})
-    console.log(change,"3456789");
-    
-    return res.redirect('/admin/dashboard')
-    }
-    return res.redirect('admin/login')
+    const { firstname, Lastname, email, number } = req.body;
+    await admin.findByIdAndUpdate(req.params.id, {
+        Fistname: firstname,
+        Lastname,
+        email,
+        number,
+    });
+    return res.redirect("/admin/dashboard");
 });
 
 export const userEdit = asyncHandler(async (req, res) => {
-    const userid = req.params.id;
-    const value = await User.findOne({ _id: userid });
-    console.log(req.body.status,"sdfghjjvcvbn");
-    
+    const id = req.params.id;
+    const value = await User.findById(id);
     let hashedPassword = value.password;
 
     if (req.body.password) {
         hashedPassword = await bcrypt.hash(req.body.password, 10);
     }
 
-    const updated = await User.findByIdAndUpdate(
-        { _id: userid },
+    await User.findByIdAndUpdate(
+        { _id: id },
         {
             $set: {
-                firstname: req.body.firstname,
+                Firstname: req.body.firstname,
                 Lastname: req.body.Lastname,
                 email: req.body.email,
                 number: req.body.number,
                 password: hashedPassword,
-                status:req.body.status
+                status: req.body.status,
             },
         },
         { new: true }
     );
 
-    console.log(updated,"qwertyuio");
-
     res.redirect("/admin/userDetails");
 });
-export const userDelete = asyncHandler(async (req, res) => {  
-    const userid = req.params.id;
-    const finds=await User.findById('681f35aa5ce97761c32b8f2a')
-    const find=await User.findByIdAndUpdate(userid,{isDlt:true,status:false})
-    console.log(find,"wertyu");
-    res.redirect('/admin/userDetails')
-    
+export const userDelete = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    await User.findByIdAndUpdate(id, {
+        isDlt: true,
+        status: false,
+    });
+    res.redirect("/admin/userDetails");
 });
-export const adminEdit = asyncHandler(async (req, res) => {
-    const adminid = req.params.id;
-    const value = await admin.findOne({ _id: adminid });
-    let hashedPassword = value.password;
-    if (req.body.password) {
-        hashedPassword = await bcrypt.hash(req.body.password, 10);
+export const adminDelete = asyncHandler(async (req, res) => {
+    const id = req.params.id;
+    await admin.findByIdAndUpdate(id, {
+        isDlt: true,
+        status: false,
+    });
+    res.redirect("/admin/userDetails");
+});
+export const adminsEdit = asyncHandler(async (req, res) => {
+    try {
+        const id = req.params.id;
+        const value = await admin.findById(id);
+        let hashedPassword = value.password;
+        if (req.body.password) {
+            hashedPassword = await bcrypt.hash(req.body.password, 10);
+        }
+        const status = req.body.status === "on" ? true : false;
+
+        const updated = await admin.findByIdAndUpdate(
+            { _id: id },
+            {
+                $set: {
+                    Firstname: req.body.firstname,
+                    Lastname: req.body.Lastname,
+                    email: req.body.email,
+                    number: req.body.number,
+                    password: hashedPassword,
+                    status,
+                },
+            },
+            { new: true }
+        );
+        res.redirect("/admin/admins/details");
+    } catch (error) {
+        console.log(error);
     }
-    const updated = await admin.findByIdAndUpdate(
-        { _id: adminid },
-        {
-            $set: {
-                firstname: req.body.firstname,
-                Lastname: req.body.Lastname,
-                email: req.body.email,
-                number: req.body.number,
-                password: hashedPassword,
-            },
-        },
-        { new: true }
-    );
-    console.log("Updated", updated);
-    res.redirect("/admin/userDetails");
 });
 
-export const userStatus=asyncHandler(async(req,res)=>{
-    console.log(req.body.status);
+export const userStatus = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(req.params.id, {
+        status: req.body.status,
+    });
+    res.redirect("/admin/userDetails");
+});
+export const adminStatus = asyncHandler(async (req, res) => {
+    await admin.findByIdAndUpdate(req.params.id, {
+        status: req.body.status,
+    });
+    res.redirect("/admin/admins/details");
+});
+export const editOrderStatus = asyncHandler(async (req, res) => {
+    const id=req.params.id
+    await Order.findByIdAndUpdate(
+    {_id:id},
+    { status: req.body.status },
+    { new: true }
+    )
     
-    const find = await User.findByIdAndUpdate(req.params.id,{status:req.body.status});
-    console.log(find);
-    
-    res.redirect('/admin/userDetails')
-
+    res.redirect('/admin/orders')
+});
+export const editOrderPaymentStatus = asyncHandler(async (req, res) => {  
+    const id=req.params.id
+    await Order.findByIdAndUpdate(
+    {_id:id},
+    { paymentStatus: req.body.paymentStatus },
+    { new: true }
+    )
+    res.redirect('/admin/orders')
+});
+export const reviewStatus=asyncHandler(async(req,res)=>{
+    const id = req.params.id
+    await review.findByIdAndUpdate(
+    {_id:id},
+    { status: req.body.status },
+    { new: true }
+    )
+    res.redirect('/admin/reviews')
 })

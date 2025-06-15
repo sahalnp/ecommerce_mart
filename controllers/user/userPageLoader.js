@@ -4,6 +4,7 @@ import { User } from "../../models/userModel.js";
 import { Cart } from "../../models/cartModel.js";
 import { Compare } from "../../models/compareModel.js";
 import { Order } from "../../models/orderModel.js";
+import { brandModel } from "../../models/brandModel.js";
 import { review } from "../../models/reviewModel.js";
 export const home = asyncHandler(async (req, res) => {
     const latestProducts = await product
@@ -35,63 +36,99 @@ export const home = asyncHandler(async (req, res) => {
 });
 
 export const loadProfile = asyncHandler(async (req, res) => {
-    const user=await User.findById(req.session.users._id)
+    const user = await User.findById(req.session.users._id);
     return res.render("users/page/profile", {
         user,
         username: req.session.userName,
     });
 });
 export const loadchangePass = asyncHandler(async (req, res) => {
-    const user=await User.findById(req.session.users._id)
+    const user = await User.findById(req.session.users._id);
     return res.render("users/page/changePass", {
         user,
         username: req.session.userName,
     });
 });
 export const loadProfileAddress = asyncHandler(async (req, res) => {
-    const user=await User.findById(req.session.users._id)
+    const user = await User.findById(req.session.users._id);
 
     return res.render("users/page/addressDetail", {
         user,
         username: req.session.userName,
-        addressArray:user.addresses
+        addressArray: user.addresses,
     });
-}); 
-export const editAddress= asyncHandler(async (req, res) => {
-    const user=await User.findById(req.session.users._id)
-    const address = user.addresses.find(addr => addr._id.toString() === req.params.id);
+});
+export const editAddress = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.session.users._id);
+    const address = user.addresses.find(
+        (addr) => addr._id.toString() === req.params.id
+    );
     return res.render("users/page/editAddress", {
         user,
         username: req.session.userName,
-        address
+        address,
     });
 });
 
 export const loadWallet = asyncHandler(async (req, res) => {
-    const user=await User.findById(req.session.users._id) 
+    const user = await User.findById(req.session.users._id);
     return res.render("users/page/wallet", {
         user,
         username: req.session.userName,
     });
-}); 
-
+});
 
 export const laodShop = asyncHandler(async (req, res) => {
-    const find = await product.find().populate("image");
+    const find = await product
+        .find()
+        .populate("image")
+        .populate("brand")
+        .populate("category");
+    
+    
     const userfind = await User.findById(req.session.users._id);
     const productsWishlist = find.filter((product) => {
         return userfind.wishList.some(
             (id) => id.toString() === product._id.toString()
         );
     });
+    const mat = [...new Set(find.map((p) => p.bandMaterial))];
     const cartfind = await Cart.find({ UserId: req.session.users._id });
+    const brand = [...new Set(find.map((p) => p.brand.name))];
+    const cat = [...new Set(find.flatMap((p) => Array.isArray(p.category) ? p.category.map((c) => c.name) : []   ) ),];
+    const shape = [...new Set(find.map((p) => p.caseShape))];
+  const rev = await review.aggregate([
+    {
+        $group: {
+            _id: "$productId",
+            averageRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 }
+        }
+    }
+    ]);
+    const productWithRatings = find.map(prod => {
+            const ratingData = rev.find(r => r._id.toString() === prod._id.toString());
+            return {
+                ...prod.toObject(),
+                averageRating: ratingData ? ratingData.averageRating : 0,
+                totalReviews: ratingData ? ratingData.totalReviews : 0
+            };
+        });
+        
+        
+
 
     return res.render("users/page/shop", {
         username: req.session.userName,
-        product: find,
+        product: productWithRatings,
         user: req.session.users,
         wish: productsWishlist,
         cartItems: cartfind,
+        mat,
+        brand,
+        cat,
+        shape,
+        rev
     });
 });
 
@@ -118,7 +155,7 @@ export const loadProduct = asyncHandler(async (req, res) => {
             );
         }
     }
-    const reviews = await review.find({ productId: find._id });
+    const reviews = await review.find({ productId: find._id,status:"Accepted" });
     let star = 0;
     reviews.forEach((d) => {
         star += d.rating;
@@ -142,8 +179,8 @@ export const loadProduct = asyncHandler(async (req, res) => {
         exist: show,
         cartItems: cartfind,
         cmp,
-        totalUser:reviews.length,
-        avg:averageRating
+        totalUser: reviews.length,
+        avg: averageRating,
     });
 });
 export const loadcart = asyncHandler(async (req, res) => {
@@ -424,7 +461,7 @@ export const loadReview = asyncHandler(async (req, res) => {
         .findById(req.params.id)
         .populate("image")
         .populate("brand");
-    const rev = await review.find({ productId: prod._id }).populate("UserId");
+    const rev = await review.find({ productId: prod._id,status:"Accepted" }).populate("UserId");
     let avg = 0;
     if (rev.length > 0) {
         const total = rev.reduce((sum, r) => sum + r.rating, 0);

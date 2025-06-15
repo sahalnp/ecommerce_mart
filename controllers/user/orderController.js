@@ -8,6 +8,11 @@ import { User } from "../../models/userModel.js";
 import orderid from "order-id";
 import { Order } from "../../models/orderModel.js";
 import { product } from "../../models/productModel.js";
+import puppeteer from "puppeteer";
+import ejs from "ejs";
+import path from "path";
+import fs from "fs";
+
 export const intialisePay = asyncHandler(async (req, res) => {
     try {
         const { total } = req.body;
@@ -113,7 +118,7 @@ export const verifyPay = asyncHandler(async (req, res) => {
                 shippedDate,
                 estimatedDelivery,
                 couponCode,
-                reason:null
+                reason: null,
             });
         } else {
             console.log("wrong payment ");
@@ -213,42 +218,116 @@ export const placeOrder = asyncHandler(async (req, res) => {
         shippedDate,
         estimatedDelivery,
         couponCode,
-        reason:null,
+        reason: null,
     });
     res.json({ success: true, redirectUrl: "/place/order" });
 });
 export const orderReturn = asyncHandler(async (req, res) => {
     console.log("sdfghjk");
-    
+
     const { OrderId } = req.body;
     const find = await Order.findOneAndUpdate(
         { OrderId, UserId: req.session.users._id },
-        { status: "Return requested",reason },
-        { new: true } 
+        { status: "Return requested", reason },
+        { new: true }
     );
 
-    console.log(find,"zxcvbnm,.");
-    
+    console.log(find, "zxcvbnm,.");
 });
-export const cancelOrder=asyncHandler(async(req,res)=>{
+export const cancelOrder = asyncHandler(async (req, res) => {
     try {
-    const {OrderId}=req.body
-    const find = await Order.findOneAndUpdate(
-        { OrderId, UserId: req.session.users._id },
-        { status: "Cancelled",reason },
-        { new: true } 
-    );
-    
-    console.log(find,"zxcvbnm,.");
-    // await User.findByIdAndUpdate(req.session.users._id,{wallet}) 
+        const { OrderId } = req.body;
+        const find = await Order.findOneAndUpdate(
+            { OrderId, UserId: req.session.users._id },
+            { status: "Cancelled", reason },
+            { new: true }
+        );
+
+        console.log(find, "zxcvbnm,.");
+        // await User.findByIdAndUpdate(req.session.users._id,{wallet})
     } catch (error) {
         console.log(error);
-        
-    }   
-})
-export const invoice=asyncHandler(async(req,res)=>{
-    res.render('/users/page/invoice',{
-        username: req.session.userName,
-        user: req.session.users
+    }
+});
+export const invoice = asyncHandler(async (req, res) => {
+    const order = await Order.findOne({
+        UserId: req.session.users._id,
+        OrderId: req.params.id,
     })
-})
+        .populate("items.product")
+        .populate("billingAddress");
+    function generateRandomGSTIN() {
+  const stateCodes = [
+    "01", "02", "03", "04", "05", "06", "07", "08", "09", "10",
+    "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+    "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+    "31", "32", "33", "34", "35", "36", "37", "38", "39"
+  ];
+
+  const randomState = stateCodes[Math.floor(Math.random() * stateCodes.length)];
+
+  const randomPAN = () => {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const digits = '0123456789';
+    return (
+      letters.charAt(Math.floor(Math.random() * 26)) +
+      letters.charAt(Math.floor(Math.random() * 26)) +
+      letters.charAt(Math.floor(Math.random() * 26)) +
+      letters.charAt(Math.floor(Math.random() * 26)) +
+      letters.charAt(Math.floor(Math.random() * 26)) +
+      digits.charAt(Math.floor(Math.random() * 10)) +
+      digits.charAt(Math.floor(Math.random() * 10)) +
+      digits.charAt(Math.floor(Math.random() * 10)) +
+      digits.charAt(Math.floor(Math.random() * 10)) +
+      letters.charAt(Math.floor(Math.random() * 26))
+    );
+  };
+
+  const entityCode = Math.floor(Math.random() * 9) + 1; 
+  const checkChar = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return chars.charAt(Math.floor(Math.random() * chars.length));
+  };
+
+  return `${randomState}${randomPAN()}${entityCode}Z${checkChar()}`;
+}
+
+    if (!order) {
+        return res.status(404).send("Order not found");
+    }
+    const user=await User.findById(req.session.users._id)
+    const add = user.addresses.find(p => p._id.toString() === order.billingAddress.toString());
+    const htmlString = await ejs.renderFile(
+        path.join(process.cwd(), "views", "users", "page", "invoice.ejs"),
+        {
+            username: req.session.userName,
+            user: req.session.users,
+            order,
+            add,
+            gst:generateRandomGSTIN()
+        }
+    );
+ 
+    
+    const browser = await puppeteer.launch({ headless: "new" });
+    const page = await browser.newPage();
+    await page.setContent(htmlString, { waitUntil: "networkidle0" });
+
+    const invoicesDir = path.join("public", "invoices");
+    if (!fs.existsSync(invoicesDir)) {
+        fs.mkdirSync(invoicesDir, { recursive: true });
+    }
+
+    const pdfPath = path.join(invoicesDir, `invoice-${order.OrderId}.pdf`);
+    await page.pdf({ path: pdfPath, format: "A4" });
+
+    await browser.close();
+    res.download(pdfPath, `Invoice-${order.OrderId}.pdf`, (err) => {
+        if (err) {
+            console.error("Download error:", err);
+            res.status(500).send("Something went wrong");
+        } else {
+            fs.unlink(pdfPath, () => {}); 
+        }
+    });
+});

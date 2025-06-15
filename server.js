@@ -7,7 +7,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import csurf from "csurf";
 import nocache from "nocache";
-import cors from 'cors';
+import cors from 'cors'
 
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routers/user_router.js";

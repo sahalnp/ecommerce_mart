@@ -75,13 +75,13 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
-        image: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "image",
-                required: true,
-            },
-        ],
+            image: [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "image",
+                    required: true,
+                },
+            ],
         vrImage:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"image",
@@ -95,21 +95,15 @@ const productSchema = new mongoose.Schema(
                 required: true,
             },
         ],
-        rating: {
-            type: Object,
-            default: {
-                1: 0,
-                2: 0,
-                3: 0,
-                4: 0,
-                5: 0,
-            },
-            },
-
         inStock: {
             type: Number,
             required: true,
             min: 0,
+        },
+        
+        isFeatured:{
+            type:Boolean,
+            default:false
         },
 
         isListed: {

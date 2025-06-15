@@ -1,4 +1,3 @@
-
 <nav
     class="header-navbar navbar-expand-md navbar navbar-with-menu navbar-without-dd-arrow fixed-top navbar-semi-light"
 >
@@ -66,7 +65,9 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <div class="arrow_box_right">
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/admin/edit/<%= admin._id %>"
+                                <a
+                                    class="dropdown-item"
+                                    href="/admin/edit/<%= admin._id %>"
                                     ><i class="ft-user"></i> Edit Profile</a
                                 >
                                 <div class="dropdown-divider"></div>
@@ -124,28 +125,36 @@
                     ><i class="fas fa-users"></i><span>Users</span></a
                 >
             </li>
+            <% if (admin.role==1) { %>
             <li
-                class="nav-item <%= activePage === 'productListAdmin'||activePage==='productEdit' ? 'active' : '' %>"
+                class="nav-item <%= activePage === 'adminManagement'||activePage==='adminEdit' ? 'active' : '' %>"
             >
-                <a href="/admin/products"
-                    ><i class="fas fa-boxes"></i
-                    ><span class="menu-title">All Products</span></a
+                <a href="/admin/admins/details"
+                    ><i class="fas fa-shield-alt"></i><span>Admin</span></a
                 >
             </li>
+            <% } %>
+            <li class="nav-item has-sub <%= ['productListAdmin', 'productEdit', 'adminAddProduct'].includes(activePage) ? 'open' : '' %>">
+    <a href="#">
+        <i class="fas fa-boxes"></i>
+        <span class="menu-title">Products</span>
+    </a>
+    <ul class="menu-content">
+        <li class="<%= ['productListAdmin', 'productEdit'].includes(activePage) ? 'active' : '' %>">
+            <a class="menu-item" href="/admin/products">All Products</a>
+        </li>
+        <li class="<%= activePage === 'adminAddProduct' ? 'active' : '' %>">
+            <a class="menu-item" href="/admin/add_product">Add Product</a>
+        </li>
+    </ul>
+</li>
+
             <li
                 class="nav-item <%= activePage === 'adminCategory'||activePage==='addCategory'||activePage==='addCategoryEdit' ? 'active' : '' %>"
             >
                 <a href="/admin/category"
                     ><i class="fas fa-list"></i
                     ><span class="menu-title">Categories</span></a
-                >
-            </li>
-            <li
-                class="nav-item <%= activePage === 'adminAddProduct' ? 'active' : '' %>"
-            >
-                <a href="/admin/add_product"
-                    ><i class="fas fa-plus"></i
-                    ><span class="menu-title">Add Product</span></a
                 >
             </li>
             <li
@@ -157,11 +166,38 @@
                 >
             </li>
             <li
-                class="nav-item <%= activePage === 'watchlist' ? 'active' : '' %>"
+                class="nav-item <%= activePage === 'orderManagement'||activePage==='orderEdit' ? 'active' : '' %>"
             >
-                <a href="/admin/watchlist"
-                    ><i class="fas fa-heart"></i><span>Watchlist</span></a
-                >
+                <a href="/admin/orders">
+                    <i class="fas fa-box"></i>
+                    <span class="menu-title">Orders</span>
+                </a>
+            </li>
+            <li
+                class="nav-item <%= activePage === 'bannerManagement'||activePage === 'AddBanner' ? 'active' : '' %>"
+            >
+                <a href="/admin/banners">
+                    <i class="fas fa-image"></i>
+                    <span class="menu-title">Banners</span>
+                </a>
+            </li>
+
+            <li
+                class="nav-item <%= activePage === 'reviewManagement' ? 'active' : '' %>"
+            >
+                <a href="/admin/reviews">
+                    <i class="fas fa-star"></i>
+                    <span class="menu-title">Reviews</span>
+                </a>
+            </li>
+
+            <li
+                class="nav-item <%= activePage === 'couponManagement'||activePage==='couponEdit' ? 'active' : '' %>"
+            >
+                <a href="/admin/coupons">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span class="menu-title">Coupons</span>
+                </a>
             </li>
         </ul>
     </div>

@@ -384,7 +384,7 @@ export const reviewRighted = asyncHandler(async (req, res) => {
             .send("You can't review a product you haven't purchased.");
     }
 
-    const existingReview = await review.findOne({ UserId: userId, productId });
+    const existingReview = await review.findOne({ UserId: userId, productId,status:"Accepted" });
 
     if (existingReview) {
         if (title?.trim()) existingReview.title = title.trim();
@@ -399,6 +399,7 @@ export const reviewRighted = asyncHandler(async (req, res) => {
             title: title?.trim() || "No Title",
             description: desc?.trim() || "No Description",
             rating: rating || 0,
+            status:"pending",
             date: new Date(),
         });
     }

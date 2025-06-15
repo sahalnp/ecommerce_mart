@@ -52,11 +52,7 @@ export const editBrand= asyncHandler(async(req,res)=>{
     res.redirect('/admin/brand')
 })
 export const updateStatus=asyncHandler(async(req,res)=>{
-    console.log(req.body.isListed);
-    
-    const find = await brandModel.findByIdAndUpdate(req.params.id,{isListed:req.body.isListed});
-    console.log(find);
-    
+    await brandModel.findByIdAndUpdate(req.params.id,{isListed:req.body.isListed});
     res.redirect('/admin/brand')
 
 })

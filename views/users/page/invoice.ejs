@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #d4b073;
+            position: relative;
+        }
+        
+        .free-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #d4b073;
+            color: white;
+            padding: 5px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+        
+        .invoice-header {
+            background: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #d4b073;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .main-table td {
+            padding: 15px;
+            vertical-align: top;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .company-section {
+            background: #f9f9f9;
+        }
+        
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .company-details {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .invoice-info-section {
+            background: #fff2cc;
+        }
+        
+        .invoice-details-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .invoice-details-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px;
+        }
+        
+        .invoice-details-table .label {
+            font-weight: bold;
+            width: 40%;
+        }
+        
+        .addresses-section {
+            display: flex;
+        }
+        
+        .bill-to, .ship-to {
+            flex: 1;
+            padding: 15px;
+        }
+        
+        .bill-to {
+            border-right: 1px solid #ddd;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 14px;
+            background: #f9f9f9;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .address-details {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .items-header {
+            background: #8b6914;
+            color: white;
+        }
+        
+        .items-header th {
+            padding: 12px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            border-right: 1px solid #fff;
+        }
+        
+        .items-header th:last-child {
+            border-right: none;
+        }
+        
+        .items-row td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .items-row td:last-child {
+            border-right: none;
+            text-align: right;
+        }
+        
+        .items-row td:first-child {
+            text-align: left;
+        }
+        
+        /* Add empty rows for visual spacing */
+        .empty-row td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            border-right: 1px solid #eee;
+            font-size: 12px;
+            text-align: right;
+        }
+        
+        .empty-row td:first-child {
+            text-align: left;
+        }
+        
+        .empty-row td:last-child {
+            border-right: none;
+        }
+        
+        .bottom-section {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .terms-section {
+            flex: 1;
+            padding: 15px;
+        }
+        
+        .terms-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        
+        .terms-box {
+            border: 1px solid #ccc;
+            height: 100px;
+            padding: 10px;
+            font-size: 12px;
+            background: #f9f9f9;
+        }
+        
+        .payment-mode {
+            margin-top: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .totals-section {
+            width: 300px;
+            padding: 15px;
+        }
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .totals-table td {
+            padding: 8px 12px;
+            font-size: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .totals-table .label {
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .totals-table .amount {
+            text-align: right;
+            width: 100px;
+        }
+        
+        .balance-due {
+            background: #fff2cc !important;
+            font-weight: bold;
+        }
+        
+        .grand-total {
+            background: #d4b073 !important;
+            color: white !important;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .signature-section {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .footer {
+            text-align: right;
+            padding: 10px 20px;
+            font-size: 10px;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        .vyapar-logo {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="free-badge">FREE</div>
+
+        <div class="invoice-header">Invoice</div>
+
+        <table class="main-table">
+            <tr>
+                <td class="company-section" style="width: 50%;">
+                    <div class="company-name">M4 Watch</div>
+                    <div class="company-details">
+                        123 Street Address, City, State, Zip<br />
+                        Website: M4Watch.com<br />
+                        Email Address: sahalnp60@gmail.com<br />
+                        Contact Number: <%= user.number %><br />
+                        GSTIN NO: <%=gst %>
+                    </div>
+                </td>
+                <td class="invoice-info-section" style="width: 50%;">
+                    <table class="invoice-details-table">
+                        <tr>
+                            <td class="label">INVOICE NO.:</td>
+                            <td>INV-<%= order.OrderId %></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Invoice Date:</td>
+                            <td><%= new Date(order.estimatedDelivery).toLocaleDateString() %></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Due Date:</td>
+                            <%
+                                    const currentDate = new Date();
+                                    const estimated = new Date(order.estimatedDelivery);
+                                    const diffTime = estimated - currentDate;
+                                    const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                %>
+                                <td>Valid for <%= daysLeft %> days</td>
+
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div class="addresses-section">
+            <div class="bill-to">
+                <div class="section-title">BILL TO</div>
+                <div class="address-details">
+                    Person Name: <%= user.firstname + ' ' + user.Lastname %><br />
+                    Business Name: M4 Watch<br />
+                    Address: <%= add.addressType %>,<br />
+                    <%= add.city %>, <%= add.state %> - <%= add.pincode %><br />
+                    <br />
+                    GSTIN NO: <%=gst %>
+                </div>
+            </div>
+        </div>
+
+        <table class="items-table">
+            <thead class="items-header">
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>QTY</th>
+                    <th>UNIT PRICE</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.items.forEach(item => { %>
+                <tr class="items-row">
+                    <td><%= item.product.title %></td>
+                    <td><%= item.quantity %></td>
+                    <td>₹ <%= item.product.pricing.salePrice.toFixed(2) %></td>
+                    <td>₹ <%= item.price.toFixed(2) %></td>
+                </tr>
+                <% }); %>
+                
+                <!-- Add empty rows for visual spacing -->
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+                <tr class="empty-row">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="bottom-section">
+            <div class="terms-section">
+                <div class="payment-mode">
+                    Payment Mode: <%= order.paymentMethod %>
+                </div>
+            </div>
+
+            <div class="totals-section">
+                <table class="totals-table">
+                    <tr>
+                        <td class="label">SUBTOTAL</td>
+                        <td class="amount">₹ <%= order.subtotal.toFixed(2) %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">DISCOUNT</td>
+                        <td class="amount">₹ <%= order.discount.toFixed(2) %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">SUBTOTAL LESS DISCOUNT</td>
+                        <td class="amount">₹ <%= (order.subtotal - order.discount).toFixed(2) %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">GST @ 9%</td>
+                        <td class="amount">₹ <%= (Number(order.tax) / 2).toFixed(2) %></td>
+                    </tr>
+                    <tr>
+                        <td class="label">Rounded Balance</td>
+                        <td class="amount">₹ 0.00</td>
+                    </tr>
+                    <tr class="grand-total">
+                        <td class="label">GRAND TOTAL</td>
+                        <td class="amount">₹ <%= order.total.toFixed(2) %></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

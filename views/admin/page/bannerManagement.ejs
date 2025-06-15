@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+<head></head>
+<%- include('../partials/navbar') %>
+<div class="app-content content" style="padding-top: 50px;">
+  <div class="content-wrapper">
+    <div class="content-header row"></div>
+    <div class="content-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Banner Management</h2>
+        <a href="/admin/banner/add" class="btn btn-primary">+ Add New Banner</a>
+      </div>
+
+      <% if (banners.length > 0) { %>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped text-center align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Banner Image</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% banners.forEach((banner) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td>
+                    <img src="/uploads/banners/<%= banner.image %>" alt="Banner" width="120" class="img-thumbnail" />
+                  </td>
+                  <td><%= banner.title %></td>
+                  <td>
+                    <span class="badge <%= banner.status === 'active' ? 'badge-success' : 'badge-secondary' %>">
+                      <%= banner.status %>
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/admin/banners/edit/<%= banner._id %>" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="/admin/banners/delete/<%= banner._id %>" method="POST" style="display:inline;">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this banner?')">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } else { %>
+        <p class="text-center">No banners found.</p>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

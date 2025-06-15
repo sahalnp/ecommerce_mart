@@ -181,7 +181,6 @@ UserRouter.post("/writedReview/:id", reviewRighted);
 
 UserRouter.post("/order/return", orderReturn);
 UserRouter.post("/order/cancel", cancelOrder);
-
-UserRouter.get("/order/invoice", isUserloggedIn, invoice);
+UserRouter.get("/order/invoice/:id",isUserloggedIn,invoice);
 
 export default UserRouter;

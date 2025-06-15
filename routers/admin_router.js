@@ -7,6 +7,13 @@ import {
     adminLogout,
     userDetails,
     editAdmin,
+    loadAdminDetails,
+    loadAdminEdit,
+    loadOrder,
+    viewOrder,
+    loadReview,
+    loadBanner,
+    loadAddBanner,
 } from "../controllers/admin/adminPageLoader.js";
 import {
     adminSignup,
@@ -18,9 +25,15 @@ import express from "express";
 import {
     userEdit,
     userDelete,
-    adminEdit,
     profileEdit,
     userStatus,
+    adminStatus,
+    adminsEdit,
+    adminDelete,
+    editOrderStatus,
+    editOrderPaymentStatus,
+    reviewStatus,
+
 } from "../controllers/admin/adminDashboardController.js";
 
 import {
@@ -33,7 +46,7 @@ import {
     productListing,
     vrImageDlt,
 } from "../controllers/admin/productController.js";
-import { isAdminloggedIn, isAdminLoggedOut } from "../middleware/adminAuthMiddleware.js";
+import { isAdminloggedIn} from "../middleware/adminAuthMiddleware.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 import {
     addCategory,
@@ -51,22 +64,18 @@ import {
     loadEditBrand,
     updateStatus,
 } from "../controllers/admin/adminBrandController.js";
-import csurf from "csurf";
-
-const csrfProtection = csurf({ cookie: true });
-
 
 const adminRouter = express.Router();
 
-adminRouter.get("/admin/login", isAdminLoggedOut, loadPasskey);
+adminRouter.get("/admin/login", loadPasskey);
 adminRouter.post("/admin/login", admin_login);
 
 adminRouter.post("/admin/login/passkey", passkeySend);
 
-adminRouter.get("/admin/signup",isAdminLoggedOut, load_adminSignup);
+adminRouter.get("/admin/signup", load_adminSignup);
 adminRouter.post("/admin/signup", adminSignup);
 
-adminRouter.get("/admin/otp", isAdminLoggedOut,admin_Otp);
+adminRouter.get("/admin/otp",admin_Otp);
 adminRouter.post("/admin/otp", verify_adminOtp);
 
 adminRouter.get("/admin/logout", adminLogout);
@@ -75,8 +84,8 @@ adminRouter.get("/admin/dashboard", isAdminloggedIn, adminDashboard);
 adminRouter.get("/admin/edit-user/:id", isAdminloggedIn,loadUser_Edit);
 adminRouter.post("/admin/edit-user/:id", userEdit);
 
-adminRouter.post("/admin/delete-user/:id",  isAdminloggedIn,userDelete);
-adminRouter.post("/admin/profile/:id", adminEdit);
+adminRouter.post("/admin/delete-user/:id",userDelete);
+adminRouter.post("/admin/profile/:id", editAdmin);
 
 adminRouter.get("/admin/add_product", isAdminloggedIn, loadAdd_product);
 
@@ -84,8 +93,8 @@ adminRouter.get("/admin/category",  isAdminloggedIn,categoryLoad);
 adminRouter.post(
   "/admin/upload",
   upload.fields([
-    { name: "photos", maxCount: 15 },   // up to 15 “photos” files
-    { name: "vrImage", maxCount: 1 }    // exactly 1 “vrImage” file
+    { name: "photos", maxCount: 15 },   
+    { name: "vrImage", maxCount: 1 }   
   ]),
   productAdd
 );
@@ -126,10 +135,27 @@ adminRouter.post("/admin/brand/edit/:id", editBrand);
 
 adminRouter.get("/admin/brand/add",  isAdminloggedIn,loadBrandAdd);
 adminRouter.post("/admin/brand/add", addBrand);
+adminRouter.post('/admin/product/delete-vrImage',vrImageDlt)
 
 adminRouter.post("/admin/brand/update-status/:id", updateStatus);
 adminRouter.post('/admin/user/update-status/:id',userStatus)
 
-adminRouter.post('/admin/product/delete-vrImage',vrImageDlt)
+adminRouter.get("/admin/admins/details", isAdminloggedIn,loadAdminDetails);
+
+adminRouter.get('/admin/edit-admin/:id',isAdminloggedIn,loadAdminEdit)
+adminRouter.post('/admin/edit-admin/:id',adminsEdit)
+adminRouter.post('/admin/admins/update-status/:id',adminStatus)
+adminRouter.post("/admin/delete-admin/:id",adminDelete);
+
+adminRouter.get('/admin/orders',isAdminloggedIn,loadOrder)
+adminRouter.get('/admin/orders/view/:id',isAdminloggedIn,viewOrder)
+adminRouter.post('/admin/orders/editOrder/:id',editOrderStatus)
+adminRouter.post('/admin/orders/updatePaymentStatus/:id',editOrderPaymentStatus)
+
+adminRouter.get('/admin/reviews',isAdminloggedIn,loadReview)
+adminRouter.post('/admin/reviews/update-status/:id',reviewStatus)
+
+adminRouter.get('/admin/banners',isAdminloggedIn,loadBanner)
+adminRouter.get('/admin/banner/add',isAdminloggedIn,loadAddBanner)
 
 export default adminRouter;

@@ -82,7 +82,9 @@ export const productAdd = asyncHandler(async (req, res) => {
             modelYear,
             caseDiameter,
             inStock,
+            featured
         } = req.body;
+        
 
         //Getting category id
         const typedoc = await categoryModel.find({
@@ -126,6 +128,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             image: imageIds,
             vrImage:vrImageId,
             isActive: true,
+            featured
         });
 
         if (findProduct) {
@@ -158,6 +161,7 @@ export const productAdd = asyncHandler(async (req, res) => {
             image: imageIds,
             vrImage:vrImageId,
             isActive: true,
+            featured
         });
 
         res.redirect("/admin/dashboard");
@@ -256,9 +260,11 @@ export const productEdit = asyncHandler(async (req, res) => {
             modelYear,
             caseDiameter,
             inStock,
+            featured
         } = req.body;
 
         const isList = req.body.isListed === "on" ? true : false;
+        const isFeatured=req.body.featured==="on" ? true : false;
         const categoryDocs = await categoryModel.find({
             name: { $in: req.body.categorybox },
         });
@@ -293,6 +299,7 @@ export const productEdit = asyncHandler(async (req, res) => {
             image: allImageIds,
             vrImage:vrImageId, 
             isActive: true,
+            isFeatured
         });
         res.redirect("/admin/products");
     } catch (error) {

@@ -26,23 +26,23 @@
             <div class="filter-row">
                 <div class="filter-group">
                     <label>Orders placed in</label>
-                    <select>
-                        <option>Last 30 days</option>
-                        <option>Past 3 months</option>
-                        <option>2023</option>
-                        <option>2022</option>
-                        <option>Archived orders</option>
+                    <select id="filter-date">
+                        <option value="last30">Last 30 days</option>
+                        <option value="last90">Past 3 months</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="all">All</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
                     <label>Order status</label>
-                    <select>
-                        <option>All orders</option>
-                        <option>Not yet shipped</option>
-                        <option>Shipped</option>
-                        <option>Delivered</option>
-                        <option>Cancelled</option>
+                    <select id="filter-status">
+                        <option value="all">All orders</option>
+                        <option value="not yet shipped">Not yet shipped</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
                     </select>
                 </div>
             </div>
@@ -50,22 +50,21 @@
 
         <div class="orders-container">
             <% orders.forEach((order) => { %>
-            <div class="order-card">
+            <div class="order-card"
+                data-date="<%= new Date(order.OrderDate).toISOString() %>"
+                data-status="<%= order.status ? order.status.toLowerCase() : 'processing' %>">
                 <div class="order-header">
                     <div class="order-info">
                         <h3>ORDER: <%= order.OrderId %></h3>
                         <p>
-                            Placed on: <%= new
-                            Date(order.OrderDate).toLocaleDateString('en-US', {
-                            year: 'numeric', month: 'short', day: 'numeric' })
-                            %>
+                            Placed on:
+                            <%= new Date(order.OrderDate).toLocaleDateString('en-US', {
+                                year: 'numeric', month: 'short', day: 'numeric'
+                            }) %>
                         </p>
                     </div>
                     <div class="order-actions">
-                        <a
-                            href="/MyOrder/<%= order._id %>"
-                            class="btn btn-primary"
-                        >
+                        <a href="/MyOrder/<%= order._id %>" class="btn btn-primary">
                             <i class="fas fa-box"></i> Track package
                         </a>
 
@@ -73,12 +72,10 @@
                         <a href="#" class="btn">
                             <i class="fas fa-undo"></i> Return items
                         </a>
-                         <a href="/order/invoice" class="btn">
+                        <a href="/order/invoice/<%= order.OrderId %>" target="_blank" class="btn">
                             <i class="fas fa-file-invoice"></i> Invoice
                         </a>
                         <% } %>
-
-                       
                     </div>
                 </div>
 
@@ -86,39 +83,25 @@
                     <% order.items.forEach((item) => { %>
                     <div class="order-image">
                         <a href="/product/<%= item.product._id %>">
-                            <img
-                                src="<%= item.product.image[0].filepath %>"
-                                alt="Product"
-                            />
+                            <img src="<%= item.product.image[0].filepath %>" alt="Product" />
                         </a>
                     </div>
                     <div class="order-content">
                         <div class="product-name">
-                            <a href="/product/<%= item.product._id %>"
-                                ><%= item.title %></a
-                            >
+                            <a href="/product/<%= item.product._id %>"><%= item.title %></a>
                         </div>
                         <div>
-                            <span
-                                class="order-status status-<%= order.status ? order.status.toLowerCase() : 'processing' %>"
-                            >
+                            <span class="order-status status-<%= order.status ? order.status.toLowerCase() : 'processing' %>">
                                 <%= order.status || 'Processing' %>
                             </span>
                         </div>
                         <p>Quantity: <%= item.quantity %></p>
-                        <p>Price: <%= item.price %></p>
-                        <div class="meta-item"></div>
+                        <p>Price: ₹<%= item.price %></p>
                     </div>
-
                     <% }); %>
+
                     <h4>Order total:</h4>
-                    <p
-                        style="
-                            font-weight: 900;
-                            color: rgb(147, 142, 142);
-                            font-family: fantasy;
-                        "
-                    >
+                    <p style="font-weight: 900; color: rgb(147, 142, 142); font-family: fantasy;">
                         ₹<%= order.total %>
                     </p>
                 </div>
@@ -127,4 +110,48 @@
         </div>
     </section>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const dateFilter = document.getElementById("filter-date");
+    const statusFilter = document.getElementById("filter-status");
+    const orders = document.querySelectorAll(".order-card");
+
+    function filterOrders() {
+        const selectedDate = dateFilter.value;
+        const selectedStatus = statusFilter.value;
+        const now = new Date();
+
+        orders.forEach(order => {
+            const orderDate = new Date(order.getAttribute("data-date"));
+            const orderStatus = order.getAttribute("data-status");
+
+            let showByDate = true;
+            let showByStatus = true;
+
+            if (selectedDate === "last30") {
+                const past30 = new Date(now);
+                past30.setDate(now.getDate() - 30);
+                showByDate = orderDate >= past30;
+            } else if (selectedDate === "last90") {
+                const past90 = new Date(now);
+                past90.setDate(now.getDate() - 90);
+                showByDate = orderDate >= past90;
+            } else if (selectedDate === "2022" || selectedDate === "2023") {
+                showByDate = orderDate.getFullYear().toString() === selectedDate;
+            } // else: show all
+
+            if (selectedStatus !== "all") {
+                showByStatus = orderStatus === selectedStatus;
+            }
+
+            order.style.display = (showByDate && showByStatus) ? "block" : "none";
+        });
+    }
+
+    dateFilter.addEventListener("change", filterOrders);
+    statusFilter.addEventListener("change", filterOrders);
+});
+</script>
+
 <%- include('../partials/footer') %>

@@ -1,0 +1,58 @@
+<%- include('../partials/header') %>
+<head>
+<style>
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px white inset !important;
+        box-shadow: 0 0 0 1000px white inset !important;
+        -webkit-text-fill-color: #000 !important;
+    }
+</style>
+</head>
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 mx-auto" style="max-width: 500px;">
+        <h3 class="text-center mb-4">Edit Admin</h3>
+        <form action="/admin/edit-admin/<%= admins._id %>" method="POST">
+             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="mb-3">
+                <label for="firstname" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstname" name="Firstname" value="<%= admins.Firstname %>" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="Lastname" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="Lastname" name="Lastname" value="<%= admins.Lastname %>" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="<%= admins.email %>" required autocomplete="off">
+            </div>
+
+            <div class="mb-3">
+                <label for="number" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="number" name="number" value="<%= admins.number %>" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="password" name="password" autocomplete="new-password">
+                <small class="text-muted">Leave blank to keep the current password.</small>
+            </div>
+
+                    <div class="mb-3">
+                    <label for="status" class="form-label">Status &nbsp;</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="true" <%= admins.status == true || admins.status === true ? 'selected' : '' %>>Active</option>
+                        <option value="false" <%= admins.status == false || admins.status === false ? 'selected' : '' %>>Block</option>
+
+                    </select>
+                </div>
+
+
+            <button type="submit" class="btn btn-primary w-100">Update admin</button>
+        </form>
+    </div>
+</div>
+
+<%- include('.././partials/footer') %>

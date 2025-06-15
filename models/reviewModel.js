@@ -17,6 +17,14 @@ const reviewSchema = new mongoose.Schema({
     },
     title: String,
     description: String,
+    status:{
+        type:String,
+          enum: [
+            "Pending",
+            "Rejected",
+            "Accepted"
+        ],
+    },
     date: Date,
 });
 export const review = mongoose.model("review", reviewSchema);

@@ -58,7 +58,7 @@ export const sendotp = async (email, otp) => {
       to: email,
       subject: "Your OTP for M4 Mart",
       text: `YOUR OTP TO ENTER THE M4 MART IS: ${otp}`,
-      html: generateOtpHtml(otp), // ✅ Added HTML version
+      html: generateOtpHtml(otp),
     });
     console.log("OTP Email sent: " + otp);
   } catch (error) {

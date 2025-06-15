@@ -411,7 +411,7 @@
                                     </div>
 
                                     <!-- Stock & Listing -->
-                                    <div class="form-group">
+                                    <div class="form-group" >
                                         <label for="inStock">In Stock</label>
                                         <input
                                             type="number"
@@ -421,7 +421,7 @@
                                             value="<%= product.inStock %>"
                                         />
                                     </div>
-                                    <div class="form-group form-check">
+                                    <div class="form-group form-check" >
                                         <input type="checkbox" name="isListed"
                                         class="form-check-input" id="isListed"
                                         <%= product.isListed ? 'checked' : '' %>
@@ -429,9 +429,19 @@
                                         <label
                                             class="form-check-label"
                                             for="isListed"
+                                            style="padding-left: 7px;"
                                             >Status</label
                                         >
                                     </div>
+                                              <div class="form-group" style="display: flex; gap: 10px;">
+                                                <% if (product.isFeatured==true) { %>
+                                                    <input type="checkbox" id="featured" name="featured" checked />
+                                                    <% } else { %>
+                                                        <input type="checkbox" id="featured" name="featured"  /> 
+                                                <% } %>
+
+                                                <label  for="featured">Featured</label>
+                                            </div>
 
                                     <button
                                         type="submit"

@@ -1,0 +1,128 @@
+<%- include('../partials/header') %>
+<head>
+  <style>
+    .status-dropdown {
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-weight: 500;
+      width: 100%;
+    }
+
+    .status-dropdown.text-success {
+      color: #28a745;
+    }
+
+    .status-dropdown.text-danger {
+      color: #dc3545;
+    }
+
+    .status-dropdown option {
+      color: #000;
+    }
+
+    .blurred-row {
+      filter: blur(2px);
+      opacity: 0.6;
+    }
+
+    .deleted-label {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<%- include('../partials/navbar') %>
+
+<div class="app-content content" style="padding-top: 50px;">
+  <div class="content-wrapper">
+    <div class="content-header row"></div>
+    <div class="content-body">
+      <h2>Order Management</h2>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">ORDERS LIST:</h5>
+              </div>
+
+              <% if (orders.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Order Date</th>
+                      <th>Total</th>
+                      <th>Payment</th>
+                      <th>Status</th>
+                      <th>Payment Status</th>
+                      <th>Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% orders.forEach((order, index) => { %>
+                      <tr class="<%= order.isCancelled ? 'blurred-row' : '' %>">
+                        <td><%= index + 1 %></td>
+                        <td><%= order.OrderId %></td>
+                        <td><%= order.UserId?.firstname + ' ' + order.UserId?.Lastname || 'Unknown' %></td>
+                        <td><%= new Date(order.OrderDate).toLocaleDateString() %></td>
+                        <td>₹<%= order.total.toLocaleString() %></td>
+                        <td><%= order.paymentMethod %></td>
+
+                        <!-- Order Status Dropdown -->
+                        <td>
+                          <form action="/admin/orders/editOrder/<%= order._id %>" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <select
+                              name="status"
+                              class="form-select <%= order.status === 'Delivered' ? 'bg-success text-white' : order.status === 'Cancelled' ? 'bg-danger text-white' : 'bg-warning text-dark' %>"
+                              onchange="this.form.submit()"
+                              style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
+                              <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                              <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                              <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                              <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            </select>
+                          </form>
+                        </td>
+
+                        <!-- Payment Status Dropdown -->
+                        <td>
+                          <form action="/admin/orders/updatePaymentStatus/<%= order._id %>" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <select
+                              name="paymentStatus"
+                              class="form-select <%= order.paymentStatus === 'Completed' ? 'bg-success text-white' : order.paymentStatus === 'Refunded' ? 'bg-info text-white' : 'bg-warning text-dark' %>"
+                              onchange="this.form.submit()"
+                              style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
+                              <option value="Pending" <%= order.paymentStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                              <option value="Completed" <%= order.paymentStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
+                              <option value="Refunded" <%= order.paymentStatus === 'Refunded' ? 'selected' : '' %>>Refunded</option>
+                            </select>
+                          </form>
+                        </td>
+
+                        <td>
+                          <a href="/admin/orders/view/<%= order._id %>" class="btn btn-sm btn-outline-primary">View</a>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% } else { %>
+                <p class="text-center">No orders found.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
