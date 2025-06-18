@@ -14,6 +14,12 @@ import {
     loadReview,
     loadBanner,
     loadAddBanner,
+    loadEditBanner,
+    loadCoupon,
+    loadAddCoupon,
+    loadEditCoupon,
+    loadLowStock,
+    viewProduct
 } from "../controllers/admin/adminPageLoader.js";
 import {
     adminSignup,
@@ -33,6 +39,16 @@ import {
     editOrderStatus,
     editOrderPaymentStatus,
     reviewStatus,
+    bannerAdd,
+    bannerStatus,
+    bannerEdit,
+    bannerImgDlt,
+    addCoupon,
+    couponStatus,
+    couponEdit,
+    couponDlt,
+    bannerDlt,
+    userDashboardStatus
 
 } from "../controllers/admin/adminDashboardController.js";
 
@@ -139,6 +155,7 @@ adminRouter.post('/admin/product/delete-vrImage',vrImageDlt)
 
 adminRouter.post("/admin/brand/update-status/:id", updateStatus);
 adminRouter.post('/admin/user/update-status/:id',userStatus)
+adminRouter.post('/admin/user/update-status/dashboard/:id',userDashboardStatus)
 
 adminRouter.get("/admin/admins/details", isAdminloggedIn,loadAdminDetails);
 
@@ -156,6 +173,23 @@ adminRouter.get('/admin/reviews',isAdminloggedIn,loadReview)
 adminRouter.post('/admin/reviews/update-status/:id',reviewStatus)
 
 adminRouter.get('/admin/banners',isAdminloggedIn,loadBanner)
-adminRouter.get('/admin/banner/add',isAdminloggedIn,loadAddBanner)
+adminRouter.get('/admin/banners/add',isAdminloggedIn,loadAddBanner)
+adminRouter.post('/admin/banners/add', upload.single('image'), bannerAdd);
+adminRouter.post('/admin/banners/update-status/:id',bannerStatus)
+adminRouter.get('/admin/banners/edit/:id',isAdminloggedIn,loadEditBanner)
+adminRouter.post('/admin/banners/edit/:id',upload.single('image'),bannerEdit)
+adminRouter.post('/admin/banner/image/delete', bannerImgDlt);
+adminRouter.post('/admin/banners/delete/:id',bannerDlt)
+
+adminRouter.get('/admin/coupons',isAdminloggedIn,loadCoupon)
+adminRouter.get('/admin/coupons/add',isAdminloggedIn,loadAddCoupon)
+adminRouter.post('/admin/coupons/add',addCoupon)
+adminRouter.post('/admin/coupons/update-status/:id',couponStatus)
+adminRouter.get('/admin/coupons/edit/:id',isAdminloggedIn,loadEditCoupon)
+adminRouter.post('/admin/coupons/edit/:id',couponEdit)
+adminRouter.post('/admin/coupons/delete/:id',couponDlt)
+
+adminRouter.get('/admin/low-stock',isAdminloggedIn,loadLowStock)
+adminRouter.get('/admin/product/view/:id',isAdminloggedIn,viewProduct)
 
 export default adminRouter;

@@ -1,134 +1,269 @@
-<!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
- 
 <%- include('../partials/header') %>
-    <head>
-        <style>
-            .sidebar {
-                height: 100vh;
-                background-color: #343a40;
-                padding-top: 20px;
-            }
-            .sidebar .nav-link {
-                color: white;
-            }
-            .sidebar .nav-link:hover {
-                background-color: #495057;
-                color: white;
-            }
-            .content {
-                padding: 20px;
-            }
-            .card {
-                margin-bottom: 20px;
-            }
-            html body.fixed-navbar{
-                padding-top: 0;
-            } 
-        </style>
-    </head>
-    </head>
-        <%- include('../partials/navbar') %>
 
-        
+<head>
+    <style>
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
 
-        <div class="app-content content">
-            <div class="content-wrapper">
-                <div class="content-wrapper-before"></div>
-                <div class="content-header row"></div>
-                <div class="content-body">
+        .sidebar .nav-link {
+            color: white;
+        }
 
-                    <div class="row match-height">
-                        <div class="col-12">
-                            <div class="">
-                                <div
-                                    id="gradient-line-chart1"
-                                    class="height-250 GradientlineShadow1"
-                                ></div>
+        .sidebar .nav-link:hover {
+            background-color: #495057;
+            color: white;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        html body.fixed-navbar {
+            padding-top: 0;
+        }
+
+        #revenueChart {
+            height: 300px;
+        }
+
+        .export-buttons button {
+            margin-right: 10px;
+        }
+
+        .blue-section {
+            background-color: #1e2746;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            color: white;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<%- include('../partials/navbar') %>
+
+<div class="app-content content">
+    <div class="content-wrapper">
+        <div class="content-wrapper-before"></div>
+        <div class="content-header row"></div>
+        <div class="content-body" style="margin-top: 50px;">
+
+            <!-- Blue Section with Summary Boxes -->
+            <div class="blue-section">
+                <div class="row">
+                     <div class="col-xl-3 col-md-6 col-sm-12">
+                <div class="card text-center">
+                    <div class="card-body">
+                    <i class="ft-activity font-large-2 info"></i> <!-- Replace with a valid icon -->
+                    <h5 class="mt-1">Total Revenue</h5>
+                    <h3>₹<%= totalRevenue %></h3>
+                    </div>
+                </div>
+                </div>
+
+
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="ft-package font-large-2 success"></i>
+                                <h5 class="mt-1">Total Orders</h5>
+                                <h3><%= totalOrders.length %></h3>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="card pull-up ecom-card-1 bg-white">
-                                <div class="card-content ecom-card2 height-180">
-                                    <h5
-                                        class="text-muted danger position-absolute p-1"
-                                    >
-                                        Progress Stats
-                                    </h5>
-                                    <div>
-                                        <i
-                                            class="ft-pie-chart danger font-large-1 float-right p-1"
-                                        ></i>
-                                    </div>
-                                    <div
-                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
-                                    >
-                                        <div
-                                            id="progress-stats-bar-chart"
-                                        ></div>
-                                        <div
-                                            id="progress-stats-line-chart"
-                                            class="progress-stats-shadow"
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-6 col-md-12">
-                            <div class="card pull-up ecom-card-1 bg-white">
-                                <div class="card-content ecom-card2 height-180">
-                                    <h5
-                                        class="text-muted info position-absolute p-1"
-                                    >
-                                        Activity Stats
-                                    </h5>
-                                    <div>
-                                        <i
-                                            class="ft-activity info font-large-1 float-right p-1"
-                                        ></i>
-                                    </div>
-                                    <div
-                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
-                                    >
-                                        <div
-                                            id="progress-stats-bar-chart1"
-                                        ></div>
-                                        <div
-                                            id="progress-stats-line-chart1"
-                                            class="progress-stats-shadow"
-                                        ></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-12">
-                            <div class="card pull-up ecom-card-1 bg-white">
-                                <div class="card-content ecom-card2 height-180">
-                                    <h5
-                                        class="text-muted warning position-absolute p-1"
-                                    >
-                                        Sales Stats
-                                    </h5>
-                                    <div>
-                                        <i
-                                            class="ft-shopping-cart warning font-large-1 float-right p-1"
-                                        ></i>
-                                    </div>
-                                    <div
-                                        class="progress-stats-container ct-golden-section height-75 position-relative pt-3"
-                                    >
-                                        <div
-                                            id="progress-stats-bar-chart2"
-                                        ></div>
-                                        <div
-                                            id="progress-stats-line-chart2"
-                                            class="progress-stats-shadow"
-                                        ></div>
-                                    </div>
-                                </div>
+
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="ft-shopping-cart font-large-2 warning"></i>
+                                <h5 class="mt-1">Total Products</h5>
+                                <h3><%= totalProducts.length %></h3>
                             </div>
                         </div>
                     </div>
-        <%- include('../partials/footer') %>
+
+                <div class="col-xl-3 col-md-6 col-sm-12">
+  <div class="card text-center">
+    <div class="card-body">
+      <i class="ft-alert-triangle font-large-2 danger"></i>
+      <h5 class="mt-1">Low Stock Items</h5>
+
+      <% if (lowStockCount && lowStockCount.length > 0) { %>
+        <h3><%= lowStockCount.length %></h3>
+        <a href="/admin/low-stock" class="btn btn-sm btn-outline-danger mt-2">View Items</a>
+      <% } else { %>
+        <h6 class="text-muted mt-2">No low stock items</h6>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+                </div>
+            </div>
+
+            <!-- New Members and Payment Method -->
+            <div class="row">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-primary">New Members (Last 15 Days)</h5>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% Users.forEach(user => { %>
+                                        <tr>
+                                            <td><%= user.firstname + ' ' + user.Lastname %></td>
+                                            <td><%= user.email %></td>
+                                            <td>
+  <form action="/admin/user/update-status/dashboard/<%= user._id %>" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    
+    <select
+      class="form-select <%= user.status === true ? 'bg-success text-white' : 'bg-danger text-white' %>"
+      name="status"
+      onchange="this.form.submit()"
+      style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
+      
+      <option value="true" <%= user.status === true ? 'selected' : '' %>>Active</option>
+      <option value="false" <%= user.status === false ? 'selected' : '' %>>Block</option>   
+    </select>
+  </form>
+</td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-info">Payment Method Breakdown</h5>
+                            <p>Razorpay: <strong><%= razorpayCount %></strong></p>
+                            <p>Cash on Delivery: <strong><%= codCount %></strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-dark">Recent Orders</h5>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Billing Name</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                             <tbody>
+  <% recentOrders.forEach(order => { %>
+    <tr>
+      <td><%= order.OrderId %></td>
+      <td><%= order.UserId.email %></td>
+      <td><%= order.OrderDate.toDateString() %></td>
+      <td>₹<%= order.total %></td>
+      <td>
+        <a href="/admin/orders/view/<%= order._id %>?from=dashboard" class="btn btn-sm btn-info">View</a>
+      </td>
+    </tr>
+  <% }) %>
+</tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+  <div class="col-xl-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="text-success">Top Selling Products</h5>
+      </div>
+      <div class="card-body">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Sold</th>
+              <th>Stock</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% topSelling.forEach(p => { %>
+              <tr>
+                <td>
+                  <img src="<%= p.image[0].filepath %>" alt="Product Image" width="50" height="50" style="object-fit: cover;">
+                </td>
+                <td><%= p.title %></td>
+                <td><%= p.sold %></td>
+                <td><%= p.inStock %></td>
+                <td>
+                  <a href="/admin/product/view/<%= p._id %>" class="btn btn-sm btn-outline-info">View</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+            <!-- Revenue Graph and Filters -->
+            <div class="row">
+                <div class="col-xl-8 col-md-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>Revenue Overview</h5>
+                            <select id="dateFilter" class="form-control w-auto">
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="row">
+                <div class="col-12 export-buttons mb-2">
+                    <button class="btn btn-primary" onclick="exportOrders()">Export Orders (Excel)</button>
+                    <button class="btn btn-success" onclick="exportUsers()">Export Users (PDF)</button>
+                </div>
+            </div>
+
+        </div> <!-- content-body -->
+    </div> <!-- content-wrapper -->
+</div> <!-- app-content -->
+
+<%- include('../partials/footer') %>
+

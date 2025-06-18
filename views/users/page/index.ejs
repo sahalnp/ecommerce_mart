@@ -4,30 +4,51 @@
 </head>
 
 <main>
-    <!-- Single Slider -->
-    <div class="single-slider slider-height d-flex align-items-center slide-bg">
-        <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
-                    <div class="hero__caption">
-                        <h1 data-animation="fadeInLeft" data-delay=".4s" data-duration="2000ms">Select Your New Perfect Style</h1>
-                        <p data-animation="fadeInLeft" data-delay=".7s" data-duration="2000ms">
-                           Discover timepieces that don’t just tell time — they tell your story. Elegance, precision, and personality in every tick.
-                        </p>
-                        <div class="hero__btn" data-animation="fadeInLeft" data-delay=".8s" data-duration="2000ms">
-                            <a href="/shop" class="btn hero-btn " style="padding: 20px;">Shop Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 d-none d-sm-block">
-                    <div class="hero__img" data-animation="bounceIn" data-delay=".4s">
-                        <img src="assets/img/hero/watch.png" alt="" class="heartbeat">
-                    </div>
-                </div>
-            </div>
+<% if (banners && banners.length > 0) { %>
+  <div class="banner-container">
+    <% banners.forEach((b, index) => { %>
+      <div class="banner-slide <%= index === 0 ? 'active' : '' %>">
+        <div class="banner-content">
+          <h2><%= b.title %></h2>
+          <p><%= b.description %></p>
+          <a href="/product/<%= b.productId %>" class="shop-btn">Shop Now</a>
         </div>
+        <div class="banner-img-wrapper">
+          <img src="<%= b.image.filepath %>" alt="<%= b.title %>" class="banner-img">
+        </div>
+      </div>
+    <% }) %>
+    
+    <div class="banner-indicators">
+      <% banners.filter(b => b.status === 'Active').forEach((b, index) => { %>
+        <div class="indicator <%= index === 0 ? 'active' : '' %>" data-slide="<%= index %>"></div>
+      <% }) %>
     </div>
-    <!-- slider Area End-->
+  </div>
+<% } else { %>
+  <!-- Default Static Hero -->
+  <div class="banner-container">
+    <div class="banner-slide active">
+      <div class="banner-content">
+        <h2>Select Your New Perfect Style</h2>
+        <p>Discover timepieces that don't just tell time — they tell your story. Elegance, precision, and personality in every tick.</p>
+        <a href="/shop" class="shop-btn">Shop Now</a>
+      </div>
+      <div class="banner-img-wrapper">
+        <img src="assets/img/hero/watch.png" alt="Luxury Watch" class="banner-img">
+      </div>
+    </div>
+  </div>
+<% } %>
+
+
+  <div class="banner-indicators">
+    <% banners.filter(b => b.status === 'active').forEach(() => { %>
+      <div class="indicator"></div>
+    <% }) %>
+  </div>
+</div>
+
 
     <!-- New Product Start -->
     <section class="new-product-area section-padding30">
@@ -51,21 +72,19 @@
 
                             <!-- Add to Cart Button -->
                             <div class="addtoCart">
- <% if (cart.includes(String(p._id))) { %>
-    <button onclick="goToCart()" class="add-cart-btn">
-        <i class="fas fa-shopping-cart"></i> Go to Cart
-    </button>
-<% } else if (p.inStock <= 0) { %>
-    <button class="add-cart-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
-        <i class="fas fa-shopping-cart"></i> Out of Stock
-    </button>
-<% } else { %>
-    <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn">
-        <i class="fas fa-shopping-cart"></i> Add to Cart
-    </button>
-<% } %>
-
-
+                                <% if (cart.includes(String(p._id))) { %>
+                                    <button onclick="goToCart()" class="add-cart-btn">
+                                        <i class="fas fa-shopping-cart"></i> Go to Cart
+                                    </button>
+                                <% } else if (p.inStock <= 0) { %>
+                                    <button class="add-cart-btn" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                        <i class="fas fa-shopping-cart"></i> Out of Stock
+                                    </button>
+                                <% } else { %>
+                                    <button onclick="addToCart('<%= p._id %>')" class="add-cart-btn">
+                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                    </button>
+                                <% } %>
                             </div>
 
                             <!-- Wishlist Icon -->
@@ -86,13 +105,13 @@
         </div>
     </section>
 
-            <div class="row justify-content-center">
-                <div class="room-btn pt-70">
-                    <a href="/shop" class="btn view-btn1">View More Products</a>
-                </div>
-            </div>
+    <div class="row justify-content-center">
+        <div class="room-btn pt-70">
+            <a href="/shop" class="btn view-btn1">View More Products</a>
         </div>
     </div>
+
+    <!-- Shop Method Area -->
     <div class="shop-method-area pt-5">
         <div class="container">
             <div class="method-wrapper">
@@ -123,12 +142,90 @@
         </div>
     </div>
 
+    <!-- Toast Messages -->
     <div class="cart-toast">Item added to cart! 🎉</div>
     <div class="wishlist-toast">Item removed from wishlist! ❌</div>
     <div class="stock-toast">Item is out of stock! 📦</div>
 </main>
 
 <script>
+// Auto-Sliding Banner JavaScript
+let currentSlide = 0;
+const slides = document.querySelectorAll('.banner-slide');
+const indicators = document.querySelectorAll('.indicator');
+const slider = document.getElementById('bannerSlider');
+const totalSlides = slides.length;
+let slideInterval;
+
+function updateSlider() {
+    slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+    
+    // Update indicators
+    indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+    });
+
+    // Reset animations for current slide
+    const currentSlideElement = slides[currentSlide];
+    const animatedElements = currentSlideElement.querySelectorAll('.hero__caption h1, .hero__caption p, .hero__btn, .hero__img');
+    
+    // Remove animation classes
+    animatedElements.forEach(el => {
+        el.style.animation = 'none';
+    });
+    
+    // Trigger reflow
+    currentSlideElement.offsetHeight;
+    
+    // Re-add animations
+    setTimeout(() => {
+        animatedElements.forEach((el, index) => {
+            if (el.matches('.hero__caption h1')) {
+                el.style.animation = 'slideInUp 1s ease forwards';
+            } else if (el.matches('.hero__caption p')) {
+                el.style.animation = 'slideInUp 1s ease 0.3s forwards';
+            } else if (el.matches('.hero__btn')) {
+                el.style.animation = 'slideInUp 1s ease 0.6s forwards';
+            } else if (el.matches('.hero__img')) {
+                el.style.animation = 'bounceIn 1s ease 0.4s forwards';
+            }
+        });
+    }, 100);
+}
+
+function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    updateSlider();
+}
+
+function previousSlide() {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    updateSlider();
+}
+
+function goToSlide(slideIndex) {
+    currentSlide = slideIndex;
+    updateSlider();
+}
+
+function startSlideshow() {
+    slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+}
+
+function stopSlideshow() {
+    clearInterval(slideInterval);
+}
+
+// Initialize slider
+updateSlider();
+startSlideshow();
+
+// Pause slideshow on hover
+const bannerContainer = document.querySelector('.banner-container');
+bannerContainer.addEventListener('mouseenter', stopSlideshow);
+bannerContainer.addEventListener('mouseleave', startSlideshow);
+
+// Existing cart and wishlist functionality
 const csrfToken = "<%= csrfToken %>";
 
 function showToast(selector, message, color = "#dc3545") {
@@ -215,5 +312,45 @@ function showOutOfStockToast() {
     showToast(".stock-toast", "Item is out of stock! 📦");
 }
 </script>
+  <script>
+        // Banner Slider Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.banner-slide');
+            const indicators = document.querySelectorAll('.indicator');
+            let currentSlide = 0;
+            const slideInterval = 4000;
+            
+            function showSlide(index) {
+                // Hide all slides
+                slides.forEach(slide => slide.classList.remove('active'));
+                indicators.forEach(indicator => indicator.classList.remove('active'));
+                
+                // Show the current slide
+                slides[index].classList.add('active');
+                indicators[index].classList.add('active');
+                currentSlide = index;
+            }
+            
+            function nextSlide() {
+                let nextIndex = (currentSlide + 1) % slides.length;
+                showSlide(nextIndex);
+            }
+            
+            // Set up automatic sliding
+            let slideTimer = setInterval(nextSlide, slideInterval);
+            
+            // Add click events to indicators
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    clearInterval(slideTimer);
+                    showSlide(index);
+                    slideTimer = setInterval(nextSlide, slideInterval);
+                });
+            });
+            
+            // Initial slide
+            showSlide(0);
+        });
+    </script>
 
 <%- include('../partials/footer') %>

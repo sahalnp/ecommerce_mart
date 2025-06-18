@@ -51,9 +51,6 @@ const userSchema = new mongoose.Schema({
       ref: "product",
     },
   ],
-  wallet:{
-    type:Number
-  },
   status: {
     type: Boolean,
     default: true,

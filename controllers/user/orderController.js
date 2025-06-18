@@ -118,6 +118,7 @@ export const verifyPay = asyncHandler(async (req, res) => {
                 shippedDate,
                 estimatedDelivery,
                 couponCode,
+                walletAmount:walletAmount||0,
                 reason: null,
             });
         } else {
@@ -218,6 +219,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
         shippedDate,
         estimatedDelivery,
         couponCode,
+        walletAmount:walletAmount||0,
         reason: null,
     });
     res.json({ success: true, redirectUrl: "/place/order" });
@@ -236,14 +238,13 @@ export const orderReturn = asyncHandler(async (req, res) => {
 });
 export const cancelOrder = asyncHandler(async (req, res) => {
     try {
-        const { OrderId } = req.body;
+        const { OrderId,reason } = req.body;;
+        
         const find = await Order.findOneAndUpdate(
             { OrderId, UserId: req.session.users._id },
             { status: "Cancelled", reason },
             { new: true }
         );
-
-        console.log(find, "zxcvbnm,.");
         // await User.findByIdAndUpdate(req.session.users._id,{wallet})
     } catch (error) {
         console.log(error);

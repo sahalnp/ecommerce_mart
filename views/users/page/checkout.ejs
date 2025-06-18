@@ -120,9 +120,9 @@
         </div>
     </div>
 
-    <!-- Main Content -->
+
     <div class="checkout-container ">
-        <!-- Right Column - Order Summary (Now First) -->
+
         <div class="checkout-sidebar">
             <div class="order-summary">
                 <div class="summary-header">Order Summary</div>
@@ -268,7 +268,7 @@
                 <div class="section-content">
                     <!-- Wallet Balance Display -->
                     <div class="wallet-balance">
-                        <strong>💰 Wallet Balance: ₹<span id="wallet-balance"><%= typeof wallet !== 'undefined' ? wallet.balance || 0 : 50 %></span></strong>
+                        <strong>💰 Wallet Balance: ₹<span id="wallet-balance"><%= wallet %></span></strong>
                     </div>
 
                     <!-- Cash on Delivery -->
@@ -476,7 +476,6 @@
     let appliedCoupon = null;
     let discountAmount = 0;
     let walletBalance = parseFloat(document.getElementById('wallet-balance').textContent) || 0;
-    
     async function changeQty(button, delta) {
         const qtySelector = button.parentElement;
         const qtySpan = qtySelector.querySelector(".qty-value");
@@ -522,65 +521,79 @@
     async function dlt(id) {
         try {
             const res = await axios.post('/address/delete/' + id, { _csrf: csrfToken });
-            location.reload(); // Refresh to update address list
+            location.reload(); 
         } catch (error) {
             console.log(error, "ERROR");
             showToast("Failed to delete address");
         }
     }
 
-    async function applyCoupon() {
+async function applyCoupon() {
     const couponCode = document.getElementById('coupon-code').value.trim().toUpperCase();
     if (!couponCode) {
         showToast("Please enter a coupon code");
         return;
     }
 
-    // Predefined coupons with 40% discount
-    const validCoupons = {
-        'FLAT500': { code: 'FLAT500', discountType: 'percentage', discountValue: 40, description: '40% off' },
-        'FIRST400': { code: 'FIRST400', discountType: 'percentage', discountValue: 30, description: '30% off' },
-        'BING100': { code: 'BING100', discountType: 'percentage', discountValue: 50, description: '50% off' }
-    };
+    // Calculate subtotal
+    let subtotal = 0;
+    const qtyControls = document.querySelectorAll(".quantity-controls");
+    qtyControls.forEach((qtySelector) => {
+        const price = parseFloat(qtySelector.getAttribute("data-price"));
+        const quantity = parseInt(qtySelector.querySelector(".qty-value").textContent);
+        subtotal += price * quantity;
+    });
 
-    if (validCoupons[couponCode]) {
-        appliedCoupon = validCoupons[couponCode];
-        
-        // Calculate discount amount (40% of subtotal only, not including shipping and tax)
-        const qtyControls = document.querySelectorAll(".quantity-controls");
-        let subtotal = 0;
-        qtyControls.forEach((qtySelector) => {
-            const price = parseFloat(qtySelector.getAttribute("data-price"));
-            const quantity = parseInt(qtySelector.querySelector(".qty-value").textContent);
-            subtotal += price * quantity;
+    try {
+        const res = await axios.post('/applyCoupon', {
+            _csrf: csrfToken,
+            couponCode,
+            subtotal
         });
-        
-        discountAmount = subtotal * (appliedCoupon.discountValue / 100);
-        
+
+        appliedCoupon = res.data;
+        discountAmount = appliedCoupon.discountAmount || 0;
+
         document.getElementById('coupon-input-section').style.display = 'none';
         document.getElementById('applied-coupon-section').style.display = 'block';
-        document.getElementById('applied-coupon-text').textContent = 
+        document.getElementById('applied-coupon-text').textContent =
             `${appliedCoupon.code} - ${appliedCoupon.description} applied`;
-        document.getElementById('coupon-savings').textContent = 
-            `You saved ₹${discountAmount.toFixed(2)}!`;
-        
+        document.getElementById('coupon-savings').textContent =
+            `You saved ₹${appliedCoupon.discountAmount}!`;
+
         updateSubtotal();
-        showToast(`Coupon applied! You saved ₹${discountAmount.toFixed(2)}`);
-    } else {
-        showToast("Invalid coupon code. Try: FLAAT500, FIRST400, or MAIN404");
+        showToast(appliedCoupon.message);
+
+    } catch (error) {
+       const errMsg = error.response?.data?.message || "Failed to apply coupon.";
+
+        showToast(errMsg);
     }
 }
-    function removeCoupon() {
+
+   async function removeCoupon() {
+    try {
+        await axios.post('/removeCoupon', {
+            _csrf: csrfToken,
+            couponCode: appliedCoupon?.code  
+        });
+
         appliedCoupon = null;
         discountAmount = 0;
-        
+
         document.getElementById('coupon-input-section').style.display = 'block';
         document.getElementById('applied-coupon-section').style.display = 'none';
         document.getElementById('coupon-code').value = '';
-        
+
         updateSubtotal();
         showToast("Coupon removed");
+        
+    } catch (error) {
+        const errMsg = error.response?.data?.error || "Failed to remove coupon";
+        showToast(errMsg);
     }
+}
+
 
     function handlePaymentChange() {
         const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
@@ -611,7 +624,6 @@
             walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
         }
         
-        // Validate wallet amount
         if (walletAmount > walletBalance) {
             walletAmount = walletBalance;
             if (type === 'cod') {
@@ -656,17 +668,15 @@ function getCurrentOrderTotal() {
         );
         subtotal += price * quantity;
     });
-
-    // Calculate dynamic shipping fee and tax based on backend logic
     let shippingFee = 0;
     let tax = 0;
     
     if (subtotal < 3000) {
         shippingFee = 40.0;
-        tax = (10 / 100) * subtotal; // 10% of product total only
+        tax = (10 / 100) * subtotal; 
     } else {
-        shippingFee = 0; // No shipping fee for orders ≥ ₹3000
-        tax = (5 / 100) * subtotal; // 5% of product total only
+        shippingFee = 0; 
+        tax = (5 / 100) * subtotal; 
     }
 
     const totalBeforeDiscount = subtotal + shippingFee + tax;

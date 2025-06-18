@@ -6,6 +6,8 @@ import { Compare } from "../../models/compareModel.js";
 import { Order } from "../../models/orderModel.js";
 import { review } from "../../models/reviewModel.js";
 import bcrypt from "bcrypt";
+import { Coupon } from "../../models/couponModel.js";
+import exp from "constants";
 
 export const editProfile = asyncHandler(async (req, res) => {
     const { firstname, Lastname, email, number, gender, dob } = req.body;
@@ -324,7 +326,7 @@ export const cmpResetOne = asyncHandler(async (req, res) => {
         await Compare.findOneAndDelete({ UserId, productId }, { new: true });
         res.redirect("/compare");
     } catch (error) {
-        console.log("ERROR in addCompare:", error);
+        console.log("ERROR:", error);
         res.status(500).json({
             success: false,
             message: "Internal Server Error",
@@ -384,7 +386,11 @@ export const reviewRighted = asyncHandler(async (req, res) => {
             .send("You can't review a product you haven't purchased.");
     }
 
-    const existingReview = await review.findOne({ UserId: userId, productId,status:"Accepted" });
+    const existingReview = await review.findOne({
+        UserId: userId,
+        productId,
+        status: "Accepted",
+    });
 
     if (existingReview) {
         if (title?.trim()) existingReview.title = title.trim();
@@ -399,9 +405,81 @@ export const reviewRighted = asyncHandler(async (req, res) => {
             title: title?.trim() || "No Title",
             description: desc?.trim() || "No Description",
             rating: rating || 0,
-            status:"pending",
+            status: "pending",
             date: new Date(),
         });
     }
     res.redirect(`/MyOrder/${hasOrdered._id}`);
+});
+export const applyCoupon = asyncHandler(async (req, res) => {
+    const { couponCode, subtotal } = req.body;
+    const userId = req.session.users._id;
+    const coupon = await Coupon.findOne({ code: couponCode, active: true });
+    if (!coupon) {
+        return res.status(404).json({ message: "No coupon exists" });
+    }
+    if (subtotal < coupon.minAmount) {
+        return res
+            .status(404)
+            .json({ message: `Minimum amount ₹${coupon.minAmount} required.` });
+    }
+    const userEntry = coupon.usedBy.find(
+        (p) => p.userId.toString() === userId.toString()
+    );
+    if (userEntry && userEntry.usageCount >= coupon.usageLimit) {
+        return res.status(400).json({
+            message: "You already used this coupon the maximum number of times.",
+        });
+    }
+    if (userEntry) {
+        userEntry.usageCount += 1;
+    } else {
+        coupon.usedBy.push({ userId, usageCount: 1 });
+    }
+    let discountAmount = subtotal * (coupon.discount / 100);
+    if (discountAmount > coupon.maxDiscount) {
+        discountAmount = coupon.maxDiscount;
+    }
+    const finalDiscount = Math.min(discountAmount, coupon.maxDiscount);
+    await coupon.save();
+    res.json({
+    code: coupon.code,
+    discountPercent: coupon.discount,
+    discountAmount: Number(finalDiscount.toFixed(2)),
+    description: `Flat ${coupon.discount}% OFF`,
+    message: `Coupon applied! You saved ₹${finalDiscount.toFixed(2)}`
+});
+});
+export const removeCoupon = asyncHandler(async (req, res) => {
+    const { couponCode } = req.body
+    const userId = req.session.users._id;
+
+    const coupon = await Coupon.findOne({ code: couponCode });
+    if (!coupon) {
+        return res.status(404).json({ error: "Coupon not found." });
+    }
+    const userUsage = coupon.usedBy.find(
+        (e) => e.userId.toString() === userId.toString()
+    );
+    if (userUsage.usageCount > 1) {
+        await Coupon.updateOne(
+            { code: couponCode },
+            {
+                $inc: { "usedBy.$[elem].usageCount": -1 },
+            },
+            {
+                arrayFilters: [{ "elem.userId": userId }],
+            }
+        );
+    } else {
+        await Coupon.updateOne(
+            { code: couponCode },
+            {
+                $pull: { usedBy: { userId: userId } },
+                $inc: { usageCount: -1 },
+            }
+        );
+    }
+   res.json({ message: "Coupon removed successfully." });
+
 });

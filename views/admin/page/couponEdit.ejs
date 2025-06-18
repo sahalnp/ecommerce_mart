@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+<head>
+  <title>Edit Coupon</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<%- include('../partials/navbar') %>
+
+<div class="app-content content" style="padding-top: 50px;">
+  <div class="content-wrapper" style="padding: 6.2rem;">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="mb-4">Edit Coupon</h3>
+
+        <form action="/admin/coupons/edit/<%= coupons._id %>" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="form-group mb-3">
+            <label for="code">Coupon Code</label>
+            <input type="text" class="form-control" id="code" name="code" value="<%= coupons.code %>" required />
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="discount">Discount (%)</label>
+            <input type="number" class="form-control" id="discount" name="discount" value="<%= coupons.discount %>" min="1" max="100" required />
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="minAmount">Minimum Purchase (₹)</label>
+            <input type="number" class="form-control" id="minAmount" name="minAmount" value="<%= coupons.minAmount %>" min="0" required />
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="maxDiscount">Maximum Discount (₹)</label>
+            <input type="number" class="form-control" id="maxDiscount" name="maxDiscount" value="<%= coupons.maxDiscount %>" min="0" required />
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="expiry">Expiry Date</label>
+            <input type="date" class="form-control" id="expiry" name="expiry" value="<%= coupons.expiry.toISOString().split('T')[0] %>" required />
+          </div>
+
+          <div class="form-group mb-3">
+            <label for="usageLimit">Usage Limit</label>
+            <input type="number" class="form-control" id="usageLimit" name="usageLimit" value="<%= coupons.usageLimit %>" min="1" required />
+          </div>
+
+          <div class="form-group mb-4">
+            <label for="active">Status</label>
+            <select class="form-control" id="active" name="active">
+              <option value="true" <%= coupons.active ? 'selected' : '' %>>Active</option>
+              <option value="false" <%= !coupons.active ? 'selected' : '' %>>Inactive</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-success">Update Coupon</button>
+          <a href="/admin/coupons" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

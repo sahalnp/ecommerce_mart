@@ -60,7 +60,9 @@ app.use(passport.session());
 const skipCSRFPaths = [
   "/admin/product/edit",
   "/admin/upload",
-  "/admin/add_product"
+  "/admin/add_product",
+  "/admin/banners/add",
+  "/admin/banners/edit"
 ];
 app.use((req, res, next) => {
   const isPathSkipped =
@@ -88,7 +90,6 @@ app.use((err, req, res, next) => {
   }
   next(err);
 });
-
 
 
 // View Engine

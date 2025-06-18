@@ -4,6 +4,7 @@ import { sendotp } from "../../utility/sendotp_email.js";
 import { settimer } from "../../middleware/otp_timerMiddleware.js";
 import { forgetPassMail } from "../../utility/ForgotPassEmail.js";
 import asyncHandler from "express-async-handler";
+import { wallet } from "../../models/walletModel.js";
 
 // Controller for login
 export const loginUser = async (req, res) => {
@@ -20,22 +21,19 @@ export const loginUser = async (req, res) => {
     if (!user) {
         return res.render("users/Auth/login", {
             error: "User does not exist. Please sign up.",
-        }); //sending login page if user doesnot exist
+        }); 
     }
     if(user.isDlt==true){
          return res.render("users/Auth/login", {
             error: "User was deleted by admin",
         }); 
     }
-
-    // Compare the entered password with the hashed password in the database
-    const passwordMatch = await bcrypt.compare(password, user.password); // user.password is the stored hashed password
+    const passwordMatch = await bcrypt.compare(password, user.password); 
     if (!passwordMatch) {
          return res.render("users/Auth/login", {
             error: "Incorrect Password",
         }); 
     }
-
     return res.redirect("/");
 };
 
@@ -48,7 +46,6 @@ export const signupUser = async (req, res, next) => {
         firstname: req.body.firstname,
         Lastname: req.body.lastname,
         email: req.body.email,
-        wallet:0,
         number: fullPhoneNumber,
         password: hashedPassword,
         role:0,
@@ -134,7 +131,13 @@ export const phoneverifyotp = async (req, res) => {
                 time: null,
             });
         } else {
-            await User.create(req.session.newUser);
+            const newUser=await User.create(req.session.newUsers);
+            await wallet.create({
+            user: newUser._id,
+            balance: 0,
+            transactions: []
+        });
+
             return res.redirect("/login");
         }
     } catch (error) {

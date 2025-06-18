@@ -6,7 +6,12 @@
       <% viewOrder.items.forEach(item => { %>
         <div class="card mb-4">
           <form action="/admin/orders/editOrder/<%= viewOrder._id %>" method="POST">
+            <input type="hidden" name="redirectTo" value="<%= redirectTo || '/admin/orders' %>">
+
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            
+            <input type="hidden" name="productId" value="<%= item.product._id %>">
+
             <div class="card-header bg-primary text-white">
               <h5>Order ID: <%= viewOrder.OrderId %></h5>
             </div>
@@ -17,7 +22,6 @@
                   <h6 class="mb-2">Customer Email</h6>
                   <p class="mb-0"><%= viewOrder.UserId?.email %></p>
                 </div>
-                
                 <div class="col-12">
                   <h6 class="mb-2">Address</h6>
                   <div class="address-info">
@@ -32,147 +36,89 @@
                 </div>
               </div>
 
-              <!-- Product Information -->
+              <!-- Product Info -->
               <div class="row mb-3">
                 <div class="col-12">
                   <h6 class="mb-2">Product</h6>
                   <p class="mb-3"><strong><%= item.product?.title %></strong></p>
-                  
-                  <!-- Product Image -->
                   <div class="mb-3">
                     <% if (item.product?.image?.length > 0) { %>
-                      <img src="<%= item.product.image[0].filepath %>" 
-                           class="img-thumbnail" 
-                           style="max-height: 150px; max-width: 150px; object-fit: cover;">
+                      <img src="<%= item.product.image[0].filepath %>" class="img-thumbnail" style="max-height: 150px; max-width: 150px; object-fit: cover;">
                     <% } else { %>
-                      <div class="text-muted">
-                        <p>No product image</p>
-                      </div>
+                      <div class="text-muted"><p>No product image</p></div>
                     <% } %>
                   </div>
                 </div>
               </div>
 
-              <!-- Product Details Grid -->
+              <!-- Product Details -->
               <div class="row mb-3">
-                <div class="col-md-3 col-6 mb-2">
-                  <strong>Qty:</strong> <%= item.quantity %>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                  <strong>Price:</strong> ₹<%= item.price?.toLocaleString() %>
-                </div>
-                <div class="col-md-3 col-6 mb-2">
-                  <strong>Processing Fee:</strong> ₹<%= item.processingFee || 0 %>
-                </div>
+                <div class="col-md-3 col-6 mb-2"><strong>Qty:</strong> <%= item.quantity %></div>
+                <div class="col-md-3 col-6 mb-2"><strong>Price:</strong> ₹<%= item.price?.toLocaleString() %></div>
+                <div class="col-md-3 col-6 mb-2"><strong>Processing Fee:</strong> ₹<%= item.processingFee || 0 %></div>
                 <% if (viewOrder.discount) { %>
-                  <div class="col-md-3 col-6 mb-2">
-                    <strong>Discount:</strong> ₹<%= viewOrder.discount %>
-                  </div>
+                  <div class="col-md-3 col-6 mb-2"><strong>Discount:</strong> ₹<%= viewOrder.discount %></div>
                 <% } %>
               </div>
 
-              <!-- Total Amount -->
+              <!-- Total -->
               <div class="row mb-3">
                 <div class="col-12">
                   <div class="bg-light p-3 rounded">
-                    <h6 class="mb-0">
-                      <strong>Total Amount: ₹<%= viewOrder.total?.toLocaleString() %></strong>
-                    </h6>
+                    <h6 class="mb-0"><strong>Total Amount: ₹<%= viewOrder.total?.toLocaleString() %></strong></h6>
                   </div>
                 </div>
               </div>
 
               <!-- Payment and Order Info -->
               <div class="row mb-3">
-                <div class="col-md-6 mb-2">
-                  <strong>Payment Method:</strong> <%= viewOrder.paymentMethod %>
-                </div>
-                <div class="col-md-6 mb-2">
-                  <strong>Order Date:</strong> <%= new Date(viewOrder.OrderDate).toLocaleDateString('en-IN') %>
-                </div>
+                <div class="col-md-6 mb-2"><strong>Payment Method:</strong> <%= viewOrder.paymentMethod %></div>
+                <div class="col-md-6 mb-2"><strong>Order Date:</strong> <%= new Date(viewOrder.OrderDate).toLocaleDateString('en-IN') %></div>
               </div>
 
-              <!-- Order Status Section -->
-             <div class="row">
+              <!-- ✅ Combined Order + Payment Status -->
+              <div class="row">
                 <div class="col-12">
                   <div class="border-top pt-3">
+                    <!-- Order Status -->
                     <h6 class="mb-3">Order Status</h6>
                     <% if (viewOrder.status === 'Return requested' || viewOrder.status === 'Refunded') { %>
-                      <div class="alert alert-danger">
-                        <strong>Status:</strong> <%= viewOrder.status %>
-                      </div>
+                      <div class="alert alert-danger"><strong>Status:</strong> <%= viewOrder.status %></div>
                       <% if (viewOrder.status === 'Return requested') { %>
-                        <input type="hidden" name="productId" value="<%= item.product._id %>">
                         <input type="hidden" name="status" value="Refunded">
-                        <button type="submit" class="btn btn-danger">
-                          <i class="fas fa-check me-2"></i>Confirm Return
-                        </button>
                       <% } %>
                     <% } else { %>
-                      <div class="row align-items-end">
-                        <div class="col-md-8 mb-2">
-                          <label for="status" class="form-label">Update Status:</label>
-                          <select name="status" id="status" class="form-select">
-                            <option value="<%= viewOrder.status %>" selected><%= viewOrder.status %></option>
-                            <% if (viewOrder.status !== 'Delivered' && viewOrder.status !== 'Cancelled') { %>
-                              <% if (viewOrder.status !== 'Pending') { %>
-                                  <option value="Pending">Pending</option>
-                              <% } %>
-                              <% if (viewOrder.status !== 'Shipped') { %>
-                                  <option value="Shipped">Shipped</option>
-                              <% } %>
-                              <% if (viewOrder.status !== 'Refunded') { %>
-                                  <option value="Refunded">Refunded</option>
-                              <% } %>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
-                            <% } %>
-                          </select>
-                        </div>
-                        <div class="col-md-4 mb-2">
-                          <input type="hidden" name="productId" value="<%= item.product._id %>">
-                          <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-save me-2"></i>&nbsp;Update Status
-                          </button>
-                        </div>
-                      </div>
+                      <label for="status" class="form-label">Update Status:</label>
+                      <select name="status" id="status" class="form-select mb-3">
+                        <option value="<%= viewOrder.status %>" selected><%= viewOrder.status %></option>
+                        <% if (viewOrder.status !== 'Delivered' && viewOrder.status !== 'Cancelled') { %>
+                          <% if (viewOrder.status !== 'Pending') { %><option value="Pending">Pending</option><% } %>
+                          <% if (viewOrder.status !== 'Shipped') { %><option value="Shipped">Shipped</option><% } %>
+                          <% if (viewOrder.status !== 'Refunded') { %><option value="Refunded">Refunded</option><% } %>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        <% } %>
+                      </select>
                     <% } %>
+
+                    <!-- Payment Status -->
+                    <h6 class="mt-4 mb-3">Payment Status</h6>
+                    <label for="paymentStatus" class="form-label">Update Payment:</label>
+                    <select name="paymentStatus" id="paymentStatus" class="form-select mb-4">
+                      <option value="<%= viewOrder.paymentStatus %>" selected><%= viewOrder.paymentStatus %></option>
+                      <% if (viewOrder.paymentStatus !== 'Pending') { %><option value="Pending">Pending</option><% } %>
+                      <% if (viewOrder.paymentStatus !== 'Completed') { %><option value="Completed">Completed</option><% } %>
+                      <% if (viewOrder.paymentStatus !== 'Refunded') { %><option value="Refunded">Refunded</option><% } %>
+                    </select>
+
+                    <!-- Single Submit Button -->
+                    <button type="submit" class="btn btn-primary w-100">
+                      <i class="fas fa-save me-2"></i>&nbsp;Update Order
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <!-- ✅ Payment Status Section -->
-              <div class="row mt-3">
-                <div class="col-12">
-                  <div class="border-top pt-3">
-                    <h6 class="mb-3">Payment Status</h6>
-                    <div class="row align-items-end">
-                      <div class="col-md-8 mb-2">
-                        <label for="paymentStatus" class="form-label">Update Payment:</label>
-                        <select name="paymentStatus" id="paymentStatus" class="form-select">
-                          <option value="<%= viewOrder.paymentStatus %>" selected><%= viewOrder.paymentStatus %></option>
-                          <% if (viewOrder.paymentStatus !== 'Pending') { %>
-                            <option value="Pending">Pending</option>
-                          <% } %>
-                          <% if (viewOrder.paymentStatus !== 'Completed') { %>
-                            <option value="Completed">Completed</option>
-                          <% } %>
-                          <% if (viewOrder.paymentStatus !== 'Refunded') { %>
-                            <option value="Refunded">Refunded</option>
-                          <% } %>
-                        </select>
-                      </div>
-                      <div class="col-md-4 mb-2">
-                        <button type="submit" class="btn btn-success w-100">
-                          <i class="fas fa-credit-card me-2"></i>&nbsp;Update Payment
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- ✅ End Payment Status Section -->
-
+              <!-- ✅ End Combined Section -->
             </div>
           </form>
         </div>
@@ -184,6 +130,5 @@
     <% } %>
   </div>
 </main>
-
 
 <%- include('../partials/footer') %>

@@ -333,8 +333,5 @@ export const vrImageDlt=asyncHandler(async(req,res)=>{
     productId,
     { $unset: { vrImage: 1 } }, 
     { new: true }
-    );
-
-        
-
+    );  
 })

@@ -60,6 +60,7 @@ import {
     addCompare,
     addtoCart,
     addTowhish,
+    applyCoupon,
     buy,
     cartDlt,
     checkout,
@@ -68,6 +69,7 @@ import {
     editProfile,
     quantchnge,
     rating,
+    removeCoupon,
     removeFromWish,
     reviewRighted,
     updateAddress,
@@ -167,6 +169,8 @@ UserRouter.post("/cmp/resetOne", cmpResetOne);
 
 UserRouter.get("/tryOn/:id", isUserloggedIn, loadtryOn);
 
+UserRouter.post('/applyCoupon',applyCoupon)
+UserRouter.post('/removeCoupon',removeCoupon)
 UserRouter.post("/razorpay/create-order", intialisePay);
 UserRouter.post("/razorpay/verify-payment", verifyPay);
 UserRouter.get("/place/order", loadOrderPlace);

@@ -1,0 +1,69 @@
+<%- include('../partials/header') %>
+
+<div class="container py-4">
+  <div class="card p-4 shadow-sm">
+    <h2 class="mb-4"><%= product.title %></h2>
+
+    <!-- Product Images Row -->
+    <div class="row mb-4 text-center">
+      <% product.image.forEach(img => { %>
+        <div class="col-md-2 col-4 mb-3">
+          <img src="/uploads/<%= img.filename %>" class="img-fluid rounded border" alt="Product Image">
+        </div>
+      <% }) %>
+    </div>
+
+    <!-- Product Basic Info -->
+    <div class="mb-3">
+      <p><strong>Brand:</strong> <%= product.brand.name %></p>
+      <p><strong>Model Number:</strong> <%= product.modelNumber %></p>
+      <p><strong>Description:</strong> <%= product.description %></p>
+    </div>
+
+    <!-- Pricing & Stock Info -->
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="list-group mb-3">
+          <li class="list-group-item"><strong>Price:</strong> ₹<%= product.pricing.price %></li>
+          <li class="list-group-item"><strong>Sale Price:</strong> ₹<%= product.pricing.salePrice %></li>
+          <li class="list-group-item"><strong>In Stock:</strong> <%= product.inStock %></li>
+          <li class="list-group-item"><strong>Warranty:</strong> <%= product.warranty %> year(s)</li>
+          <li class="list-group-item"><strong>Movement Type:</strong> <%= product.movementType %></li>
+        </ul>
+      </div>
+
+      <!-- Feature Info -->
+      <div class="col-md-6">
+        <ul class="list-group mb-3">
+          <li class="list-group-item"><strong>Band Colour:</strong> <%= product.bandColour %></li>
+          <li class="list-group-item"><strong>Band Material:</strong> <%= product.bandMaterial %></li>
+          <li class="list-group-item"><strong>Item Weight:</strong> <%= product.itemWeight %> g</li>
+          <li class="list-group-item"><strong>Case Shape:</strong> <%= product.caseShape %></li>
+          <li class="list-group-item"><strong>Case Diameter:</strong> <%= product.caseDiameter %> mm</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Special Features -->
+    <div class="mb-3">
+      <strong>Special Features:</strong>
+      <ul>
+        <% product.specialFeatures.forEach(feature => { %>
+          <li><%= feature %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <!-- Categories -->
+    <p><strong>Categories:</strong>
+      <% product.category.forEach(cat => { %>
+        <span class="badge bg-primary me-1"><%= cat.name %></span>
+      <% }) %>
+    </p>
+
+    <!-- Back Button -->
+    <a href="/admin/dashboard" class="btn btn-secondary mt-3">← Back </a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

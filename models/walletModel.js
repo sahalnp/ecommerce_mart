@@ -12,8 +12,8 @@ const walletSchema = new mongoose.Schema({
     transactions: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Transaction',
+            ref: 'transaction',
         },
     ],
 });
-export const walletModel=mongoose.model('wallet',walletSchema)
+export const wallet=mongoose.model('wallet',walletSchema)

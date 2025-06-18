@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { product } from "./productModel.js";
 
 const bannerSchema = new mongoose.Schema({
   title: {
@@ -6,19 +7,29 @@ const bannerSchema = new mongoose.Schema({
     required: true
   },
   image: {
-    type: String, 
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'image',
+    required:true
   },
   description: {
     type: String
   },
-  link: {
-    type: String 
+  productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "product",
+      required: true,
   },
   status: {
     type: String,
     enum: ['active', 'inactive'],
     default: 'active'
+  },
+  link:{
+    type:String,
+  },
+  isDlt:{
+    type:Boolean,
+    default:false
   },
   createdAt: {
     type: Date,

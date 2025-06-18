@@ -134,20 +134,46 @@
                 >
             </li>
             <% } %>
-            <li class="nav-item has-sub <%= ['productListAdmin', 'productEdit', 'adminAddProduct'].includes(activePage) ? 'open' : '' %>">
-    <a href="#">
-        <i class="fas fa-boxes"></i>
-        <span class="menu-title">Products</span>
-    </a>
-    <ul class="menu-content">
-        <li class="<%= ['productListAdmin', 'productEdit'].includes(activePage) ? 'active' : '' %>">
-            <a class="menu-item" href="/admin/products">All Products</a>
-        </li>
-        <li class="<%= activePage === 'adminAddProduct' ? 'active' : '' %>">
-            <a class="menu-item" href="/admin/add_product">Add Product</a>
-        </li>
-    </ul>
-</li>
+            <li
+                class="nav-item has-sub <%= ['productListAdmin', 'productEdit', 'adminAddProduct'].includes(activePage) ? 'open' : '' %>"
+            >
+                <a
+                    href="#"
+                    class="menu-toggle dropdown-toggle"
+                    data-target="#products-submenu"
+                    aria-expanded="<%= ['productListAdmin', 'productEdit', 'adminAddProduct'].includes(activePage) ? 'true' : 'false' %>"
+                >
+                    <i class="fas fa-boxes"></i>
+                    <span class="menu-title" data-i18n="Products"
+                        >Products</span
+                    >
+                </a>
+                <ul
+                    id="products-submenu"
+                    class="menu-content collapse <%= ['productListAdmin', 'productEdit', 'adminAddProduct'].includes(activePage) ? 'show' : '' %>"
+                >
+                    <li
+                        class="<%= ['productListAdmin', 'productEdit'].includes(activePage) ? 'active' : '' %>"
+                    >
+                        <a
+                            class="menu-item"
+                            href="/admin/products"
+                            data-i18n="All Products"
+                            >All Products</a
+                        >
+                    </li>
+                    <li
+                        class="<%= activePage === 'adminAddProduct' ? 'active' : '' %>"
+                    >
+                        <a
+                            class="menu-item"
+                            href="/admin/add_product"
+                            data-i18n="Add Product"
+                            >Add Product</a
+                        >
+                    </li>
+                </ul>
+            </li>
 
             <li
                 class="nav-item <%= activePage === 'adminCategory'||activePage==='addCategory'||activePage==='addCategoryEdit' ? 'active' : '' %>"
@@ -202,3 +228,57 @@
         </ul>
     </div>
 </div>
+<script>
+    // JavaScript for dropdown functionality
+    document.addEventListener("DOMContentLoaded", function () {
+        // Handle dropdown toggles
+        const dropdownToggles = document.querySelectorAll(".dropdown-toggle");
+
+        dropdownToggles.forEach(function (toggle) {
+            toggle.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute("data-target");
+                const target = document.querySelector(targetId);
+
+                if (target) {
+                    // Toggle the submenu
+                    if (target.classList.contains("show")) {
+                        target.classList.remove("show");
+                        this.setAttribute("aria-expanded", "false");
+                        this.parentElement.classList.remove("open");
+                    } else {
+                        // Close other open submenus
+                        document
+                            .querySelectorAll(".menu-content.show")
+                            .forEach(function (openMenu) {
+                                if (openMenu !== target) {
+                                    openMenu.classList.remove("show");
+                                    const relatedToggle =
+                                        document.querySelector(
+                                            '[data-target="#' +
+                                                openMenu.id +
+                                                '"]'
+                                        );
+                                    if (relatedToggle) {
+                                        relatedToggle.setAttribute(
+                                            "aria-expanded",
+                                            "false"
+                                        );
+                                        relatedToggle.parentElement.classList.remove(
+                                            "open"
+                                        );
+                                    }
+                                }
+                            });
+
+                        // Open this submenu
+                        target.classList.add("show");
+                        this.setAttribute("aria-expanded", "true");
+                        this.parentElement.classList.add("open");
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -59,6 +59,9 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    walletAmount:{
+        type:Number
+    },
     shippingFee: Number,
     discount: Number,
     tax: Number,
@@ -74,7 +77,7 @@ const orderSchema = new mongoose.Schema({
             "Shipped",
             "Delivered",
             "Cancelled",
-            "Return requested",
+            "Return",
         ],
         default: "Pending",
     },

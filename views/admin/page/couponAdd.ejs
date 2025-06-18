@@ -1,0 +1,52 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="card p-4 shadow" style="width: 100%; max-width: 600px;">
+    <h4 class="mb-4 text-center">Add New Coupon</h4>
+
+    <% if (error) { %>
+      <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+
+    <form action="/admin/coupons/add" method="POST">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-group mb-3">
+        <label for="code">Coupon Code</label>
+        <input type="text" name="code" class="form-control" required />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="discount">Discount (%)</label>
+        <input type="number" name="discount" class="form-control" min="1" max="100" required />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="minAmount">Minimum Purchase Amount</label>
+        <input type="number" name="minAmount" class="form-control" required />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="maxDiscount">Maximum Discount Amount</label>
+        <input type="number" name="maxDiscount" class="form-control" required />
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="usageLimit">Usage Limit per User</label>
+        <input type="number" name="usageLimit" class="form-control" value="1" required />
+      </div>
+
+      <!-- <div class="form-group mb-4">
+        <label for="expiry">Expiry Date</label>
+        <input type="date" name="expiry" class="form-control" required />
+      </div> -->
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Add Coupon</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

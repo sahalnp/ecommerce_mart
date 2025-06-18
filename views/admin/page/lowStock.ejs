@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+<head>
+  <style>
+    .status-dropdown {
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-weight: 500;
+      width: 100%;
+    }
+
+    .status-dropdown.text-warning {
+      color: #ffc107;
+    }
+
+    .status-dropdown.text-danger {
+      color: #dc3545;
+    }
+
+    .status-dropdown option {
+      color: #000;
+    }
+
+    .blurred-row {
+      filter: blur(2px);
+      opacity: 0.6;
+    }
+
+    .deleted-label {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<%- include('../partials/navbar') %>
+
+<div class="app-content content" style="padding-top: 50px;">
+  <div class="content-wrapper">
+    <div class="content-header row"></div>
+    <div class="content-body">
+      <h2>Inventory Management</h2>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">LOW STOCK PRODUCTS:</h5>
+              </div>
+
+              <% if (lowStockProducts && lowStockProducts.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Product Name</th>
+                      <th>Brand</th>
+                      <th>Stock</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% lowStockProducts.forEach((product, index) => { %>
+                      <tr class="<%= product.stock === 0 ? 'blurred-row' : '' %>">
+                        <td><%= index + 1 %></td>
+                        <td><%= product.title %></td>
+                        <td><%= product.brand?.name || 'N/A' %></td>
+                        <td><%= product.inStock %></td>
+                        <td>
+                          <form action="/admin/product/update-stock-status/<%= product._id %>" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <select
+                              class="form-select <%= product.stock === 0 ? 'bg-danger text-white' : 'bg-warning text-dark' %>"
+                              name="stockStatus"
+                              onchange="this.form.submit()"
+                              style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
+                              <option value="low" <%= product.stock > 0 && product.stock < 5 ? 'selected' : '' %>>Low Stock</option>
+                              <option value="out" <%= product.stock === 0 ? 'selected' : '' %>>Out of Stock</option>
+                            </select>
+                          </form>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <% } else { %>
+                <p class="text-center">No low stock products available.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
