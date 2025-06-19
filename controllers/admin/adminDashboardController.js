@@ -8,6 +8,7 @@ import { banner } from "../../models/bannerModel.js";
 import { imageModel } from "../../models/imageModel.js";
 import { Coupon } from "../../models/couponModel.js";
 import { wallet } from "../../models/walletModel.js";
+import { transaction } from "../../models/transactionModel.js";
 
 export const profileEdit = asyncHandler(async (req, res) => {
     const { firstname, Lastname, email, number } = req.body;
@@ -72,7 +73,7 @@ export const adminsEdit = asyncHandler(async (req, res) => {
         }
         const status = req.body.status === "on" ? true : false;
 
-        const updated = await admin.findByIdAndUpdate(
+        await admin.findByIdAndUpdate(
             { _id: id },
             {
                 $set: {
@@ -113,8 +114,8 @@ export const adminStatus = asyncHandler(async (req, res) => {
 export const editOrderStatus = asyncHandler(async (req, res) => {
     const id = req.params.id;
     const redirectTo = req.body.redirectTo || "/admin/dashboard";
-
-    await Order.findByIdAndUpdate(
+    const UserId=req.session.users._id
+    const order = await Order.findByIdAndUpdate(
         { _id: id },
         {
             status: req.body.status,
@@ -122,27 +123,63 @@ export const editOrderStatus = asyncHandler(async (req, res) => {
         },
         { new: true }
     );
+    if(order.wallet>0){
+        await transaction.create({
+        UserId,
+        orderId: order._id,
+        type: "Credit",
+        amount:order.wallet, 
+        description: `Refund for canceled order #${order.OrderId}`,
+        status: req.body.status
+        });
+    }
 
     res.redirect(redirectTo);
 });
 
 export const editOrderPaymentStatus = asyncHandler(async (req, res) => {
     const id = req.params.id;
+    const UserId=req.session.users._id
     const { paymentStatus, subtotal } = req.body;
-    await Order.findByIdAndUpdate(
+    const updatedOrder=await Order.findByIdAndUpdate(
         { _id: id },
         { paymentStatus: paymentStatus },
         { new: true }
     );
-    
-    if (paymentStatus == "Refunded" ) {
+
+    if (paymentStatus == "Refunded") {
         await wallet.findOneAndUpdate(
-            {user:req.session.users._id},
+            { user: UserId },
             {
-            balance: subtotal,
+                balance: subtotal,
             },
             { new: true }
-        ); 
+        );
+        if(updatedOrder.status=="Return"){
+             await transaction.create({
+            UserId,
+            orderId: updatedOrder._id,
+            type: "Credit",
+            amount: updatedOrder.walletAmount, 
+            description: `Refund for  returned order #${updatedOrder.OrderId}`,
+            paymentMethod: "Wallet",
+            status: "Cancelled"
+            });
+
+        }
+        else if (updatedOrder.status=="Cancelled"){
+            await transaction.create({
+            UserId,
+            orderId: updatedOrder._id,
+            type: "Credit",
+            amount: updatedOrder.walletAmount, 
+            description: `Refund for canceled order #${updatedOrder.OrderId}`,
+            paymentMethod: "Wallet",
+            status: "Cancelled"
+            });
+        }
+
+       
     }
     res.redirect("/admin/orders");
 });

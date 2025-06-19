@@ -41,15 +41,17 @@ export const addtoCart = asyncHandler(async (req, res) => {
         _id: productId,
         inStock: { $gt: 0 },
     });
+    
     if (prodfind) {
         if (!find) {
-            await Cart.create({
+            const myr=await Cart.create({
                 UserId,
                 productId,
                 productName: prodfind.title,
                 price: quantity * prodfind.pricing.salePrice,
                 quantity,
             });
+            
         }
     }
     res.redirect("/cart");
@@ -94,6 +96,7 @@ export const removeFromWish = asyncHandler(async (req, res) => {
 export const quantchnge = asyncHandler(async (req, res) => {
     try {
         const { productId, quantity } = req.body;
+        
         const prod = await product.findById(productId);
         const price = quantity * prod.pricing.salePrice;
 
@@ -266,6 +269,8 @@ export const buy = asyncHandler(async (req, res) => {
             productId,
             inStock: { $gt: 0 },
         });
+        console.log(quantity);
+        
 
         if (!find) {
             await Cart.create({

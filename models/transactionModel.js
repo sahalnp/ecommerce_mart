@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const transactionSchema = new mongoose.Schema({
-      userId: {
+    UserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
@@ -12,7 +12,7 @@ const transactionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['credit', 'debit'],
+    enum: ['Credit', 'Debit'],
     required: true
   },
   amount: {
@@ -23,6 +23,7 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+
   status: {
     type: String,
      enum: [
@@ -34,10 +35,6 @@ const transactionSchema = new mongoose.Schema({
         ],
     default: 'Pending'
   },
-  date: {
-    type: Date,
-    default: Date.now
-  }
    
 },{
     timestamps:true

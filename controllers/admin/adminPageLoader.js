@@ -58,17 +58,17 @@ export const adminLogout = (req, res) => {
         return res.redirect("/admin/login");
     }
 };
+
 export const adminDashboard = asyncHandler(async (req, res) => {
     const adminData = await admin.findOne({ _id: req.session.admin._id });
     const totalUsers = await User.find();
     const totalOrders = await Order.find();
+    const totalProducts = await product.find();
     const completedOrders = await Order.find({ status: "Delivered" });
     const totalRevenue = completedOrders.reduce(
         (sum, order) => sum + order.total,
         0
     );
-
-    const totalProducts = await product.find();
     const lowStockCount = await product.find({ inStock: { $lt: 2 } });
     const recentOrders = await Order.find()
         .sort({ createdAt: -1 })
@@ -94,12 +94,15 @@ export const adminDashboard = asyncHandler(async (req, res) => {
     ]);
     const prod = await product.find().populate('image');
     const enrichedTopSelling = top.map(soldItem => {
-    const product = prod.find(p => p._id.toString() === soldItem._id.toString());
-    return {
-        ...product.toObject(),
-        sold: soldItem.Sold
-    };
+        const product = prod.find(p => p._id.toString() === soldItem._id.toString());
+        return {
+            ...product.toObject(),
+            sold: soldItem.Sold
+        };
     });
+
+    // Generate monthly statistics for the past 12 months
+    const monthlyStats = await generateMonthlyStats();
 
     return res.render("admin/page/admin_dashboard", {
         totalUsers,
@@ -110,16 +113,61 @@ export const adminDashboard = asyncHandler(async (req, res) => {
         razorpayCount,
         codCount,
         Users,
-        topSelling:enrichedTopSelling,
-        // revenueData: {
-        //     labels,
-        //     values,
-        // },
+        topSelling: enrichedTopSelling,
         totalProducts,
+        monthlyStats: JSON.stringify(monthlyStats), // Pass as JSON string
         admin: adminData,
         activePage: "admin_dashboard",
     });
 });
+
+// Helper function to generate monthly statistics
+async function generateMonthlyStats() {
+    const now = new Date();
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyData = [];
+
+    for (let i = 11; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        
+        const monthLabel = monthNames[date.getMonth()];
+        
+        // Count users created in this month
+        const usersCount = await User.countDocuments({
+            createdAt: {
+                $gte: date,
+                $lt: nextMonth
+            }
+        });
+
+        // Count orders created in this month
+        const ordersCount = await Order.countDocuments({
+            createdAt: {
+                $gte: date,
+                $lt: nextMonth
+            }
+        });
+
+        // Count products created in this month
+        const productsCount = await product.countDocuments({
+            createdAt: {
+                $gte: date,
+                $lt: nextMonth
+            }
+        });
+
+        monthlyData.push({
+            month: monthLabel,
+            users: usersCount,
+            orders: ordersCount,
+            products: productsCount
+        });
+    }
+
+    return monthlyData;
+}
 export const editAdmin = asyncHandler(async (req, res) => {
     return res.render("admin/page/adminProfile", {
         admin: req.session.admin,

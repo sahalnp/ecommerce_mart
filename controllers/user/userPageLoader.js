@@ -7,6 +7,7 @@ import { Order } from "../../models/orderModel.js";
 import { review } from "../../models/reviewModel.js";
 import { banner } from "../../models/bannerModel.js";
 import { wallet } from "../../models/walletModel.js";
+import { transaction } from "../../models/transactionModel.js";
 export const home = asyncHandler(async (req, res) => {
     const latestProducts = await product
         .find()
@@ -76,8 +77,10 @@ export const editAddress = asyncHandler(async (req, res) => {
 export const loadWallet = asyncHandler(async (req, res) => {
     const user = await User.findById(req.session.users._id);
     const wlt = await wallet.findOne({ user: user._id });
+    const transactions=await transaction.find().populate('orderId')
     return res.render("users/page/wallet", {
         wallet:wlt,
+        transactions,
         user,
         username: req.session.userName,
     });
@@ -208,13 +211,18 @@ export const loadcart = asyncHandler(async (req, res) => {
         const prod = await product.findById(productIds[i]);
         if (prod.inStock <= 0) {
             await Cart.findOneAndDelete({ productId: productIds[i] });
-        } else if (prod.inStock > 0 && prod.inStock <= 10) {
-            await Cart.findOneAndUpdate(
-                { UserId: req.session.users._id, productId: productIds[i] },
-                { quantity: prod.inStock },
-                { new: true }
-            );
         }
+        // } else if (prod.inStock > 0 && prod.inStock <= 10) {
+        //     console.log(prod.inStock);
+            
+        //     const s=await Cart.findOneAndUpdate(
+        //         { UserId: req.session.users._id, productId: productIds[i] },
+        //         { quantity: prod.inStock },
+        //         { new: true }
+        //     );
+        //     console.log(s,"zxcvbnm,.");
+            
+        // }
     }
 
     const total = [];
@@ -326,12 +334,6 @@ export const loadCheckout = asyncHandler(async (req, res) => {
         const prod = await product.findById(productIds[i]);
         if (prod.inStock <= 0) {
             await Cart.findOneAndDelete({ productId: productIds[i] });
-        } else if (prod.inStock > 0 && prod.inStock <= 10) {
-            await Cart.findOneAndUpdate(
-                { UserId: req.session.users._id, productId: productIds[i] },
-                { quantity: prod.inStock },
-                { new: true }
-            );
         }
     }
     

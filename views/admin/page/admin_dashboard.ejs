@@ -1,51 +1,6 @@
 <%- include('../partials/header') %>
-
 <head>
-    <style>
-        .sidebar {
-            height: 100vh;
-            background-color: #343a40;
-            padding-top: 20px;
-        }
-
-        .sidebar .nav-link {
-            color: white;
-        }
-
-        .sidebar .nav-link:hover {
-            background-color: #495057;
-            color: white;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .card {
-            margin-bottom: 20px;
-        }
-
-        html body.fixed-navbar {
-            padding-top: 0;
-        }
-
-        #revenueChart {
-            height: 300px;
-        }
-
-        .export-buttons button {
-            margin-right: 10px;
-        }
-
-        .blue-section {
-            background-color: #1e2746;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            color: white;
-        }
-    </style>
-
+    <link rel="stylesheet" href="/admin/assets/css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -63,13 +18,12 @@
                      <div class="col-xl-3 col-md-6 col-sm-12">
                 <div class="card text-center">
                     <div class="card-body">
-                    <i class="ft-activity font-large-2 info"></i> <!-- Replace with a valid icon -->
+                    <i class="ft-activity font-large-2 info"></i>
                     <h5 class="mt-1">Total Revenue</h5>
                     <h3>₹<%= totalRevenue %></h3>
                     </div>
                 </div>
                 </div>
-
 
                     <div class="col-xl-3 col-md-6 col-sm-12">
                         <div class="card text-center">
@@ -92,21 +46,20 @@
                     </div>
 
                 <div class="col-xl-3 col-md-6 col-sm-12">
-  <div class="card text-center">
-    <div class="card-body">
-      <i class="ft-alert-triangle font-large-2 danger"></i>
-      <h5 class="mt-1">Low Stock Items</h5>
+                  <div class="card text-center">
+                    <div class="card-body">
+                      <i class="ft-alert-triangle font-large-2 danger"></i>
+                      <h5 class="mt-1">Low Stock Items</h5>
 
-      <% if (lowStockCount && lowStockCount.length > 0) { %>
-        <h3><%= lowStockCount.length %></h3>
-        <a href="/admin/low-stock" class="btn btn-sm btn-outline-danger mt-2">View Items</a>
-      <% } else { %>
-        <h6 class="text-muted mt-2">No low stock items</h6>
-      <% } %>
-    </div>
-  </div>
-</div>
-
+                      <% if (lowStockCount && lowStockCount.length > 0) { %>
+                        <h3><%= lowStockCount.length %></h3>
+                        <a href="/admin/low-stock" class="btn btn-sm btn-outline-danger mt-2">View Items</a>
+                      <% } else { %>
+                        <h6 class="text-muted mt-2">No low stock items</h6>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
                 </div>
             </div>
 
@@ -130,20 +83,20 @@
                                             <td><%= user.firstname + ' ' + user.Lastname %></td>
                                             <td><%= user.email %></td>
                                             <td>
-  <form action="/admin/user/update-status/dashboard/<%= user._id %>" method="POST">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-    
-    <select
-      class="form-select <%= user.status === true ? 'bg-success text-white' : 'bg-danger text-white' %>"
-      name="status"
-      onchange="this.form.submit()"
-      style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
-      
-      <option value="true" <%= user.status === true ? 'selected' : '' %>>Active</option>
-      <option value="false" <%= user.status === false ? 'selected' : '' %>>Block</option>   
-    </select>
-  </form>
-</td>
+                                              <form action="/admin/user/update-status/dashboard/<%= user._id %>" method="POST">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                
+                                                <select
+                                                  class="form-select <%= user.status === true ? 'bg-success text-white' : 'bg-danger text-white' %>"
+                                                  name="status"
+                                                  onchange="this.form.submit()"
+                                                  style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
+                                                  
+                                                  <option value="true" <%= user.status === true ? 'selected' : '' %>>Active</option>
+                                                  <option value="false" <%= user.status === false ? 'selected' : '' %>>Block</option>   
+                                                </select>
+                                              </form>
+                                            </td>
                                         </tr>
                                     <% }) %>
                                 </tbody>
@@ -154,13 +107,43 @@
                 <div class="col-xl-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="text-info">Payment Method Breakdown</h5>
-                            <p>Razorpay: <strong><%= razorpayCount %></strong></p>
-                            <p>Cash on Delivery: <strong><%= codCount %></strong></p>
+                            <h5 class="text-info mb-3">Payment Method Breakdown</h5>
+
+<% 
+    const totalPayments = razorpayCount + codCount;
+    const razorpayPercent = totalPayments ? (razorpayCount / totalPayments * 100).toFixed(1) : 0;
+    const codPercent = totalPayments ? (codCount / totalPayments * 100).toFixed(1) : 0;
+%>
+
+<div class="mb-3">
+    <div class="d-flex justify-content-between">
+        <span>Razorpay</span>
+        <span><strong><%= razorpayCount %></strong> (<%= razorpayPercent %>%)</span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar bg-info" role="progressbar" style="width: <%= razorpayPercent %>%;" 
+             aria-valuenow="<%= razorpayPercent %>" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="d-flex justify-content-between">
+        <span>Cash on Delivery</span>
+        <span><strong><%= codCount %></strong> (<%= codPercent %>%)</span>
+    </div>
+    <div class="progress">
+        <div class="progress-bar bg-warning" role="progressbar" style="width: <%= codPercent %>%;" 
+             aria-valuenow="<%= codPercent %>" aria-valuemin="0" aria-valuemax="100">
+        </div>
+    </div>
+</div>
+
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xl-12">
                     <div class="card">
@@ -177,93 +160,266 @@
                                     </tr>
                                 </thead>
                              <tbody>
-  <% recentOrders.forEach(order => { %>
-    <tr>
-      <td><%= order.OrderId %></td>
-      <td><%= order.UserId.email %></td>
-      <td><%= order.OrderDate.toDateString() %></td>
-      <td>₹<%= order.total %></td>
-      <td>
-        <a href="/admin/orders/view/<%= order._id %>?from=dashboard" class="btn btn-sm btn-info">View</a>
-      </td>
-    </tr>
-  <% }) %>
-</tbody>
-
+                              <% recentOrders.forEach(order => { %>
+                                <tr>
+                                  <td><%= order.OrderId %></td>
+                                  <td><%= order.UserId.email %></td>
+                                  <td><%= order.OrderDate.toDateString() %></td>
+                                  <td>₹<%= order.total %></td>
+                                  <td>
+                                    <a href="/admin/orders/view/<%= order._id %>?from=dashboard" class="btn btn-sm btn-info">View</a>
+                                  </td>
+                                </tr>
+                              <% }) %>
+                            </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-  <div class="col-xl-12">
-    <div class="card">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="text-success">Top Selling Products</h5>
-      </div>
-      <div class="card-body">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Image</th>
-              <th>Product</th>
-              <th>Sold</th>
-              <th>Stock</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% topSelling.forEach(p => { %>
-              <tr>
-                <td>
-                  <img src="<%= p.image[0].filepath %>" alt="Product Image" width="50" height="50" style="object-fit: cover;">
-                </td>
-                <td><%= p.title %></td>
-                <td><%= p.sold %></td>
-                <td><%= p.inStock %></td>
-                <td>
-                  <a href="/admin/product/view/<%= p._id %>" class="btn btn-sm btn-outline-info">View</a>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
 
-
-            <!-- Revenue Graph and Filters -->
             <div class="row">
-                <div class="col-xl-8 col-md-12">
+              <div class="col-xl-12">
+                <div class="card">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="text-success">Top Selling Products</h5>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Image</th>
+                          <th>Product</th>
+                          <th>Sold</th>
+                          <th>Stock</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% topSelling.forEach(p => { %>
+                          <tr>
+                            <td>
+                              <img src="<%= p.image[0].filepath %>" alt="Product Image" width="50" height="50" style="object-fit: cover;">
+                            </td>
+                            <td><%= p.title %></td>
+                            <td><%= p.sold %></td>
+                            <td><%= p.inStock %></td>
+                            <td>
+                              <a href="/admin/product/view/<%= p._id %>" class="btn btn-sm btn-outline-info">View</a>
+                            </td>
+                          </tr>
+                        <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xl-12">
                     <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5>Revenue Overview</h5>
-                            <select id="dateFilter" class="form-control w-auto">
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                            </select>
+                        <div class="card-header">
+                            <h5 class="text-primary">Sale statistic</h5>
+                        
+                            <div class="legend-container">
+                                <div class="legend-item">
+                                    <div class="legend-dot sales"></div>
+                                    <span>Sales</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot products"></div>
+                                    <span>Products</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-dot visitors"></div>
+                                    <span>Visitors</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
-                            <canvas id="revenueChart"></canvas>
+                            <div class="monthly-chart-container">
+                                <canvas id="monthlyStatsChart"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
+                
+               
             </div>
+        </div> 
+    </div> 
+</div> 
 
-            <!-- Export Buttons -->
-            <div class="row">
-                <div class="col-12 export-buttons mb-2">
-                    <button class="btn btn-primary" onclick="exportOrders()">Export Orders (Excel)</button>
-                    <button class="btn btn-success" onclick="exportUsers()">Export Users (PDF)</button>
-                </div>
-            </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const monthlyData = <%- monthlyStats %>;
 
-        </div> <!-- content-body -->
-    </div> <!-- content-wrapper -->
-</div> <!-- app-content -->
+    if (!monthlyData || !monthlyData.length) {
+        console.warn("Monthly statistics data is empty.");
+        return;
+    }
+
+    const ctx = document.getElementById('monthlyStatsChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthlyData.map(item => item.month),
+            datasets: [
+                {
+                    label: 'Sales',
+                    data: monthlyData.map(item => item.orders),
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#3B82F6',
+                    pointBorderColor: '#3B82F6',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'Products',
+                    data: monthlyData.map(item => item.products),
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#10B981',
+                    pointBorderColor: '#10B981',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                },
+                {
+                    label: 'Visitors',
+                    data: monthlyData.map(item => item.users),
+                    borderColor: '#F97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#F97316',
+                    pointBorderColor: '#F97316',
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white'
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#6B7280'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : null;
+                        },
+                        stepSize: 1,
+                        color: '#6B7280'
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.1)'
+                    }
+                }
+            }
+        }
+    });
+});
+
+function createReport() {
+    try {
+        // Get the same data that's used for the chart
+        const monthlyData = <%- monthlyStats %>;
+        
+        console.log("Raw monthlyStats:", monthlyData);
+        console.log("Type of monthlyStats:", typeof monthlyData);
+        console.log("Is array:", Array.isArray(monthlyData));
+        
+        if (!monthlyData) {
+            alert("No monthly statistics data found. Please contact administrator.");
+            return;
+        }
+        
+        if (!Array.isArray(monthlyData) || monthlyData.length === 0) {
+            alert("Monthly statistics data is empty. Please ensure there are orders and statistics to generate the report.");
+            console.error("Monthly data is:", monthlyData);
+            return;
+        }
+
+        console.log("Exporting data:", monthlyData);
+
+        // Create CSV content
+        const csvRows = [
+            ['Month', 'Sales', 'Products', 'Visitors']
+        ];
+
+        // Add data rows
+        monthlyData.forEach(row => {
+            csvRows.push([
+                row.month || 'N/A',
+                row.orders || 0,
+                row.products || 0,
+                row.users || 0
+            ]);
+        });
+
+        // Convert to CSV string
+        const csvContent = csvRows.map(row => 
+            row.map(field => {
+                // Handle fields that might contain commas or quotes
+                if (typeof field === 'string' && (field.includes(',') || field.includes('"'))) {
+                    return `"${field.replace(/"/g, '""')}"`;
+                }
+                return field;
+            }).join(',')
+        ).join('\n');
+
+        // Create and download file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Sales_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.style.display = 'none';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the URL object
+        URL.revokeObjectURL(url);
+        
+        console.log("Report exported successfully");
+        
+    } catch (error) {
+        console.error("Error creating report:", error);
+        alert("An error occurred while creating the report. Please try again.");
+    }
+}
+</script>
 
 <%- include('../partials/footer') %>
-

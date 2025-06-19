@@ -1,0 +1,144 @@
+.legend-dot.sales {
+    background-color: #3b82f6;
+}
+
+.legend-dot.products {
+    background-color: #10b981;
+}
+
+.legend-dot.visitors {
+    background-color: #f97316;
+}
+
+.legend-container {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #718096;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.monthly-chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+.sidebar {
+    height: 100vh;
+    background-color: #343a40;
+    padding-top: 20px;
+}
+
+.sidebar .nav-link {
+    color: white;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #495057;
+    color: white;
+}
+
+.content {
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+html body.fixed-navbar {
+    padding-top: 0;
+}
+
+#revenueChart,
+#monthlyStatsChart {
+    height: 300px;
+}
+
+.export-buttons button {
+    margin-right: 10px;
+}
+
+.blue-section {
+    background-color: #1e2746;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    color: white;
+}
+
+.monthly-chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* Sale Statistics Chart Styles */
+.sale-stats-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    margin-bottom: 30px;
+}
+
+.chart-header {
+    margin-bottom: 24px;
+}
+
+.chart-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0 0 16px 0;
+}
+
+.legend-container {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #718096;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.legend-dot.sales {
+    background-color: #4299e1;
+}
+
+.legend-dot.products {
+    background-color: #48bb78;
+}
+
+.legend-dot.visitors {
+    background-color: #ed8936;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}

@@ -92,7 +92,7 @@
                               <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                               <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                               <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                             <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                              <option value="Return" <%= order.status === 'Return' ? 'selected' : '' %>>Returned</option>
                             </select>
                           </form>
                         </td>
@@ -109,7 +109,7 @@
                               style="color: #fff; border: none; padding: 0.375rem 0.75rem; font-size: 0.90rem; border-radius: 0.375rem;">
                               <option value="Pending" <%= order.paymentStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
                               <option value="Completed" <%= order.paymentStatus === 'Completed' ? 'selected' : '' %>>Completed</option>
-                              <% if(order.status== "Returned") { %>
+                              <% if(order.status== "Return" || order.status=="Cancelled") { %>
                                 <option value="Refunded" <%= order.paymentStatus === 'Refunded' ? 'selected' : '' %>>Refunded</option>
                                 <% } %>
                               

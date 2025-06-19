@@ -83,10 +83,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% wallet.transactions.forEach(wt => { %>
+                            <% transactions.forEach(wt => { %>
                             <tr>
-                                <td><%= wt.date.toLocaleDateString() %></td>
-                                <td><%= wt.orderId || '-' %></td>
+                                <td><%= wt.createdAt.toLocaleDateString() %></td>
+                                <td><%= wt.orderId.OrderId || '-' %></td>
                                 <td><%= wt.description %></td>
                                 <td>
                                     <span
@@ -95,7 +95,8 @@
                                         <%= wt.type %>
                                     </span>
                                 </td>
-                                <td>₹<%= wt.amount %></td>
+                                <td><%= wt.type === 'Credit' ? '+₹' + wt.amount : '-₹' + wt.amount %></td>
+
                                 <td>
                                     <span
                                         class="badge <%= wt.status === 'Pending' ? 'bg-warning text-dark' : wt.status === 'Shipped' ? 'bg-primary' : wt.status === 'Delivered' ? 'bg-success' : wt.status === 'Cancelled' ? 'bg-danger' : wt.status === 'Return' ? 'bg-info text-dark' : 'bg-secondary' %>"
