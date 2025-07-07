@@ -34,7 +34,6 @@ import {
     blogDetails,
     confirmaton,
     contact,
-    dltAddress,
     home,
     loadProduct,
     laodShop,
@@ -63,9 +62,11 @@ import {
     applyCoupon,
     buy,
     cartDlt,
+    changePass,
     checkout,
     cmpReset,
     cmpResetOne,
+    dltAddress,
     editProfile,
     quantchnge,
     rating,
@@ -76,7 +77,6 @@ import {
 } from "../controllers/user/userDashboard.js";
 import {
     cancelOrder,
-    intialisePay,
     invoice,
     orderReturn,
     placeOrder,
@@ -120,7 +120,7 @@ UserRouter.get("/profile/:id", isUserloggedIn, loadProfile);
 UserRouter.post("/profile/update/:id", editProfile);
 
 UserRouter.get("/profile/changePassword/:id", isUserloggedIn, loadchangePass);
-UserRouter.post("/profile/changePassword/:id");
+UserRouter.post("/profile/changePassword/:id",changePass);
 
 UserRouter.get("/profile/address/:id", isUserloggedIn, loadProfileAddress);
 
@@ -159,7 +159,7 @@ UserRouter.get("/contact", isUserloggedIn, contact);
 UserRouter.get("/add-address", isUserloggedIn, loadAddress);
 UserRouter.post("/add-address", addAddress);
 
-UserRouter.post("/address/delete/:id", dltAddress);
+UserRouter.post("/address/delete/:id",dltAddress);
 
 UserRouter.get("/compare", isUserloggedIn, loadcmp);
 UserRouter.post("/buy", buy);
@@ -171,7 +171,6 @@ UserRouter.get("/tryOn/:id", isUserloggedIn, loadtryOn);
 
 UserRouter.post('/applyCoupon',applyCoupon)
 UserRouter.post('/removeCoupon',removeCoupon)
-UserRouter.post("/razorpay/create-order", intialisePay);
 UserRouter.post("/razorpay/verify-payment", verifyPay);
 UserRouter.get("/place/order", loadOrderPlace);
 UserRouter.post("/order/place", placeOrder);

@@ -7,7 +7,6 @@ import { Order } from "../../models/orderModel.js";
 import { review } from "../../models/reviewModel.js";
 import bcrypt from "bcrypt";
 import { Coupon } from "../../models/couponModel.js";
-import exp from "constants";
 
 export const editProfile = asyncHandler(async (req, res) => {
     const { firstname, Lastname, email, number, gender, dob } = req.body;
@@ -22,12 +21,15 @@ export const editProfile = asyncHandler(async (req, res) => {
     return res.redirect(`/profile/${req.params.id}`);
 });
 export const changePass = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.session.users._id);
-    const { password } = req.body;
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const { newPassword } = req.body;
+    const user = await User.findById(req.params.id);
+    const passwordMatch = await bcrypt.compare(newPassword, user.password);
     if (passwordMatch) {
         return res.status(400).json({ error: "This is old password try new" });
     }
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+    res.json({ success: "Password changed successfully!" });
 });
 
 export const addtoCart = asyncHandler(async (req, res) => {
@@ -135,6 +137,7 @@ export const cartDlt = asyncHandler(async (req, res) => {
     }
 });
 export const addAddress = asyncHandler(async (req, res) => {
+    const user=await User.findById(req.session.users._id)
     const {
         name,
         number,
@@ -167,8 +170,8 @@ export const addAddress = asyncHandler(async (req, res) => {
     );
     if (duplicate) {
         res.render("users/page/address", {
-            username: req.session.userName,
-            user: req.session.users,
+            username: user.firstname.trim() + " " + user.Lastname.trim(),
+            user,
             error: "The address exist.Please add new",
         });
     } else {
@@ -189,9 +192,21 @@ export const addAddress = asyncHandler(async (req, res) => {
     }
     res.redirect(req.get("referer"));
 });
+export const dltAddress = asyncHandler(async (req, res) => {
+    const find = await User.findById(req.session.users._id);
+    const address = find.addresses.id(req.params.id);
+    if (address) {
+        address.status = false;
+        await find.save();
+        return res.redirect("/checkout");
+    } else {
+        return res.status(404).send("Address not found");
+    }
+});
 export const updateAddress = async (req, res) => {
     const user = await User.findById(req.session.users._id);
     const { id } = req.params;
+    
     const {
         name,
         number,
@@ -207,21 +222,21 @@ export const updateAddress = async (req, res) => {
     } = req.body;
 
     try {
-        await user.addresses.findByIdAndUpdate(id, {
-            name,
-            number,
-            addressType,
-            street,
-            localPlace,
-            landmark,
-            city,
-            district,
-            state,
-            pincode,
-            country,
-        });
+        const address=user.addresses.id(id)
+        
+        address.name = name;
+        address.number = number;
+        address.addressType = addressType;
+        address.street = street;
+        address.localPlace = localPlace;
+        address.landmark = landmark;
+        address.city = city;
+        address.district = district;
+        address.state = state;
+        address.pincode = pincode;
+        address.country = country;
 
-        res.redirect(`/profile/address/${req.user._id}`);
+        res.redirect(`/profile/address/${user._id}`);
     } catch (error) {
         console.error("Failed to update address:", error);
         res.status(500).send(

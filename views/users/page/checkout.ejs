@@ -159,9 +159,10 @@
                         <span>Remaining Amount:</span>
                         <span id="remaining-amount">₹0.00</span>
                     </div>
-                    <button class="btn-place-order" onclick="placeOrder()">
-                        Place your order
-                    </button>
+                    <button type="button" class="btn-place-order" onclick="placeOrder()">
+  Place your order
+</button>
+
                 </div>
             </div>
         </div>
@@ -831,111 +832,79 @@ function updateSubtotal() {
     updateSubtotal();
 
     async function placeOrder() {
-        const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
-        const selectedAddress = document.querySelector('input[name="address"]:checked')?.value;
-       const totalText = document.getElementById("order-total")?.textContent || "";
-        const total = parseFloat(totalText.replace(/[^\d.]/g, ""));  // Removes ₹ and any text
+  const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+  const selectedAddress = document.querySelector('input[name="address"]:checked')?.value;
+  const totalText = document.getElementById("order-total").textContent || "";
+  const total = parseFloat(totalText.replace(/[^\d.]/g, ""));
 
+  if (!selectedAddress) {
+    showToast("Please select a shipping address.");
+    return;
+  }
 
-        if (!selectedAddress) {
-            showToast("Please select a shipping address.");
-            return;
-        }
+  const orderData = {
+    paymentMethod: selectedPayment,
+    addressId: selectedAddress,
+    total,
+    _csrf: csrfToken,
+    couponCode: appliedCoupon?.code || null,
+    discountAmount: discountAmount || 0,
+  };
 
-        const orderData = {
-            paymentMethod: selectedPayment,
-            addressId: selectedAddress,
-            total,
+  if (selectedPayment === "wallet_cod") {
+    orderData.walletAmount = parseFloat(document.getElementById('wallet-cod-amount').value) || 0;
+  } else if (selectedPayment === "wallet_razorpay") {
+    orderData.walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
+  } else if (selectedPayment === "wallet") {
+    orderData.walletAmount = Math.min(walletBalance, getCurrentOrderTotal());
+  }
+
+  try {
+    const res = await axios.post("/order/place", orderData);
+
+    if (res.data.success && res.data.razorpayOrder) {
+      const order = res.data.razorpayOrder;
+      const options = {
+        key: "<%= key %>",
+        amount: order.amount,
+        currency: order.currency,
+        name: "M4 Watch",
+        description: "Order Payment",
+        order_id: order.id,
+        handler: async function (response) {
+          const verifyData = {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            dbOrderId: res.data.dbOrderId,
+            amountPaid: total,
             _csrf: csrfToken,
-            couponCode: appliedCoupon?.code || null,
-            discountAmount: discountAmount || 0,
-            walletBalance
-            
-        };
-
-
-        // Add wallet amount for split payments
-        if (selectedPayment === 'wallet_cod') {
-            orderData.walletAmount = parseFloat(document.getElementById('wallet-cod-amount').value) || 0;
-        } else if (selectedPayment === 'wallet_razorpay') {
-            orderData.walletAmount = parseFloat(document.getElementById('wallet-razorpay-amount').value) || 0;
-        } else if (selectedPayment === 'wallet') {
-            orderData.walletAmount = Math.min(walletBalance, getCurrentOrderTotal());
-        }
-
-        // Validate wallet amount
-        if (orderData.walletAmount && orderData.walletAmount > walletBalance) {
-            showToast("Insufficient wallet balance");
-            return;
-        }
-
-        try {
-            if (selectedPayment === "cod") {
-                const res = await axios.post("/order/place", orderData);
-                window.location.href = "/place/order";
-            } 
-            else if (selectedPayment === "wallet") {
-                const res = await axios.post("/order/place", orderData);
-                window.location.href = "/place/order";
-            }
-            else if (selectedPayment === "wallet_cod") {
-                const res = await axios.post("/order/place", orderData);
-                window.location.href = "/place/order";
-            }
-            else if (selectedPayment === "razorpay" || selectedPayment === "wallet_razorpay") {
-                const res = await axios.post("/razorpay/create-order", orderData);
-                const order = res.data.order;
-
-                const options = {
-                    key: "<%= key %>",
-                    amount: order.amount,
-                    currency: order.currency,
-                    name: "M4 Watch",
-                    description: "Order Payment",
-                    order_id: order.id,
-                    handler: async function (response) {
-                        try {
-                            const verifyData = {
-                                razorpay_order_id: response.razorpay_order_id,
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_signature: response.razorpay_signature,
-                                addressId: selectedAddress,
-                                total,
-                                paymentMethod: selectedPayment,
-                                couponCode: appliedCoupon?.code || null,
-                                discountAmount: discountAmount || 0,
-                                _csrf: csrfToken,
-                            };
-
-                            if (selectedPayment === 'wallet_razorpay') {
-                                verifyData.walletAmount = orderData.walletAmount;
-                            }
-
-                            const verify = await axios.post("/razorpay/verify-payment", verifyData);
-
-                            if (verify.data.success) {
-                                window.location.href = "/place/order";
-                            } else {
-                                showToast("Payment verification failed.");
-                            }
-                        } catch (error) {
-                            showToast("Payment failed.");
-                            console.error(error);
-                        }
-                    },
-                    theme: {
-                        color: "#0e5d8f",
-                    },
-                };
-
-                const rzp = new Razorpay(options);
-                rzp.open();
-            }
-        } catch (err) {
-            console.error("Order placement failed", err);
-            showToast(err.response?.data?.message || "Failed to place order. Try again.");
-        }
+          };
+          const verify = await axios.post("/razorpay/verify-payment", verifyData);
+          if (verify.data.success) {
+            window.location.href = verify.data.redirectUrl || "/place/order";
+          } else {
+            showToast("Payment verification failed");
+          }
+        },
+        theme: { color: "#0e5d8f" },
+      };
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }  else if (res.data.success && res.data.redirectUrl) {
+    window.location.href = res.data.redirectUrl;
+    } else {
+      showToast("Order failed. Try again.");
     }
+  } catch (err) {
+    console.error(err);
+    showToast("Order failed. Try again.");
+  }
+}
+
+
+
+
     function showToast(message) {
         const toastContainer = document.getElementById("toast-container");
         if (!toastContainer) return;

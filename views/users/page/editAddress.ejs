@@ -52,7 +52,7 @@
 <div class="container">
   <h1 class="my-4">Edit Address</h1>
 
-  <form action="/update-address/<%= address._id %>" method="POST" class="address-form">
+  <form action="/edit/address/<%= address._id %>" method="POST" class="address-form">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
     <div class="form-row">

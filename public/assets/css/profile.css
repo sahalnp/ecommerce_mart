@@ -44,6 +44,20 @@ body {
     background-color:#090a0a;
     color: #ffffff;
 }
+.cart-toast {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-weight: 500;
+}
+
 #success-msg {
     color: green;
     font-weight: 500;

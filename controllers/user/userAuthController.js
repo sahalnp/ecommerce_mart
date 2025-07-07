@@ -23,6 +23,11 @@ export const loginUser = async (req, res) => {
             error: "User does not exist. Please sign up.",
         }); 
     }
+    if(user.status==false){
+         return res.render("users/Auth/login", {
+            error: "User was blocked by admin",
+        }); 
+    }
     if(user.isDlt==true){
          return res.render("users/Auth/login", {
             error: "User was deleted by admin",
@@ -194,6 +199,7 @@ export const resend_otp_email = async (req, res) => {
     res.render("users/Auth/otp", { title: "OTP", error: null, time: "Pass" });
 };
 export const resetPassEmail=asyncHandler(async(req,res)=>{
+    
     const email=req.body.email
     const find = await User.findOne({email})
     req.session.EMAIL=email
@@ -205,5 +211,4 @@ export const resetPassEmail=asyncHandler(async(req,res)=>{
     else{
          return res.json({ exist: false });
     }
-    
 })

@@ -177,22 +177,19 @@
       canvas.height = 200;
       const ctx = canvas.getContext('2d');
       
-      // Draw watch face (outer circle)
       ctx.beginPath();
       ctx.arc(100, 100, 80, 0, 2 * Math.PI);
-      ctx.fillStyle = '#c9b037'; // Gold color
+      ctx.fillStyle = '#c9b037'; 
       ctx.fill();
       ctx.strokeStyle = '#b8860b';
       ctx.lineWidth = 4;
       ctx.stroke();
-      
-      // Draw watch face (inner circle)
+  
       ctx.beginPath();
       ctx.arc(100, 100, 70, 0, 2 * Math.PI);
       ctx.fillStyle = '#1a1a1a';
       ctx.fill();
       
-      // Draw hour markers
       for (let i = 0; i < 12; i++) {
         const angle = (i * 30) * Math.PI / 180;
         const x1 = 100 + Math.cos(angle - Math.PI/2) * 60;
@@ -208,7 +205,6 @@
         ctx.stroke();
       }
       
-      // Draw hour hand (pointing to 2)
       const hourAngle = (2 * 30) * Math.PI / 180 - Math.PI/2;
       ctx.beginPath();
       ctx.moveTo(100, 100);
@@ -227,22 +223,16 @@
       ctx.lineWidth = 3;
       ctx.lineCap = 'round';
       ctx.stroke();
-      
-      // Draw center dot
       ctx.beginPath();
       ctx.arc(100, 100, 6, 0, 2 * Math.PI);
       ctx.fillStyle = '#ffffff';
       ctx.fill();
-      
-      // Draw watch band parts
       ctx.fillStyle = '#c9b037';
-      ctx.fillRect(85, 20, 30, 40); // top band
-      ctx.fillRect(85, 140, 30, 40); // bottom band
+      ctx.fillRect(85, 20, 30, 40); 
+      ctx.fillRect(85, 140, 30, 40); 
       
       return canvas;
     }
-
-    // Initialize with default watch image
     let productImg = new Image();
     productImg.src = "<%= product.vrImage.filepath %>"; 
     

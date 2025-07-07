@@ -136,6 +136,7 @@
                     </div>
                     
                     <form id="forgotPasswordForm" onsubmit="return handleSubmit(event)">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <div class="mb-4">
                             <label for="email" class="form-label">Email Address</label>
                             <input 
@@ -166,8 +167,10 @@
             </div>
         </div>
     </div>
-    
+    </body>
+
     <script>
+const csrfToken = "<%= csrfToken %>";
       async function handleSubmit(event) {
     event.preventDefault();
 
@@ -188,7 +191,7 @@
     }
 
     try {
-        const response = await axios.post('/resetpassEmail', { email });
+        const response = await axios.post('/resetpassEmail', { _csrf: csrfToken, email });
 
         if (response.data.exist) {
             successAlert.classList.remove('d-none');
@@ -198,11 +201,9 @@
             errorAlert.classList.remove('d-none');
         }
     } catch (error) {
-        console.log(error);
-        
         errorMessage.textContent = 'Something went wrong. Please try again.';
         errorAlert.classList.remove('d-none');
-        console.error(error);
+        console.error(error,"sdfghjhgfdsdfghjkhfdsdfgh");
     }
 }
 
@@ -213,3 +214,5 @@ function isValidEmail(email) {
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </html>
+

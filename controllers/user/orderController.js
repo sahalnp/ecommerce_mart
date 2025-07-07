@@ -15,142 +15,12 @@ import fs from "fs";
 import { transaction } from "../../models/transactionModel.js";
 import { wallet } from "../../models/walletModel.js";
 
-
-export const intialisePay = asyncHandler(async (req, res) => {
-    try {
-        const { total } = req.body;
-        const payOrder = await razorpayService(total);
-        res.json({ order: payOrder });
-    } catch (error) {
-        res.status(500).json({ error: "Payment initiation failed" });
-        console.log(error, "ERROR");
-    }
-});
-export const verifyPay = asyncHandler(async (req, res) => {
-    try {
-        const {
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-            paymentMethod,
-            addressId,
-            couponCode,
-            discountAmount,
-            walletAmount,
-        } = req.body;
-
-        const isVerified = verifyPayment(
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature
-        );
-
-        if (!isVerified) {
-            return res.status(400).json({ error: "Payment verification failed" });
-        }
-
-        const cartItems = await Cart.find({ UserId: req.session.users._id }).populate("productId");
-        if (!cartItems || cartItems.length === 0) {
-            return res.status(400).json({ message: "Your cart is empty." });
-        }
-
-        const user = await User.findById(req.session.users._id);
-        const selectedAddress = user.addresses.find(addr => addr._id.toString() === addressId);
-        if (!selectedAddress) {
-            return res.status(400).json({ message: "Invalid address selected." });
-        }
-
-        let currentDate = new Date();
-        let shippedDate = new Date(currentDate);
-        let estimatedDelivery = new Date(currentDate);
-        let price = 0;
-        cartItems.forEach(item => price += item.price);
-
-        let tax = price < 2000 ? (20 / 100) * price : (12 / 100) * price;
-        let shippingFee = price < 2000 ? 40 : 0;
-        const total = price + tax + shippingFee - (discountAmount || 0);
-
-
-        if (total >= 7000) {
-            shippedDate.setDate(currentDate.getDate() + 1);
-            estimatedDelivery.setDate(currentDate.getDate() + 2);
-        } else if (total >= 4000) {
-            shippedDate.setDate(currentDate.getDate() + 3);
-            estimatedDelivery.setDate(currentDate.getDate() + 5);
-        } else {
-            shippedDate.setDate(currentDate.getDate() + 5);
-            estimatedDelivery.setDate(currentDate.getDate() + 7);
-        }
-
-        const items = cartItems.map(item => ({
-            product: item.productId._id,
-            quantity: item.quantity,
-            price: item.price,
-            status: "Pending",
-        }));
-        for (let i = 0; i < items.length; i++) {
-            const productData = await product.findById(items[i].product);
-            if (productData) {
-                const newStock = productData.inStock - items[i].quantity;
-                await product.findByIdAndUpdate(items[i].product, {
-                    inStock: newStock < 0 ? 0 : newStock,
-                });
-            }
-        }
-        const generatedOrderId = orderid("key").generate();
-        req.session.OrderId=generatedOrderId
-
-        const ord=await Order.create({
-            UserId: user._id,
-            OrderId: generatedOrderId,
-            items,
-            billingAddress: addressId,
-            paymentMethod,
-            paymentStatus: "Paid",
-            total,
-            subtotal: price,
-            discount: discountAmount,
-            tax,
-            shippingFee,
-            amountPaid: total,
-            shippedDate,
-            estimatedDelivery,
-            couponCode,
-            walletAmount: walletAmount || 0,
-            reason: null,
-        });
-
-        if (walletAmount > 0) {
-            await wallet.findOneAndUpdate(
-                { user: req.session.users._id },
-                { $inc: { balance: -walletAmount } },
-                { new: true }
-            );
-
-            await transaction.create({
-                UserId: req.session.users._id,
-                orderId: ord._id,
-                amount: walletAmount,
-                type: "Debit",
-                paymentMethod: "Wallet",
-                description: `Wallet payment for Order #${generatedOrderId}`,
-                date: new Date()
-            });
-        }
-
-        res.json({ success: true });
-
-    } catch (error) {
-        console.error("verifyPay error:", error);
-        res.status(500).json({
-            error: "Payment verification failed",
-            details: error.message || error
-        });
-    }
-});
-
 export const placeOrder = asyncHandler(async (req, res) => {
-    const UserId=req.session.users._id
+
+    const UserId = req.session.users?._id;
+    if (!UserId)
+        return res.status(401).json({ message: "User not authenticated" });
+
     const {
         paymentMethod,
         addressId,
@@ -158,113 +28,136 @@ export const placeOrder = asyncHandler(async (req, res) => {
         discountAmount,
         walletAmount,
     } = req.body;
-    const find = await Cart.find({ UserId}).populate(
-        "productId"
-    );
+
+    const cartItems = await Cart.find({ UserId }).populate("productId");
+    if (!cartItems.length) {
+        return res.status(400).json({ message: "Cart is empty" });
+    }
 
     const generatedOrderId = orderid("key").generate();
-    if (!find || find.length === 0) {
-        return res.status(400).json({ message: "Your cart is empty." });
-    }
+    req.session.OrderId = generatedOrderId;
 
-    // const selectedAddress = user.addresses.find(
-    //     (addr) => addr._id.toString() === addressId
-    // );
-    
-    let currentDate = new Date();
-    let shippedDate = new Date(currentDate);
-    let estimatedDelivery = new Date(currentDate);
-    let price = 0;
-    find.forEach((item) => {
-        price += item.price;
-    });
+    let subtotal = 0;
+    cartItems.forEach((item) => (subtotal += item.price));
 
-    let tax = 0;
-    let ship = 0;
+    const tax = subtotal < 2000 ? 0.2 * subtotal : 0.12 * subtotal;
+    const shippingFee = subtotal < 2000 ? 40 : 0;
 
-    if (price < 2000) {
-        ship = 40;
-        tax = (20 / 100) * price;
-    } else {
-        tax = (12 / 100) * price;
-    }
-    let total = price + tax + ship - (discountAmount || 0);
+    let total = subtotal + tax + shippingFee - (discountAmount || 0);
+    if (walletAmount) total -= walletAmount;
 
+    let shippedDate = new Date();
+    let estimatedDelivery = new Date();
     if (total >= 7000) {
-        shippedDate.setDate(currentDate.getDate() + 1);
-        estimatedDelivery.setDate(currentDate.getDate() + 2);
-    } else if (total >= 4000 && total < 7000) {
-        shippedDate.setDate(currentDate.getDate() + 3);
-        estimatedDelivery.setDate(currentDate.getDate() + 5);
+        shippedDate.setDate(shippedDate.getDate() + 1);
+        estimatedDelivery.setDate(estimatedDelivery.getDate() + 2);
+    } else if (total >= 4000) {
+        shippedDate.setDate(shippedDate.getDate() + 3);
+        estimatedDelivery.setDate(estimatedDelivery.getDate() + 5);
     } else {
-        shippedDate.setDate(currentDate.getDate() + 5);
-        estimatedDelivery.setDate(currentDate.getDate() + 7);
+        shippedDate.setDate(shippedDate.getDate() + 5);
+        estimatedDelivery.setDate(estimatedDelivery.getDate() + 7);
     }
 
-    const items = find.map((item) => ({
+    const items = cartItems.map((item) => ({
         product: item.productId._id,
         quantity: item.quantity,
         price: item.price,
         status: "Pending",
     }));
-    req.session.OrderId =generatedOrderId;
-    if (walletAmount) {
-        total -= walletAmount;
-    }
-    for (let i = 0; i < items.length; i++) {
-        const productData = await product.findById(items[i].product);
 
-        if (productData) {
-            const newStock = productData.inStock - items[i].quantity;
-            await product.findByIdAndUpdate(items[i].product, {
-                inStock: newStock < 0 ? 0 : newStock,
-            });
+    for (const item of items) {
+        const prod = await product.findById(item.product);
+        if (prod) {
+            prod.inStock -= item.quantity;
+            await prod.save();
         }
     }
 
-    const ord=await Order.create({
+    const ord = await Order.create({
         UserId,
         OrderId: generatedOrderId,
         items,
         billingAddress: addressId,
         paymentMethod,
-        paymentStatus: "Pending",
+        paymentStatus: paymentMethod.startsWith("razorpay")
+            ? "Pending"
+            : "Pending",
         total,
-        subtotal: price,
+        subtotal,
         discount: discountAmount,
         tax,
-        shippingFee: ship,
+        shippingFee,
         amountPaid: 0,
         shippedDate,
         estimatedDelivery,
         couponCode,
         walletAmount: walletAmount || 0,
-        reason: null,
     });
+    console.log(ord,"dfghjkl");
+    
 
     if (walletAmount > 0) {
-        console.log("sdfghjkl");
-        
         await transaction.create({
             UserId,
             orderId: ord._id,
             amount: walletAmount,
             type: "Debit",
-            paymentMethod,
+            paymentMethod: "Wallet",
             description: `Wallet payment for Order #${generatedOrderId}`,
         });
-           await wallet.findOneAndUpdate(
-        {
-            user: req.session.users._id,
-        },
-        { $inc: { balance: -walletAmount } },
-        {
-            new: true,
-        }
-    );
+
+        await wallet.findOneAndUpdate(
+            { user: UserId },
+            { $inc: { balance: -walletAmount } }
+        );
     }
+
+    await Cart.deleteMany({ UserId });
+
+    if (
+          paymentMethod.toLowerCase() === "cod" ||
+        paymentMethod === "wallet" ||
+        paymentMethod === "wallet_cod"
+    ) {
+        return res.json({ success: true, redirectUrl: "/place/order" });
+    }
+
+    if (paymentMethod === "razorpay" || paymentMethod === "wallet_razorpay") {
+        const payOrder = await razorpayService(total);
+        return res.json({
+            success: true,
+            razorpayOrder: payOrder,
+            dbOrderId: ord._id,
+        });
+    }
+});
+export const verifyPay = asyncHandler(async (req, res) => {
+    const {
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        dbOrderId,
+    } = req.body;
+
+    const isVerified = verifyPayment(
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature
+    );
+
+    if (!isVerified) {
+        return res.status(400).json({ error: "Payment verification failed" });
+    }
+
+    await Order.findByIdAndUpdate(dbOrderId, {
+        paymentStatus: "Completed",
+        amountPaid: req.body.amountPaid || 0,
+    });
+
     res.json({ success: true, redirectUrl: "/place/order" });
 });
+
 export const orderReturn = asyncHandler(async (req, res) => {
     try {
         const { OrderId, reason } = req.body;
@@ -274,10 +167,10 @@ export const orderReturn = asyncHandler(async (req, res) => {
             { new: true }
         );
         await transaction.findOneAndUpdate(
-                { userId: req.session.users._id, orderId: find._id },
-                { status: req.body.status },
-                { new: true }
-            );
+            { userId: req.session.users._id, orderId: find._id },
+            { status: req.body.status },
+            { new: true }
+        );
         if (!find) {
             return res.status(404).json({ message: "Order not found" });
         }
@@ -293,7 +186,7 @@ export const orderReturn = asyncHandler(async (req, res) => {
 export const cancelOrder = asyncHandler(async (req, res) => {
     try {
         const { OrderId, reason } = req.body;
-        const UserId=req.session.users_id
+        const UserId = req.session.users_id;
         const updatedOrder = await Order.findOneAndUpdate(
             { OrderId, UserId },
             { status: "Cancelled", reason },
@@ -402,8 +295,8 @@ export const invoice = asyncHandler(async (req, res) => {
     const htmlString = await ejs.renderFile(
         path.join(process.cwd(), "views", "users", "page", "invoice.ejs"),
         {
-            username: req.session.userName,
-            user: req.session.users,
+            username: user.firstname.trim() + " " + user.Lastname.trim(),
+            user,
             order,
             add,
             gst: generateRandomGSTIN(),

@@ -9,6 +9,7 @@ import { imageModel } from "../../models/imageModel.js";
 import { Coupon } from "../../models/couponModel.js";
 import { wallet } from "../../models/walletModel.js";
 import { transaction } from "../../models/transactionModel.js";
+import { product } from "../../models/productModel.js";
 
 export const profileEdit = asyncHandler(async (req, res) => {
     const { firstname, Lastname, email, number } = req.body;
@@ -199,13 +200,14 @@ export const bannerAdd = asyncHandler(async (req, res) => {
     if (!image) {
         return res.status(400).json({ error: "No image uploaded." });
     }
+
     const basePath = `${req.protocol}://${req.get("host")}/uploads`;
     const savedImage = await imageModel.create({
         filename: image,
         filepath: `${basePath}/${image}`,
     });
     const exists = await banner.findOne({ title, description, status, link });
-
+    const prod=await product.findById(productId)
     if (!exists) {
         await banner.create({
             title,
@@ -215,6 +217,7 @@ export const bannerAdd = asyncHandler(async (req, res) => {
             link,
             image: savedImage._id,
         });
+       
     } else {
         return res.render("admin/page/addBanner", {
             admin: req.session.admin,

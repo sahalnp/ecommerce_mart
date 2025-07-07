@@ -1,128 +1,1164 @@
 <!DOCTYPE html>
-<!--
-Copyright (c) 2003-2018, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
--->
-<html>
+<html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>CKEditor Sample</title>
-	<script src="../ckeditor.js"></script>
-	<script src="js/sample.js"></script>
-	<link rel="stylesheet" href="css/samples.css">
-	<link rel="stylesheet" href="toolbarconfigurator/lib/codemirror/neo.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Shop - Premium Timepieces</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: #ffd700;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            color: #ffd700;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .header-icons a {
+            color: white;
+            font-size: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .header-icons a:hover {
+            color: #ffd700;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4757;
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1523170335258-f5ed11844a49?ixlib=rb-4.0.3') center/cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .hero-content {
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #ff4757;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        /* Main Content */
+        .shop-main-container {
+            padding: 40px 0;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        
+        .col-lg-3, .col-lg-9 {
+            padding: 0 15px;
+        }
+        
+        .col-lg-3 {
+            width: 25%;
+        }
+        
+        .col-lg-9 {
+            width: 75%;
+        }
+        
+        /* Filter Sidebar */
+        .filter-sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-header h2 {
+            font-size: 22px;
+            color: #333;
+        }
+        
+        .clear-filters {
+            background: none;
+            border: none;
+            color: #ff4757;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .filter-section {
+            margin-bottom: 25px;
+        }
+        
+        .filter-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .price-range {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .price-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .price-field {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+        }
+        
+        .filter-section label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 15px;
+            color: #555;
+        }
+        
+        .filter-section input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+        
+        .product-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .product-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .popular-img {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .popular-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-item:hover .popular-img img {
+            transform: scale(1.1);
+        }
+        
+        .img-cap {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            text-align: center;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-item:hover .img-cap {
+            transform: translateY(0);
+        }
+        
+        .img-cap a.cart {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 20px;
+            background: #ff6b6b;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .img-cap a.cart:hover {
+            background: #ff4757;
+        }
+        
+        .favorit-items {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .heart-toggle {
+            background: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .heart-toggle:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .popular-caption {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .popular-caption h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .popular-caption h3 a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .popular-caption h3 a:hover {
+            color: #ff6b6b;
+        }
+        
+        .popular-caption span {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ff6b6b;
+        }
+        
+        /* Search and Sort */
+        .product-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .results-count {
+            font-size: 16px;
+            color: #555;
+        }
+        
+        .select-this {
+            background: white;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        
+        #select1 {
+            border: none;
+            padding: 10px;
+            font-size: 15px;
+            width: 100%;
+            background: none;
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .search-reset {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-reset:hover {
+            background: #ff4757;
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+            grid-column: 1 / -1;
+        }
+        
+        /* Pagination */
+        .pagination-container {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .pagination {
+            display: flex;
+            list-style: none;
+            gap: 8px;
+        }
+        
+        .page-item {
+            margin: 0 2px;
+        }
+        
+        .page-link {
+            display: block;
+            padding: 10px 18px;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .page-link:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+            border-color: #ff4757;
+        }
+        
+        .page-item.disabled .page-link {
+            color: #bbb;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        
+        /* Shop Method Area */
+        .shop-method-area {
+            background: white;
+            padding: 70px 0;
+            margin-top: 70px;
+        }
+        
+        .method-wrapper {
+            padding: 0 20px;
+        }
+        
+        .single-method {
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .single-method:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .single-method i {
+            font-size: 50px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+        }
+        
+        .single-method h6 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .single-method p {
+            color: #666;
+        }
+        
+        /* Toast Messages */
+        .cart-toast, .wishlist-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 2000;
+            display: none;
+        }
+        
+        .cart-toast {
+            background: #2ed573;
+        }
+        
+        .wishlist-toast {
+            background: #ff6b6b;
+        }
+        
+        /* Footer */
+        footer {
+            background: #1e272e;
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-col h4 {
+            font-size: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: #ff6b6b;
+        }
+        
+        .footer-col ul {
+            list-style: none;
+        }
+        
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-col ul li a {
+            color: #bbb;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-col ul li a:hover {
+            color: #ff6b6b;
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: #2f3640;
+            color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: #ff6b6b;
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #2f3640;
+            color: #bbb;
+            font-size: 14px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .col-lg-3, .col-lg-9 {
+                width: 100%;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body id="main">
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <i class="fas fa-clock"></i>
+                Timepiece
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Shop</a></li>
+                    <li><a href="#">Collections</a></li>
+                    <li><a href="#">Brands</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="header-icons">
+                <a href="#"><i class="fas fa-search"></i></a>
+                <a href="#"><i class="fas fa-user"></i></a>
+                <a href="#">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count">3</span>
+                </a>
+            </div>
+        </div>
+    </header>
 
-<nav class="navigation-a">
-	<div class="grid-container">
-		<ul class="navigation-a-left grid-width-70">
-			<li><a href="https://ckeditor.com/ckeditor-4/">Project Homepage</a></li>
-			<li><a href="https://github.com/ckeditor/ckeditor-dev/issues">I found a bug</a></li>
-			<li><a href="http://github.com/ckeditor/ckeditor-dev" class="icon-pos-right icon-navigation-a-github">Fork CKEditor on GitHub</a></li>
-		</ul>
-		<ul class="navigation-a-right grid-width-30">
-			<li><a href="https://ckeditor.com/blog/">CKEditor Blog</a></li>
-		</ul>
-	</div>
-</nav>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Premium Watch Collection</h1>
+            <p>Discover our exquisite collection of luxury timepieces crafted with precision and timeless elegance.</p>
+            <a href="#" class="btn">Shop Now</a>
+        </div>
+    </section>
 
-<header class="header-a">
-	<div class="grid-container">
-		<h1 class="header-a-logo grid-width-30">
-			<a href="index.html"><img src="img/logo.svg" onerror="this.src='img/logo.png'; this.onerror=null;" alt="CKEditor Sample"></a>
-		</h1>
+    <!-- Main Content -->
+    <main class="shop-main-container">
+        <div class="container">
+            <div class="row">
+                <!-- Filter Sidebar -->
+                <div class="col-lg-3">
+                    <aside class="filter-sidebar">
+                        <div class="filter-header">
+                            <h2>Filters</h2>
+                            <button class="clear-filters">Clear All</button>
+                        </div>
 
-		<nav class="navigation-b grid-width-70">
-			<ul>
-				<li><a href="index.html" class="button-a button-a-background">Start</a></li>
-				<li><a href="toolbarconfigurator/index.html" class="button-a">Toolbar configurator <span class="balloon-a balloon-a-nw">Edit your toolbar now!</span></a></li>
-			</ul>
-		</nav>
-	</div>
-</header>
+                        <!-- Price Filter -->
+                        <section class="filter-section">
+                            <h3>Price</h3>
+                            <p class="price-range">₹500 - ₹50,000</p>
+                            <div class="price-inputs">
+                                <input type="number" min="0" value="500" id="min-price" class="price-field" placeholder="Min">
+                                <input type="number" max="100000" value="50000" id="max-price" class="price-field" placeholder="Max">
+                            </div>
+                        </section>
 
-<main>
-	<div class="adjoined-top">
-		<div class="grid-container">
-			<div class="content grid-width-100">
-				<h1>Congratulations!</h1>
-				<p>
-					If you can see CKEditor below, it means that the installation succeeded.
-					You can now try out your new editor version, see its features, and when you are ready to move on, check some of the <a href="#sample-customize">most useful resources</a> recommended below.
-				</p>
-			</div>
-		</div>
-	</div>
-	<div class="adjoined-bottom">
-		<div class="grid-container">
-			<div class="grid-width-100">
-				<div id="editor">
-					<h1>Hello world!</h1>
-					<p>I'm an instance of <a href="https://ckeditor.com">CKEditor</a>.</p>
-				</div>
-			</div>
-		</div>
-	</div>
+                        <!-- Watch Shape -->
+                        <section class="filter-section">
+                            <h3>Shape</h3>
+                            <label>
+                                <input type="checkbox" name="caseShape" value="round"> Round
+                            </label>
+                            <label>
+                                <input type="checkbox" name="caseShape" value="square"> Square
+                            </label>
+                            <label>
+                                <input type="checkbox" name="caseShape" value="rectangle"> Rectangle
+                            </label>
+                            <label>
+                                <input type="checkbox" name="caseShape" value="oval"> Oval
+                            </label>
+                        </section>
 
-	<div class="grid-container">
-		<div class="content grid-width-100">
-			<section id="sample-customize">
-				<h2>Customize Your Editor</h2>
-				<p>Modular build and <a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_configuration">numerous configuration options</a> give you nearly endless possibilities to customize CKEditor. Replace the content of your <code><a href="../config.js">config.js</a></code> file with the following code and refresh this page (<strong>remember to clear the browser cache</strong>)!</p>
-		<pre class="cm-s-neo CodeMirror"><code><span style="padding-right: 0.1px;"><span class="cm-variable">CKEDITOR</span>.<span class="cm-property">editorConfig</span> <span class="cm-operator">=</span> <span class="cm-keyword">function</span>( <span class="cm-def">config</span> ) {</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">language</span> <span class="cm-operator">=</span> <span class="cm-string">'es'</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">uiColor</span> <span class="cm-operator">=</span> <span class="cm-string">'#F7B42C'</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">height</span> <span class="cm-operator">=</span> <span class="cm-number">300</span>;</span>
-<span style="padding-right: 0.1px;"><span class="cm-tab">	</span><span class="cm-variable-2">config</span>.<span class="cm-property">toolbarCanCollapse</span> <span class="cm-operator">=</span> <span class="cm-atom">true</span>;</span>
-<span style="padding-right: 0.1px;">};</span></code></pre>
-			</section>
+                        <!-- Brand -->
+                        <section class="filter-section">
+                            <h3>Brand</h3>
+                            <label>
+                                <input type="checkbox" name="brand" value="rolex"> Rolex
+                            </label>
+                            <label>
+                                <input type="checkbox" name="brand" value="omega"> Omega
+                            </label>
+                            <label>
+                                <input type="checkbox" name="brand" value="tagheuer"> Tag Heuer
+                            </label>
+                            <label>
+                                <input type="checkbox" name="brand" value="seiko"> Seiko
+                            </label>
+                        </section>
 
-			<section>
-				<h2>Toolbar Configuration</h2>
-				<p>If you want to reorder toolbar buttons or remove some of them, check <a href="toolbarconfigurator/index.html">this handy tool</a>!</p>
-			</section>
+                        <!-- Category -->
+                        <section class="filter-section">
+                            <h3>Category</h3>
+                            <label>
+                                <input type="checkbox" name="category" value="dress"> Dress
+                            </label>
+                            <label>
+                                <input type="checkbox" name="category" value="diver"> Diver
+                            </label>
+                            <label>
+                                <input type="checkbox" name="category" value="sports"> Sports
+                            </label>
+                            <label>
+                                <input type="checkbox" name="category" value="chronograph"> Chronograph
+                            </label>
+                        </section>
 
-			<section>
-				<h2>More Samples!</h2>
-				<p>Visit the <a href="https://sdk.ckeditor.com">CKEditor SDK</a> for a huge collection of samples showcasing editor features, with source code readily available to copy and use in your own implementation.</p>
-			</section>
+                        <!-- Material -->
+                        <section class="filter-section">
+                            <h3>Material</h3>
+                            <label>
+                                <input type="checkbox" name="material" value="stainless"> Stainless Steel
+                            </label>
+                            <label>
+                                <input type="checkbox" name="material" value="leather"> Leather
+                            </label>
+                            <label>
+                                <input type="checkbox" name="material" value="gold"> Gold
+                            </label>
+                            <label>
+                                <input type="checkbox" name="material" value="titanium"> Titanium
+                            </label>
+                        </section>
+                    </aside>
+                </div>
 
-			<section>
-				<h2>Developer's Guide</h2>
-				<p>The most important resource for all developers working with CKEditor, integrating it with their websites and applications, and customizing to their needs. You can start from here:</p>
-				<ul>
-					<li><a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_installation">Getting Started</a> &ndash; Explains most crucial editor concepts and practices as well as the installation process and integration with your website.</li>
-					<li><a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_advanced_installation">Advanced Installation Concepts</a> &ndash; Describes how to upgrade, install additional components (plugins, skins), or create a custom build.</li>
-				</ul>
-					<p>When you have the basics sorted out, feel free to browse some more advanced sections like:</p>
-				<ul>
-					<li><a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_features">Functionality Overview</a> &ndash; Descriptions and samples of various editor features.</li>
-					<li><a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/plugin_sdk_intro">Plugin SDK</a>, <a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/widget_sdk_intro">Widget SDK</a>, and <a href="https://docs.ckeditor.com/ckeditor4/docs/#!/guide/skin_sdk_intro">Skin SDK</a> &ndash; Useful when you want to create your own editor components.</li>
-				</ul>
-			</section>
+                <!-- Products Section -->
+                <div class="col-lg-9">
+                    <div class="product-controls">
+                        <div class="results-count">
+                            <span id="product-count">Showing 12 products</span>
+                        </div>
+                        <div class="select-this">
+                            <select id="select1">
+                                <option value="featured">Featured</option>
+                                <option value="price-low-high">Price: Low to High</option>
+                                <option value="price-high-low">Price: High to Low</option>
+                                <option value="newest">Newest Arrivals</option>
+                                <option value="rating">Best Rated</option>
+                            </select>
+                        </div>
+                    </div>
 
-			<section>
-				<h2>CKEditor JavaScript API</h2>
-				<p>CKEditor boasts a rich <a href="https://docs.ckeditor.com/ckeditor4/docs/#!/api">JavaScript API</a> that you can use to adjust the editor to your needs and integrate it with your website or application.</p>
-			</section>
-		</div>
-	</div>
-</main>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="search-input" placeholder="Search product" aria-label="Search products">
+                        </div>
+                        <button class="search-reset" id="search-reset">
+                            <i class="fas fa-times"></i> Clear Search
+                        </button>
+                    </div>
 
-<footer class="footer-a grid-container">
-	<div class="grid-container">
-		<p class="grid-width-100">
-			CKEditor &ndash; The text editor for the Internet &ndash; <a class="samples" href="https://ckeditor.com/">https://ckeditor.com</a>
-		</p>
-		<p class="grid-width-100" id="copy">
-			Copyright &copy; 2003-2018, <a class="samples" href="https://cksource.com/">CKSource</a> &ndash; Frederico Knabben. All rights reserved.
-		</p>
-	</div>
-</footer>
-<script>
-	initSample();
-</script>
+                    <div class="product-grid" id="products-container">
+                        <!-- Product 1 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Luxury Chronograph Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Luxury Chronograph</a></h3>
+                                <span>₹ 42,500</span>
+                            </div>
+                        </div>
 
+                        <!-- Product 2 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1539874754764-5a96559165b0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Classic Leather Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Classic Leather</a></h3>
+                                <span>₹ 28,900</span>
+                            </div>
+                        </div>
+
+                        <!-- Product 3 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1547996160-81dfa63595aa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Diver Professional Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Diver Professional</a></h3>
+                                <span>₹ 37,200</span>
+                            </div>
+                        </div>
+
+                        <!-- Product 4 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1612786143266-b0363a2f9ca1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Elegant Gold Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Elegant Gold</a></h3>
+                                <span>₹ 89,500</span>
+                            </div>
+                        </div>
+
+                        <!-- Product 5 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1585123334904-845d60e97b29?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Minimalist Design Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Minimalist Design</a></h3>
+                                <span>₹ 24,800</span>
+                            </div>
+                        </div>
+
+                        <!-- Product 6 -->
+                        <div class="product-item">
+                            <div class="popular-img">
+                                <img src="https://images.unsplash.com/photo-1611944190004-1d5b7a0a7c0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Sport Chronometer Watch">
+                                <div class="img-cap">
+                                    <a class="cart" href="#"><span>Add to cart</span></a>
+                                </div>
+                                <div class="favorit-items">
+                                    <button class="heart-toggle">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="popular-caption">
+                                <h3><a href="#">Sport Chronometer</a></h3>
+                                <span>₹ 32,400</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link previous" href="#" id="prev-page" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#" data-page="1">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#" data-page="2">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#" data-page="3">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link next" href="#" id="next-page" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Shop Method Area -->
+    <div class="shop-method-area">
+        <div class="container">
+            <div class="method-wrapper">
+                <div class="row d-flex justify-content-between">
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="fas fa-shipping-fast"></i>
+                            <h6>Free Shipping Method</h6>
+                            <p>Fast and reliable delivery to your doorstep with no additional charges on orders above ₹999.</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="fas fa-lock"></i>
+                            <h6>Secure Payment System</h6>
+                            <p>Your transactions are protected with industry-standard encryption and secure payment gateways.</p>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6">
+                        <div class="single-method mb-40">
+                            <i class="fas fa-redo"></i>
+                            <h6>Easy Return Policy</h6>
+                            <p>Hassle-free returns within 30 days if you're not completely satisfied with your purchase.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Messages -->
+    <div class="cart-toast">Item added to cart</div>
+    <div class="wishlist-toast">Added to wishlist</div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h4>Timepiece</h4>
+                    <p>Premium watches for those who value timeless elegance and precision craftsmanship.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Shop</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="#">Dress Watches</a></li>
+                        <li><a href="#">Sports Watches</a></li>
+                        <li><a href="#">Luxury Watches</a></li>
+                        <li><a href="#">Smart Watches</a></li>
+                        <li><a href="#">Limited Editions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Luxury Lane, Mumbai</li>
+                        <li><i class="fas fa-phone"></i> +91 98765 43210</li>
+                        <li><i class="fas fa-envelope"></i> info@timepiece.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Timepiece. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Pagination functionality
+        const productsPerPage = 6;
+        let currentPage = 1;
+        let totalPages = 3; // For demo purposes
+        
+        // Page navigation
+        document.querySelectorAll('.page-link[data-page]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage = parseInt(this.getAttribute('data-page'));
+                updatePagination();
+            });
+        });
+        
+        // Previous button
+        document.getElementById('prev-page').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                currentPage--;
+                updatePagination();
+            }
+        });
+        
+        // Next button
+        document.getElementById('next-page').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePagination();
+            }
+        });
+        
+        // Update pagination UI
+        function updatePagination() {
+            // Update active page
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.querySelector(`.page-link[data-page="${currentPage}"]`).parentElement.classList.add('active');
+            
+            // Update prev/next button states
+            document.getElementById('prev-page').parentElement.classList.toggle('disabled', currentPage === 1);
+            document.getElementById('next-page').parentElement.classList.toggle('disabled', currentPage === totalPages);
+            
+            // Update product count text
+            const start = (currentPage - 1) * productsPerPage + 1;
+            const end = Math.min(currentPage * productsPerPage, totalPages * productsPerPage);
+            document.getElementById('product-count').textContent = `Showing ${start} to ${end} of ${totalPages * productsPerPage} products`;
+        }
+        
+        // Add to cart functionality
+        document.querySelectorAll('.cart').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const toast = document.querySelector('.cart-toast');
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 3000);
+            });
+        });
+        
+        // Wishlist toggle
+        document.querySelectorAll('.heart-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const isLiked = icon.classList.contains('fas');
+                
+                if (isLiked) {
+                    icon.classList.remove('fas');
+                    icon.classList.add('far');
+                } else {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas');
+                    icon.style.color = '#ff4757';
+                    
+                    const toast = document.querySelector('.wishlist-toast');
+                    toast.style.display = 'block';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 3000);
+                }
+            });
+        });
+        
+        // Search reset button
+        document.getElementById('search-reset').addEventListener('click', function() {
+            document.getElementById('search-input').value = '';
+        });
+        
+        // Clear all filters
+        document.querySelector('.clear-filters').addEventListener('click', function() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            document.getElementById('min-price').value = 500;
+            document.getElementById('max-price').value = 50000;
+            document.querySelector('.price-range').textContent = '₹500 - ₹50,000';
+            document.getElementById('search-input').value = '';
+            document.getElementById('select1').value = 'featured';
+        });
+    </script>
 </body>
 </html>

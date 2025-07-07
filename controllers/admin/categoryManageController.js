@@ -57,21 +57,38 @@ export const categoryEdit = asyncHandler(async (req, res) => {
     }
 });
 
-export const Editcatgory = asyncHandler(async (req, res) => {
-    let islist = false;
-    if (req.body.isListed == "on") {
-        islist = true;
-    }
-
+export const Editcatgory = async (req, res) => {
+  try {
     const { name, isListed } = req.body;
+
      await categoryModel.findByIdAndUpdate(req.params.id, {
-        name,
-        isListed: islist,
+      name,
+      isListed: isListed === "true" 
     });
 
     return res.redirect("/admin/category");
-});
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
 export const categorydlt = asyncHandler(async (req, res) => {
      await categoryModel.findByIdAndUpdate(req.params.id,{isDlt:true})
     res.redirect('/admin/category')
 });
+export const changeList=asyncHandler(async(req,res)=>{
+     try {
+    const category = await categoryModel.findById(req.params.id);
+    if (!category) {
+      return res.status(404).send('Category not found');
+    }
+    category.isListed = !category.isListed;
+    await category.save();
+
+    res.redirect('/admin/category'); 
+  } catch (error) {
+    console.error('Error toggling category list status:', error);
+    res.status(500).send('Internal Server Error');
+  }
+})

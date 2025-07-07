@@ -70,6 +70,7 @@ import {
     categorydlt,
     categoryEdit,
     categoryLoad,
+    changeList,
     Editcatgory,
 } from "../controllers/admin/categoryManageController.js";
 import {
@@ -122,7 +123,7 @@ adminRouter.post("/admin/addCategory", addCategory);
 
 adminRouter.get("/admin/editCategory/:id",  isAdminloggedIn,categoryEdit);
 adminRouter.post("/admin/editCategory/:id", Editcatgory);
-
+adminRouter.post('/admin/category/update-status/:id',changeList)
 adminRouter.get("/admin/category/delete/:id",  isAdminloggedIn,categorydlt);
 
 adminRouter.get("/admin/edit/:id" ,isAdminloggedIn,editAdmin)

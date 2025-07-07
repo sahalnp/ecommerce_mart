@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const orderSchema = new mongoose.Schema({
     items: [
@@ -69,6 +70,10 @@ const orderSchema = new mongoose.Schema({
     total: Number,
     reason:{
         type:String
+    },
+    show:{
+        type:Boolean,
+        default:false
     },
     status: {
         type: String,
