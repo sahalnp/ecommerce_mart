@@ -1,50 +1,103 @@
-                                                       Ecommerce_mart
+div align="center">
 
-usign men(mongodb.express,node)
+# 🛍️ ecommerce_mart
 
-## 🛍️ Overview
+**A production-ready, open-source backend starter for modern e-commerce platforms.**
 
-**ecommerce_mart** is a comprehensive open-source backend framework tailored for building scalable and secure e-commerce platforms. It provides a rich set of modules, middleware, and data models to streamline development and maintenance.
+[Features](#-features) • [Quick Start](#️-quick-start) • [Docs](#-docs) • [Contributing](#-contributing)
 
-### 🚀 Why ecommerce_mart?
-
-This project empowers developers to create flexible, feature-rich online stores with ease. The core features include:
-
-- 🛠️ **Modular Architecture**: Organized modules and middleware for easy customization and scalability.  
-- 🚀 **Secure Authentication**: Robust user and admin login flows, including OAuth and OTP verification.  
-- 💌 **Integrated Payment & Email**: Seamless Razorpay payment processing and automated email notifications.  
-- 🧩 **Extensive Views & Controllers**: Rich admin and user interfaces for managing products, orders, reviews, and more.  
-- 🔒 **Data-Driven Design**: Well-structured models supporting complex workflows and data integrity.  
-- ⚙️ **Developer-Friendly**: Clear architecture and comprehensive source code to accelerate development.
+</div>
 
 ---
 
-## ⚙️ Getting Started
+## 🚀 Why ecommerce_mart?
 
-### 📋 Prerequisites
+Build flexible, secure and scalable online stores in record time.
 
-This project requires the following dependencies:
-
-- Programming Language: unknown  
-- Package Manager: npm
+| Feature | Summary |
+|---------|---------|
+| 🧩 **Modular Architecture** | Clean separation of concerns—swap or extend any module without touching the core. |
+| 🔐 **Secure Auth** | JWT + OTP + OAuth flows for users, admins & vendors. |
+| 💸 **Payments** | Razorpay pre-wired; add more gateways in minutes. |
+| 📧 **Email** | Nodemailer templates for order, delivery & promo events. |
+| 📊 **Admin Suite** | Full CRUD for products, orders, coupons, reviews & reports. |
+| 🧪 **Testable** | Jest + Supertest suites ready for CI/CD. |
 
 ---
 
-### 📦 Installation
+## ⚙️ Quick Start
 
-Build ecommerce_mart from the source and install dependencies:
-
+### 1. Clone & Install
 ```bash
-git clone https://github.com/sahalnp/ecommerce_mart
+git clone https://github.com/sahalnp/ecommerce_mart.git
 cd ecommerce_mart
 npm install
-▶️ Usage
-Run the project with:
-
+2. Environment
+Copy .env.example → .env and fill your keys:
+Copy
+MONGO_URI=mongodb://localhost:27017/ecommerce_mart
+JWT_SECRET=super-secret-jwt-key
+RAZORPAY_KEY_ID=rp_test_xxx
+RAZORPAY_KEY_SECRET=rp_secret_xxx
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+3. Seed (optional)
 bash
+Copy
+npm run seed
+4. Run
+bash
+Copy
+# development
+npm run dev
+
+# production
 npm start
+Server spins up at http://localhost:5000
+📚 Docs
+Table
+Copy
+Module	Endpoint Prefix	Description
+Auth	/api/auth	Register, login, refresh, OTP, OAuth
+Users	/api/users	Profile, addresses, wishlist
+Products	/api/products	CRUD, search, filter, pagination
+Cart	/api/cart	Add, update, delete, clear
+Orders	/api/orders	Place, track, cancel, admin update
+Payments	/api/payments	Razorpay order & capture
+Admin	/api/admin	Dashboard stats, manage everything
+Reviews	/api/reviews	Rate & comment on products
+Coupons	/api/coupons	Discount codes, usage limits
+Full Postman collection: docs/postman.json
 🧪 Testing
-ecommerce_mart uses the { test_framework } test framework. Run the test suite with:
-
 bash
-npm 
+Copy
+# unit & integration
+npm test
+
+# watch mode
+npm run test:watch
+
+# coverage
+npm run test:coverage
+🛠️ Tech Stack
+Runtime: Node.js (v18+)
+Framework: Express.js
+Database: MongoDB + Mongoose ODM
+Auth: jsonwebtoken, bcrypt, passport
+Payment: Razorpay SDK
+Email: Nodemailer + handlebars templates
+Testing: Jest, Supertest
+Linting: ESLint + Prettier
+CI/CD: GitHub Actions (example in .github/workflows)
+🤝 Contributing
+Fork the repo
+Create your feature branch (git checkout -b feature/amazing)
+Commit (git commit -m 'feat: add amazing')
+Push (git push origin feature/amazing)
+Open a Pull Request
+Please read CONTRIBUTING.md for coding standards.
+📄 License
+MIT © sahalnp
+<div align="center">
+⭐ Star us on GitHub — it motivates a lot!
+</div>
